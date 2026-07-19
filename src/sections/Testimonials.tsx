@@ -1,9 +1,9 @@
 import { SectionHeading } from '../components/SectionHeading'
 
 const testimonialSlots = [
-  { index: 'T–01', label: 'VERIFIED VOICE', status: 'AWAITING APPROVED TESTIMONIAL' },
-  { index: 'T–02', label: 'FIELD RESPONSE', status: 'AWAITING APPROVED TESTIMONIAL' },
-  { index: 'T–03', label: 'COMMUNITY NOTE', status: 'AWAITING APPROVED TESTIMONIAL' },
+  { index: 'T-01', label: 'VERIFIED VOICE', status: 'AWAITING APPROVED TESTIMONIAL' },
+  { index: 'T-02', label: 'FIELD RESPONSE', status: 'AWAITING APPROVED TESTIMONIAL' },
+  { index: 'T-03', label: 'COMMUNITY NOTE', status: 'AWAITING APPROVED TESTIMONIAL' },
 ]
 
 export function Testimonials() {
@@ -11,7 +11,7 @@ export function Testimonials() {
     <section id="testimonials" className="testimonials section" aria-labelledby="testimonials-title">
       <SectionHeading
         id="testimonials-title"
-        index="05"
+        index="09"
         label="TESTIMONIALS / RESERVED"
         title="REAL SIGNAL. NO FICTION."
         description="This modular field will only publish statements supplied or verified by VHOX. No names, ratings or endorsements have been fabricated."

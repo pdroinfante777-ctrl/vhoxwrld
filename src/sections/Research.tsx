@@ -11,10 +11,10 @@ function Research() {
     <section ref={sectionRef} className="research section" aria-labelledby="research-title">
       <SectionHeading
         id="research-title"
-        index="04"
-        label="RESEARCH / ACTIVE INDEX"
+        index="06"
+        label="GARMENT RESEARCH / ACTIVE INDEX"
         title="THE WORK BEHIND THE FORM."
-        description="VHOX treats every release as a continuing investigation—not a fixed aesthetic."
+        description="VHOX is a clothing movement, not a technology company. The research lives in material, placement, craft and the identity carried by each garment."
       />
 
       <div className="research__body">
@@ -23,7 +23,7 @@ function Research() {
           <span className="research__ring research__ring--two" />
           <span className="research__ring research__ring--three" />
           <span className="research__core">V</span>
-          <span className="research__coordinate">FORM / MOTION<br />IDENTITY / 001</span>
+          <span className="research__coordinate">THREAD / FORM<br />IDENTITY / 001</span>
         </div>
 
         <ol className="research__list">

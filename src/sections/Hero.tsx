@@ -40,12 +40,17 @@ export function Hero({ reducedMotion }: HeroProps) {
         <span className="hero__monolith hero__monolith--two" data-parallax="7" />
         <span className="hero__axis" />
         <span className="hero__halo" />
+        <div className="hero__garment-study" data-parallax="3">
+          <span className="hero__garment-outline" />
+          <span className="hero__garment-thread" />
+          <span className="hero__garment-label">FORM STUDY / PRODUCT MEDIA PENDING</span>
+        </div>
       </div>
 
       <div className="hero__content">
         <div className="hero__eyebrow">
-          <span>VHOX WRLD / SYSTEM 001</span>
-          <span>CHICAGO — GLOBAL</span>
+          <span>VHOX WRLD / MOVEMENT 001</span>
+          <span>CUSTOM GARMENTS — GLOBAL MOVEMENT</span>
         </div>
         <h1 id="hero-title" className="hero__title" aria-label="Who moves first.">
           <span className="hero__line"><span className="hero__line-inner">WHO MOVES</span></span>

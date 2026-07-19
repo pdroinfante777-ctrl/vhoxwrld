@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { shopIsExternal, shopUrl } from '../config/shop'
+import { BrandMark } from './BrandMark'
 
 const navigationItems = [
   { label: 'Home', href: '#top' },
   { label: 'Shop', href: shopUrl, external: shopIsExternal },
   { label: 'Lookbook', href: '#lookbook' },
-  { label: 'Research', href: '#research' },
-  { label: 'Testimonials', href: '#testimonials' },
+  { label: 'Process', href: '#process' },
+  { label: 'Voices', href: '#testimonials' },
   { label: 'Contact', href: '#contact' },
 ]
 
@@ -20,6 +21,7 @@ export function Navigation({ reducedMotion }: NavigationProps) {
   const [hidden, setHidden] = useState(false)
   const lastScroll = useRef(0)
   const toggleRef = useRef<HTMLButtonElement>(null)
+  const mobileMenuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,16 +36,29 @@ export function Navigation({ reducedMotion }: NavigationProps) {
   }, [open])
 
   useEffect(() => {
-    const closeOnEscape = (event: KeyboardEvent) => {
+    const handleMenuKeys = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setOpen(false)
         toggleRef.current?.focus()
       }
+      if (event.key !== 'Tab' || !open) return
+
+      const focusable = [toggleRef.current, ...Array.from(mobileMenuRef.current?.querySelectorAll<HTMLElement>('a[href]') ?? [])].filter(Boolean) as HTMLElement[]
+      if (!focusable.length) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first.focus()
+      }
     }
 
-    document.addEventListener('keydown', closeOnEscape)
-    return () => document.removeEventListener('keydown', closeOnEscape)
-  }, [])
+    document.addEventListener('keydown', handleMenuKeys)
+    return () => document.removeEventListener('keydown', handleMenuKeys)
+  }, [open])
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow
@@ -64,7 +79,7 @@ export function Navigation({ reducedMotion }: NavigationProps) {
   return (
     <header className={headerClasses}>
       <a className="brand" href="#top" aria-label="VHOX home" onClick={() => setOpen(false)}>
-        VHOX<span className="brand__mark" aria-hidden="true">®</span>
+        <BrandMark />
       </a>
 
       <nav className="desktop-nav" aria-label="Primary navigation">
@@ -93,7 +108,15 @@ export function Navigation({ reducedMotion }: NavigationProps) {
         <span />
       </button>
 
-      <div id="mobile-menu" className="mobile-menu" aria-hidden={!open}>
+      <div
+        ref={mobileMenuRef}
+        id="mobile-menu"
+        className="mobile-menu"
+        aria-hidden={!open}
+        onMouseDown={(event) => {
+          if (event.target === event.currentTarget) setOpen(false)
+        }}
+      >
         <nav aria-label="Mobile navigation">
           {navigationItems.map((item, index) => (
             <a

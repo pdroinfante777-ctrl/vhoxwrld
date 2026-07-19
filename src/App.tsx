@@ -8,12 +8,16 @@ import { useReducedMotion } from './hooks/useReducedMotion'
 import { usePageMotion } from './animations/usePageMotion'
 import { Hero } from './sections/Hero'
 import { Manifesto } from './sections/Manifesto'
+import { Categories } from './sections/Categories'
 import { Collection } from './sections/Collection'
+import { Process } from './sections/Process'
+import { Community } from './sections/Community'
 import { Testimonials } from './sections/Testimonials'
 import { Closing } from './sections/Closing'
 
 const Lookbook = lazy(() => import('./sections/Lookbook'))
 const Research = lazy(() => import('./sections/Research'))
+const FiberStudy = lazy(() => import('./three/FiberStudy'))
 
 function App() {
   const rootRef = useRef<HTMLDivElement>(null)
@@ -29,6 +33,12 @@ function App() {
       <main id="main-content">
         <Hero reducedMotion={reducedMotion} />
         <Manifesto />
+        <DeferredMount className="deferred-fiber-study" minHeight="360vh">
+          <Suspense fallback={<SectionFallback label="Loading fiber study" />}>
+            <FiberStudy />
+          </Suspense>
+        </DeferredMount>
+        <Categories />
         <Collection />
         <DeferredMount id="lookbook" className="deferred-lookbook" minHeight="105vh">
           <Suspense fallback={<SectionFallback label="Loading editorial study" />}>
@@ -40,6 +50,8 @@ function App() {
             <Research />
           </Suspense>
         </DeferredMount>
+        <Process />
+        <Community />
         <Testimonials />
         <Closing />
       </main>
