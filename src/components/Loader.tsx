@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from '../animations/gsap'
-import { VHOX_BAT_PATH, VHOX_BAT_VIEWBOX } from '../assets/vhoxBat'
 
-const loaderSessionKey = 'vhox-bat-loader-seen-v1'
-const loaderMaximumDuration = 2400
+const loaderSessionKey = 'vhox-clean-loader-seen-v1'
+const loaderMaximumDuration = 2100
+const letters = ['V', 'H', 'O', 'X']
 
 type LoaderProps = {
   reducedMotion: boolean
@@ -12,9 +12,7 @@ type LoaderProps = {
 export function Loader({ reducedMotion }: LoaderProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const innerRef = useRef<HTMLDivElement>(null)
-  const batRef = useRef<SVGSVGElement>(null)
-  const fillRef = useRef<SVGPathElement>(null)
-  const strokeRef = useRef<SVGPathElement>(null)
+  const wordRef = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(() => {
     try {
       return sessionStorage.getItem(loaderSessionKey) !== 'true'
@@ -29,11 +27,11 @@ export function Loader({ reducedMotion }: LoaderProps) {
     try {
       sessionStorage.setItem(loaderSessionKey, 'true')
     } catch {
-      // The loader remains usable when session storage is unavailable.
+      // Keep the loader usable when session storage is unavailable.
     }
 
     if (reducedMotion) {
-      const timeout = window.setTimeout(() => setVisible(false), 260)
+      const timeout = window.setTimeout(() => setVisible(false), 300)
       return () => window.clearTimeout(timeout)
     }
 
@@ -41,29 +39,36 @@ export function Loader({ reducedMotion }: LoaderProps) {
     let maximumTimeout = 0
 
     const context = gsap.context(() => {
-      const outlineLength = strokeRef.current?.getTotalLength() ?? 10000
-      gsap.set(strokeRef.current, { strokeDasharray: outlineLength, strokeDashoffset: outlineLength })
-      gsap.set(fillRef.current, { autoAlpha: 0 })
-      gsap.set(batRef.current, { scale: 0.98, transformOrigin: '50% 50%' })
+      const letterElements = wordRef.current?.querySelectorAll('.loader__letter') ?? []
+
+      gsap.set(letterElements, { autoAlpha: 0, y: 12, filter: 'blur(10px)' })
+      gsap.set(wordRef.current, { scale: 0.985, transformOrigin: '50% 50%' })
 
       timeline = gsap.timeline({ onComplete: () => setVisible(false) })
-        .to(strokeRef.current, { strokeDashoffset: 0, duration: 1.25, ease: 'power2.inOut' })
-        .to(fillRef.current, { autoAlpha: 1, duration: 0.3, ease: 'power2.out' }, '-=0.08')
-        .to(batRef.current, {
-          scale: 1,
-          filter: 'drop-shadow(0 0 12px rgba(124, 255, 0, 0.42))',
-          duration: 0.16,
+        .to(letterElements, {
+          autoAlpha: 1,
+          y: 0,
+          filter: 'blur(0px)',
+          duration: 0.38,
+          stagger: 0.11,
           ease: 'power2.out',
         })
-        .to(batRef.current, { filter: 'drop-shadow(0 0 0 rgba(124, 255, 0, 0))', duration: 0.12 })
-        .to(innerRef.current, { autoAlpha: 0, scale: 1.008, duration: 0.24, delay: 0.06, ease: 'power2.in' })
+        .to(wordRef.current, { scale: 1, duration: 0.25, ease: 'power2.out' }, '-=0.12')
+        .to(innerRef.current, {
+          autoAlpha: 0,
+          y: -8,
+          filter: 'blur(4px)',
+          duration: 0.28,
+          delay: 0.34,
+          ease: 'power2.in',
+        })
         .to(containerRef.current, { autoAlpha: 0, duration: 0.22 }, '-=0.08')
 
-      if (document.readyState === 'complete') timeline.timeScale(1.15)
+      if (document.readyState === 'complete') timeline.timeScale(1.08)
     }, containerRef)
 
     const accelerateWhenReady = () => {
-      if (timeline) timeline.timeScale(Math.max(timeline.timeScale(), 1.25))
+      if (timeline) timeline.timeScale(Math.max(timeline.timeScale(), 1.12))
     }
     if (document.readyState !== 'complete') window.addEventListener('load', accelerateWhenReady, { once: true })
 
@@ -89,15 +94,11 @@ export function Loader({ reducedMotion }: LoaderProps) {
       aria-label="VHOX is loading"
     >
       <div ref={innerRef} className="loader__inner" aria-hidden="true">
-        <svg ref={batRef} className="loader__bat" viewBox={VHOX_BAT_VIEWBOX}>
-          <path ref={fillRef} className="loader__bat-fill" d={VHOX_BAT_PATH} />
-          <path
-            ref={strokeRef}
-            className="loader__bat-stroke"
-            d={VHOX_BAT_PATH}
-            pathLength="1"
-          />
-        </svg>
+        <div ref={wordRef} className="loader__word">
+          {letters.map((letter) => (
+            <span key={letter} className="loader__letter">{letter}</span>
+          ))}
+        </div>
       </div>
     </div>
   )
