@@ -1,14 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
-import { shopIsExternal, shopUrl } from '../config/shop'
+import { useCart } from '../cart/useCart'
+import { BagIcon } from './BagIcon'
 import { BrandMark } from './BrandMark'
 
 const navigationItems = [
-  { label: 'Home', href: '#top' },
-  { label: 'Shop', href: shopUrl, external: shopIsExternal },
-  { label: 'Lookbook', href: '#lookbook' },
-  { label: 'Process', href: '#process' },
-  { label: 'Voices', href: '#testimonials' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Inicio', href: '/#top' },
+  { label: 'Tienda', href: '/#collection' },
+  { label: 'Lookbook', href: '/#lookbook' },
+  { label: 'Investigación', href: '/#research' },
+  { label: 'Testimonios', href: '/#testimonials' },
+  { label: 'Contacto', href: '/#contact' },
 ]
 
 type NavigationProps = {
@@ -19,6 +20,8 @@ export function Navigation({ reducedMotion }: NavigationProps) {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [hidden, setHidden] = useState(false)
+  const [bagAnimating, setBagAnimating] = useState(false)
+  const { totalQuantity, pulseToken } = useCart()
   const lastScroll = useRef(0)
   const toggleRef = useRef<HTMLButtonElement>(null)
   const mobileMenuRef = useRef<HTMLDivElement>(null)
@@ -43,7 +46,10 @@ export function Navigation({ reducedMotion }: NavigationProps) {
       }
       if (event.key !== 'Tab' || !open) return
 
-      const focusable = [toggleRef.current, ...Array.from(mobileMenuRef.current?.querySelectorAll<HTMLElement>('a[href]') ?? [])].filter(Boolean) as HTMLElement[]
+      const focusable = [
+        ...Array.from(mobileMenuRef.current?.querySelectorAll<HTMLElement>('a[href]') ?? []),
+        toggleRef.current,
+      ].filter(Boolean) as HTMLElement[]
       if (!focusable.length) return
       const first = focusable[0]
       const last = focusable[focusable.length - 1]
@@ -69,6 +75,13 @@ export function Navigation({ reducedMotion }: NavigationProps) {
     }
   }, [open])
 
+  useEffect(() => {
+    if (!pulseToken || reducedMotion) return
+    setBagAnimating(true)
+    const timeout = window.setTimeout(() => setBagAnimating(false), 520)
+    return () => window.clearTimeout(timeout)
+  }, [pulseToken, reducedMotion])
+
   const headerClasses = [
     'site-header',
     scrolled ? 'site-header--scrolled' : '',
@@ -78,35 +91,37 @@ export function Navigation({ reducedMotion }: NavigationProps) {
 
   return (
     <header className={headerClasses}>
-      <a className="brand" href="#top" aria-label="VHOX home" onClick={() => setOpen(false)}>
-        <BrandMark />
+      <a className="brand header-wordmark" href="/#top" aria-label="VHOX home" onClick={() => setOpen(false)}>
+        VHOX
       </a>
 
       <nav className="desktop-nav" aria-label="Primary navigation">
-        {navigationItems.map((item) => (
-          <a
-            key={item.label}
-            href={item.href}
-            target={item.external ? '_blank' : undefined}
-            rel={item.external ? 'noreferrer' : undefined}
-          >
-            {item.label}
-          </a>
-        ))}
+        {navigationItems.map((item) => <a key={item.label} href={item.href}>{item.label}</a>)}
       </nav>
 
-      <button
-        ref={toggleRef}
-        className="menu-toggle"
-        type="button"
-        aria-expanded={open}
-        aria-controls="mobile-menu"
-        aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
-        onClick={() => setOpen((current) => !current)}
-      >
-        <span />
-        <span />
-      </button>
+      <div className="header-actions">
+        <a
+          className={`bag-link ${bagAnimating ? 'bag-link--pulse' : ''}`}
+          href="/cart"
+          aria-label={`Bolsa de compra, ${totalQuantity} ${totalQuantity === 1 ? 'producto' : 'productos'}`}
+        >
+          <BagIcon />
+          {totalQuantity > 0 && <span className="bag-link__count" aria-hidden="true">{totalQuantity}</span>}
+        </a>
+        <button
+          ref={toggleRef}
+          className="menu-toggle"
+          type="button"
+          aria-expanded={open}
+          aria-controls="mobile-menu"
+          aria-label={open ? 'Cerrar menú de navegación' : 'Abrir menú de navegación'}
+          onClick={() => setOpen((current) => !current)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+      </div>
 
       <div
         ref={mobileMenuRef}
@@ -123,8 +138,6 @@ export function Navigation({ reducedMotion }: NavigationProps) {
             <a
               key={item.label}
               href={item.href}
-              target={item.external ? '_blank' : undefined}
-              rel={item.external ? 'noreferrer' : undefined}
               tabIndex={open ? 0 : -1}
               onClick={() => setOpen(false)}
             >
