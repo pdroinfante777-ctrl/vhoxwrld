@@ -71,6 +71,12 @@ In the Web App dashboard, open **Environment Variables** and add:
 VITE_SHOP_URL=https://the-approved-storefront-url.example
 ```
 
+Optionally add the approved public social profile:
+
+```text
+VITE_INSTAGRAM_URL=https://instagram.com/the-approved-vhox-profile
+```
+
 Use the final HTTPS storefront destination approved by VHOX. Vite injects this value at build time, so trigger a new deployment after changing it. Never place Storefront API private tokens, Stripe secret keys, passwords or other secrets in a `VITE_*` variable; values with that prefix are public in the browser bundle.
 
 ## 8. Verify before connecting `vhoxwrld.com`
@@ -84,6 +90,7 @@ Open the Hostinger temporary/preview URL and confirm:
 - `/404.html`, `/policies.html` and `/terms.html` load;
 - the loader appears once per browser session;
 - reduced-motion mode disables smooth scroll and nonessential movement;
+- the deferred fiber study morphs smoothly and falls back without WebGL;
 - there are no console errors at desktop and mobile widths;
 - refresh and direct navigation do not return a server error.
 

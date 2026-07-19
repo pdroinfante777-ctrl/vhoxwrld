@@ -1,33 +1,46 @@
 export type ProductAvailability = 'coming-soon' | 'available' | 'archived'
 
+export type ProductMedia = {
+  type: 'image' | 'video'
+  src: string
+  alt: string
+  poster?: string
+}
+
 export type Product = {
   id: string
   name: string
   code: string
   category: string
   description: string
-  image: string | null
-  video: string | null
+  media: ProductMedia[]
   price: string | null
-  variants: string[]
+  colors: string[]
+  sizes: string[]
+  materials: string | null
+  care: string | null
+  shipping: string | null
   purchaseUrl: string | null
   availability: ProductAvailability
   visual: 'slab' | 'aperture' | 'axis'
 }
 
-// Temporary collection records. Media, pricing and variants stay intentionally
-// empty until VHOX supplies real products and approved commerce data.
+// Temporary collection records. Media and commercial fields stay intentionally
+// empty until VHOX supplies approved product photography and store data.
 export const products: Product[] = [
   {
     id: 'shadow',
     name: 'SHADOW',
-    code: 'VHX–001',
-    category: 'COLLECTION SLOT 01',
-    description: 'A reserved product module for the first VHOX release.',
-    image: null,
-    video: null,
+    code: 'VHX-001',
+    category: 'T-SHIRT / MEDIA PENDING',
+    description: 'Reserved for an approved VHOX T-shirt and its real campaign photography.',
+    media: [],
     price: null,
-    variants: [],
+    colors: [],
+    sizes: [],
+    materials: null,
+    care: null,
+    shipping: null,
     purchaseUrl: null,
     availability: 'coming-soon',
     visual: 'slab',
@@ -35,13 +48,16 @@ export const products: Product[] = [
   {
     id: 'void',
     name: 'VOID',
-    code: 'VHX–002',
-    category: 'COLLECTION SLOT 02',
-    description: 'Structured for future imagery, motion, pricing and variants.',
-    image: null,
-    video: null,
+    code: 'VHX-002',
+    category: 'CAP / MEDIA PENDING',
+    description: 'Reserved for an approved VHOX cap, detail views and availability data.',
+    media: [],
     price: null,
-    variants: [],
+    colors: [],
+    sizes: [],
+    materials: null,
+    care: null,
+    shipping: null,
     purchaseUrl: null,
     availability: 'coming-soon',
     visual: 'aperture',
@@ -49,13 +65,16 @@ export const products: Product[] = [
   {
     id: 'origin',
     name: 'ORIGIN',
-    code: 'VHX–003',
-    category: 'COLLECTION SLOT 03',
-    description: 'Ready to connect to the selected external commerce system.',
-    image: null,
-    video: null,
+    code: 'VHX-003',
+    category: 'FOOTWEAR / FUTURE DROP',
+    description: 'A future footwear slot prepared for verified product and commerce data.',
+    media: [],
     price: null,
-    variants: [],
+    colors: [],
+    sizes: [],
+    materials: null,
+    care: null,
+    shipping: null,
     purchaseUrl: null,
     availability: 'coming-soon',
     visual: 'axis',

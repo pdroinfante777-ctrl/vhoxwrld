@@ -10,7 +10,7 @@ export function Closing() {
         <span />
       </div>
       <div className="closing__meta" data-reveal>
-        <span>06 / ACCESS POINT</span>
+        <span>10 / ACCESS POINT</span>
         <span>VHOX WRLD / 2026</span>
       </div>
       <h2 id="closing-title" data-reveal>ENTER THE WORLD<br />OF <em>VHOX.</em></h2>
