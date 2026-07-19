@@ -12,12 +12,28 @@ import {
 import { ScrollTrigger } from '../animations/gsap'
 import { useReducedMotion } from '../hooks/useReducedMotion'
 
+const batReferenceSource = '/brand/vhox-bat-particle-source.png'
+const batWorldWidth = 6.35
+
 const stages = [
-  { index: '01', name: 'THREAD FIELD', detail: 'LOOSE FIBERS / INITIAL SIGNAL' },
+  { index: '01', name: 'VHOX BAT SIGNAL', detail: 'OFFICIAL SILHOUETTE / PARTICLE FIELD' },
   { index: '02', name: 'T-SHIRT FORM', detail: 'PROCEDURAL SILHOUETTE / NOT A PRODUCT' },
   { index: '03', name: 'CAP FORM', detail: 'PROCEDURAL SILHOUETTE / NOT A PRODUCT' },
   { index: '04', name: 'VHOX SIGNAL', detail: 'MOVEMENT CONDENSED INTO A MARK' },
 ]
+
+type PixelCandidate = {
+  x: number
+  y: number
+  red: number
+  green: number
+  blue: number
+}
+
+type BatSample = {
+  positions: Float32Array
+  colors: Float32Array
+}
 
 function seededRandom(seed: number) {
   let value = seed % 2147483647
@@ -27,9 +43,102 @@ function seededRandom(seed: number) {
   }
 }
 
-function createTargets(count: number) {
+function loadReferenceImage(source: string) {
+  return new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new Image()
+    image.decoding = 'async'
+    image.onload = () => resolve(image)
+    image.onerror = () => reject(new Error(`Unable to load particle reference: ${source}`))
+    image.src = source
+  })
+}
+
+function sampleBatSilhouette(image: HTMLImageElement, count: number): BatSample {
+  const width = 768
+  const height = Math.max(1, Math.round(width * (image.naturalHeight / image.naturalWidth)))
+  const samplingCanvas = document.createElement('canvas')
+  samplingCanvas.width = width
+  samplingCanvas.height = height
+
+  const context = samplingCanvas.getContext('2d', { willReadFrequently: true })
+  if (!context) throw new Error('Canvas sampling is unavailable')
+
+  context.imageSmoothingEnabled = true
+  context.imageSmoothingQuality = 'high'
+  context.drawImage(image, 0, 0, width, height)
+
+  const pixels = context.getImageData(0, 0, width, height).data
+  const mask = new Uint8Array(width * height)
+  const candidates: PixelCandidate[] = []
+  let minimumX = width
+  let maximumX = 0
+  let minimumY = height
+  let maximumY = 0
+
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const pixelIndex = (y * width + x) * 4
+      const red = pixels[pixelIndex]
+      const green = pixels[pixelIndex + 1]
+      const blue = pixels[pixelIndex + 2]
+      const alpha = pixels[pixelIndex + 3]
+      const belongsToMark = alpha > 32 && green > 108 && green > red * 1.08 && green > blue * 1.65
+
+      if (!belongsToMark) continue
+
+      mask[y * width + x] = 1
+      candidates.push({ x, y, red, green, blue })
+      minimumX = Math.min(minimumX, x)
+      maximumX = Math.max(maximumX, x)
+      minimumY = Math.min(minimumY, y)
+      maximumY = Math.max(maximumY, y)
+    }
+  }
+
+  if (candidates.length < 100) throw new Error('The VHOX bat silhouette could not be sampled')
+
+  const edgeCandidates = candidates.filter(({ x, y }) => {
+    const index = y * width + x
+    return x === 0
+      || x === width - 1
+      || y === 0
+      || y === height - 1
+      || mask[index - 1] === 0
+      || mask[index + 1] === 0
+      || mask[index - width] === 0
+      || mask[index + width] === 0
+  })
+
+  const random = seededRandom(19072026)
+  const positions = new Float32Array(count * 3)
+  const colors = new Float32Array(count * 3)
+  const silhouetteWidth = Math.max(1, maximumX - minimumX)
+  const centerX = (minimumX + maximumX) * 0.5
+  const centerY = (minimumY + maximumY) * 0.5
+
+  for (let index = 0; index < count; index += 1) {
+    const offset = index * 3
+    const useEdge = edgeCandidates.length > 0 && random() < 0.48
+    const pool = useEdge ? edgeCandidates : candidates
+    const candidate = pool[Math.floor(random() * pool.length)]
+    const jitterX = (random() - 0.5) * 0.36
+    const jitterY = (random() - 0.5) * 0.36
+    const brightness = 0.84 + random() * 0.2
+
+    positions[offset] = ((candidate.x + jitterX - centerX) / silhouetteWidth) * batWorldWidth
+    positions[offset + 1] = -((candidate.y + jitterY - centerY) / silhouetteWidth) * batWorldWidth
+    positions[offset + 2] = (random() - 0.5) * 0.075
+
+    colors[offset] = Math.min(1, (candidate.red / 255) * brightness)
+    colors[offset + 1] = Math.min(1, (candidate.green / 255) * brightness)
+    colors[offset + 2] = Math.min(1, (candidate.blue / 255) * brightness)
+  }
+
+  return { positions, colors }
+}
+
+function createTargets(count: number, bat: Float32Array) {
   const random = seededRandom(1307)
-  const ring = new Float32Array(count * 3)
   const shirt = new Float32Array(count * 3)
   const cap = new Float32Array(count * 3)
   const signal = new Float32Array(count * 3)
@@ -40,14 +149,8 @@ function createTargets(count: number) {
     [[1.8, 1], [3.1, -1]], [[3.1, 1], [1.8, -1]],
   ]
 
-  for (let i = 0; i < count; i += 1) {
-    const offset = i * 3
-    const angle = random() * Math.PI * 2
-    const radius = 1.45 + (random() - 0.5) * 0.42
-    ring[offset] = Math.cos(angle) * radius
-    ring[offset + 1] = Math.sin(angle) * radius
-    ring[offset + 2] = (random() - 0.5) * 0.6
-
+  for (let index = 0; index < count; index += 1) {
+    const offset = index * 3
     const shirtY = random() * 3.2 - 1.6
     const upper = shirtY > 0.48
     const torsoWidth = 1.08 + (shirtY + 1.6) * 0.05
@@ -64,21 +167,73 @@ function createTargets(count: number) {
     cap[offset + 1] = inBrim ? -0.42 + random() * 0.24 : -0.42 + random() * capTop
     cap[offset + 2] = (random() - 0.5) * (inBrim ? 0.18 : 0.48)
 
-    const segment = letterSegments[i % letterSegments.length]
-    const t = random()
-    signal[offset] = segment[0][0] + (segment[1][0] - segment[0][0]) * t + (random() - 0.5) * 0.05
-    signal[offset + 1] = segment[0][1] + (segment[1][1] - segment[0][1]) * t + (random() - 0.5) * 0.05
+    const segment = letterSegments[index % letterSegments.length]
+    const segmentProgress = random()
+    signal[offset] = segment[0][0] + (segment[1][0] - segment[0][0]) * segmentProgress + (random() - 0.5) * 0.05
+    signal[offset + 1] = segment[0][1] + (segment[1][1] - segment[0][1]) * segmentProgress + (random() - 0.5) * 0.05
     signal[offset + 2] = (random() - 0.5) * 0.14
   }
 
-  return [ring, shirt, cap, signal]
+  return [bat, shirt, cap, signal]
+}
+
+function getParticleProfile() {
+  const shortestSide = Math.min(window.innerWidth, window.innerHeight)
+  const longestSide = Math.max(window.innerWidth, window.innerHeight)
+  const phone = shortestSide <= 480 && longestSide <= 960
+  const tablet = !phone && longestSide <= 1180
+
+  if (phone) return { count: 6200, pointSize: 0.0175, maximumPixelRatio: 1.5 }
+  if (tablet) return { count: 8200, pointSize: 0.0145, maximumPixelRatio: 1.75 }
+  return { count: 11200, pointSize: 0.0125, maximumPixelRatio: 2 }
+}
+
+function getResponsiveLayout(camera: PerspectiveCamera, width: number, height: number) {
+  const aspect = width / Math.max(height, 1)
+  const visibleHeight = 2 * camera.position.z * Math.tan((camera.fov * Math.PI) / 360)
+  const visibleWidth = visibleHeight * aspect
+  const viewportWidth = window.innerWidth
+  const viewportHeight = window.innerHeight
+  const phone = Math.min(viewportWidth, viewportHeight) <= 480 && Math.max(viewportWidth, viewportHeight) <= 960
+  const landscape = viewportWidth > viewportHeight
+  const tablet = !phone && Math.max(viewportWidth, viewportHeight) <= 1180
+
+  if (phone && !landscape) {
+    const compactPortrait = viewportHeight < 650
+    return {
+      scale: Math.min(0.42, Math.max(0.22, (visibleWidth * (compactPortrait ? 0.68 : 0.84)) / batWorldWidth)),
+      x: 0,
+      y: visibleHeight * (compactPortrait ? 0.25 : 0.13),
+    }
+  }
+
+  if (phone && landscape) {
+    return {
+      scale: Math.min(0.98, Math.max(0.48, (visibleWidth * 0.56) / batWorldWidth)),
+      x: visibleWidth * 0.2,
+      y: visibleHeight * 0.04,
+    }
+  }
+
+  if (tablet) {
+    return {
+      scale: Math.min(0.9, Math.max(0.46, (visibleWidth * (landscape ? 0.62 : 0.68)) / batWorldWidth)),
+      x: landscape ? visibleWidth * 0.08 : 0,
+      y: visibleHeight * (landscape ? 0.07 : 0.16),
+    }
+  }
+
+  return {
+    scale: Math.min(1.02, Math.max(0.68, (visibleWidth * 0.54) / batWorldWidth)),
+    x: 0,
+    y: visibleHeight * 0.15,
+  }
 }
 
 function FiberFallback() {
   return (
     <div className="fiber-study__fallback" aria-hidden="true">
-      <span className="fiber-study__shirt-line" />
-      <span className="fiber-study__stitch">VHOX</span>
+      <img src={batReferenceSource} alt="" />
     </div>
   )
 }
@@ -95,121 +250,166 @@ function FiberStudy() {
     const section = sectionRef.current
     if (!canvas || !section || reducedMotion) return
 
+    let cancelled = false
     let renderer: WebGLRenderer | null = null
     let camera: PerspectiveCamera | null = null
     let geometry: BufferGeometry | null = null
+    let material: PointsMaterial | null = null
     let points: Points | null = null
+    let resizeObserver: ResizeObserver | null = null
+    let resizeHandler: (() => void) | null = null
     let frame = 0
     let scrollTrigger: ScrollTrigger | null = null
     let progress = 0
     let pointerX = 0
     let pointerY = 0
+    let layoutX = 0
+    let layoutY = 0
     const precisePointer = window.matchMedia('(pointer: fine)').matches
-    const cleanupRef: { current: (() => void) | null } = { current: null }
 
     const onPointerMove = (event: PointerEvent) => {
-      pointerX = (event.clientX / window.innerWidth - 0.5) * 0.3
-      pointerY = (event.clientY / window.innerHeight - 0.5) * 0.2
+      pointerX = event.clientX / window.innerWidth - 0.5
+      pointerY = event.clientY / window.innerHeight - 0.5
     }
+
     if (precisePointer) window.addEventListener('pointermove', onPointerMove, { passive: true })
 
-    try {
-      const mobile = window.matchMedia('(max-width: 48rem)').matches
-      const count = mobile ? 850 : 2200
-      const targets = createTargets(count)
-      const positions = targets[0].slice()
-
+    const setup = async () => {
       try {
-        renderer = new WebGLRenderer({ canvas, alpha: true, antialias: !mobile, powerPreference: 'high-performance' })
-      } catch {
-        setWebglFailed(true)
-        if (precisePointer) window.removeEventListener('pointermove', onPointerMove)
-        return
-      }
+        const profile = getParticleProfile()
+        const image = await loadReferenceImage(batReferenceSource)
+        if (cancelled) return
 
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, mobile ? 1.35 : 1.75))
-      renderer.setClearColor(0x000000, 0)
-      const scene = new Scene()
-      camera = new PerspectiveCamera(38, 1, 0.1, 100)
-      camera.position.z = 7.2
+        const batSample = sampleBatSilhouette(image, profile.count)
+        const targets = createTargets(profile.count, batSample.positions)
+        const positions = targets[0].slice()
 
-      geometry = new BufferGeometry()
-      geometry.setAttribute('position', new BufferAttribute(positions, 3))
-      const material = new PointsMaterial({
-        color: 0x7cff00,
-        size: mobile ? 0.028 : 0.022,
-        sizeAttenuation: true,
-        transparent: true,
-        opacity: 0.84,
-        blending: AdditiveBlending,
-        depthWrite: false,
-      })
-      points = new Points(geometry, material)
-      scene.add(points)
-
-      const resize = () => {
-        if (!renderer || !camera) return
-        const bounds = canvas.getBoundingClientRect()
-        renderer.setSize(bounds.width, bounds.height, false)
-        camera.aspect = bounds.width / Math.max(bounds.height, 1)
-        camera.updateProjectionMatrix()
-      }
-      resize()
-      window.addEventListener('resize', resize)
-
-      let previousStage = -1
-      scrollTrigger = ScrollTrigger.create({
-        trigger: section,
-        start: 'top top',
-        end: 'bottom bottom',
-        scrub: 0.55,
-        onUpdate: (self) => {
-          progress = self.progress * (targets.length - 1)
-          const stage = Math.min(targets.length - 1, Math.round(progress))
-          if (stage !== previousStage) {
-            previousStage = stage
-            setActiveStage(stage)
-          }
-        },
-      })
-
-      const render = () => {
-        if (!renderer || !camera || !geometry || !points) return
-        const fromIndex = Math.floor(progress)
-        const toIndex = Math.min(targets.length - 1, fromIndex + 1)
-        const mix = progress - fromIndex
-        const from = targets[fromIndex]
-        const to = targets[toIndex]
-        const attribute = geometry.getAttribute('position')
-        const array = attribute.array as Float32Array
-
-        for (let i = 0; i < array.length; i += 1) {
-          const desired = from[i] + (to[i] - from[i]) * mix
-          array[i] += (desired - array[i]) * 0.085
+        try {
+          renderer = new WebGLRenderer({
+            canvas,
+            alpha: true,
+            antialias: false,
+            powerPreference: 'high-performance',
+          })
+        } catch {
+          if (!cancelled) setWebglFailed(true)
+          return
         }
-        attribute.needsUpdate = true
-        points.rotation.y += ((pointerX + progress * 0.025) - points.rotation.y) * 0.035
-        points.rotation.x += ((-pointerY) - points.rotation.x) * 0.035
-        renderer.render(scene, camera)
-        frame = window.requestAnimationFrame(render)
-      }
-      render()
 
-      const cleanupRenderer = () => {
-        window.removeEventListener('resize', resize)
-        material.dispose()
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, profile.maximumPixelRatio))
+        renderer.setClearColor(0x000000, 0)
+
+        const scene = new Scene()
+        camera = new PerspectiveCamera(38, 1, 0.1, 100)
+        camera.position.z = 7.2
+
+        geometry = new BufferGeometry()
+        geometry.setAttribute('position', new BufferAttribute(positions, 3))
+        geometry.setAttribute('color', new BufferAttribute(batSample.colors, 3))
+
+        material = new PointsMaterial({
+          color: 0xffffff,
+          size: profile.pointSize,
+          sizeAttenuation: true,
+          vertexColors: true,
+          transparent: true,
+          opacity: 0.91,
+          blending: AdditiveBlending,
+          depthWrite: false,
+        })
+
+        points = new Points(geometry, material)
+        scene.add(points)
+
+        const resize = () => {
+          if (!renderer || !camera || !points) return
+          const bounds = canvas.getBoundingClientRect()
+          renderer.setPixelRatio(Math.min(window.devicePixelRatio, profile.maximumPixelRatio))
+          renderer.setSize(bounds.width, bounds.height, false)
+          camera.aspect = bounds.width / Math.max(bounds.height, 1)
+          camera.updateProjectionMatrix()
+
+          const layout = getResponsiveLayout(camera, bounds.width, bounds.height)
+          points.scale.setScalar(layout.scale)
+          layoutX = layout.x
+          layoutY = layout.y
+          points.position.set(layoutX, layoutY, 0)
+        }
+
+        resizeHandler = resize
+        resize()
+        window.addEventListener('resize', resize, { passive: true })
+        window.addEventListener('orientationchange', resize)
+
+        if ('ResizeObserver' in window) {
+          resizeObserver = new ResizeObserver(resize)
+          resizeObserver.observe(canvas)
+        }
+
+        let previousStage = -1
+        scrollTrigger = ScrollTrigger.create({
+          trigger: section,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 0.55,
+          onUpdate: (self) => {
+            progress = self.progress * (targets.length - 1)
+            const stage = Math.min(targets.length - 1, Math.round(progress))
+            if (stage !== previousStage) {
+              previousStage = stage
+              setActiveStage(stage)
+            }
+          },
+        })
+
+        const render = (time = 0) => {
+          if (!renderer || !camera || !geometry || !points || !material || cancelled) return
+
+          const fromIndex = Math.floor(progress)
+          const toIndex = Math.min(targets.length - 1, fromIndex + 1)
+          const mix = progress - fromIndex
+          const from = targets[fromIndex]
+          const to = targets[toIndex]
+          const attribute = geometry.getAttribute('position')
+          const array = attribute.array as Float32Array
+
+          for (let index = 0; index < array.length; index += 1) {
+            const desired = from[index] + (to[index] - from[index]) * mix
+            array[index] += (desired - array[index]) * 0.085
+          }
+
+          attribute.needsUpdate = true
+          points.position.x += ((layoutX + pointerX * 0.08) - points.position.x) * 0.04
+          points.position.y += ((layoutY - pointerY * 0.05 + Math.sin(time * 0.00048) * 0.018) - points.position.y) * 0.04
+          points.rotation.y += ((pointerX * 0.055 + progress * 0.012) - points.rotation.y) * 0.025
+          points.rotation.x += ((-pointerY * 0.035) - points.rotation.x) * 0.025
+          points.rotation.z = Math.sin(time * 0.00022) * 0.0035
+          material.opacity = 0.89 + Math.sin(time * 0.0007) * 0.025
+
+          renderer.render(scene, camera)
+          frame = window.requestAnimationFrame(render)
+        }
+
+        frame = window.requestAnimationFrame(render)
+      } catch {
+        if (!cancelled) setWebglFailed(true)
       }
-      cleanupRef.current = cleanupRenderer
-    } catch {
-      setWebglFailed(true)
     }
 
+    void setup()
+
     return () => {
+      cancelled = true
       window.cancelAnimationFrame(frame)
       scrollTrigger?.kill()
+      resizeObserver?.disconnect()
       if (precisePointer) window.removeEventListener('pointermove', onPointerMove)
-      cleanupRef.current?.()
+      if (resizeHandler) {
+        window.removeEventListener('resize', resizeHandler)
+        window.removeEventListener('orientationchange', resizeHandler)
+      }
       geometry?.dispose()
+      material?.dispose()
       renderer?.dispose()
     }
   }, [reducedMotion])
@@ -221,7 +421,7 @@ function FiberStudy() {
       <div className="fiber-study__sticky">
         <div className="fiber-study__header">
           <span>02 / FIBER STUDY</span>
-          <p>AN ABSTRACT MOTION STUDY. NO PROCEDURAL FORM REPRESENTS A PRODUCT FOR SALE.</p>
+          <p>AN ABSTRACT MOTION STUDY. PROCEDURAL FORMS DO NOT REPRESENT PRODUCTS FOR SALE.</p>
         </div>
         <div className="fiber-study__stage">
           {!useFallback && <canvas ref={canvasRef} className="fiber-study__canvas" aria-hidden="true" />}

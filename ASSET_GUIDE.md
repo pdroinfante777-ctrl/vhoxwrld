@@ -5,6 +5,7 @@ The approved VHOX master logo is preserved verbatim in `public/brand/vhox-logo-s
 ## Brand
 
 - `vhox-logo-source.png` — official transparent raster source (`1254 × 1254`, original green `#7cff00`).
+- `vhox-bat-particle-source.png` — exact approved bat reference used only to sample the opening particle silhouette in the fiber study. It does not replace the official logo or introduce a redrawn mark.
 - Navbar, mobile menu, footer, 404 and social metadata all reference this exact file.
 - Favicons are deterministic crops and resizes of this exact file; they contain no added symbol or geometry.
 
