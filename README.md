@@ -48,7 +48,14 @@ VITE_SHOP_URL=https://approved-storefront.example
 VITE_INSTAGRAM_URL=https://instagram.com/approved-vhox-profile
 ```
 
-Every commerce CTA reads `VITE_SHOP_URL`. If it is missing or invalid, CTAs safely fall back to `#collection`. No credentials, payment logic or secret keys are stored here.
+Product CTAs use the local, persistent VHOX bag. The bag stores only product IDs, selected variants and quantities in the visitor's browser. Checkout is enabled only when an approved `VITE_SHOP_URL` and confirmed product prices exist; this repository contains no credentials, payment logic or secret keys.
+
+Supported routes:
+
+- `/` — experiential campaign homepage
+- `/product/:slug` — modular product detail and media gallery
+- `/cart` — local bag and handoff layer for a future approved storefront
+- every unknown route — branded 404 fallback
 
 ## Experience
 
@@ -56,7 +63,10 @@ Every commerce CTA reads `VITE_SHOP_URL`. If it is missing or invalid, CTAs safe
 - Cinematic campaign hero and cursor light for precise pointers
 - Scroll-controlled fiber morph: field → T-shirt → cap → VHOX signal
 - Movement manifesto and apparel categories
-- Product cards with media swap, desktop tilt and accessible detail dialog
+- Editorial product cards with media swap, desktop tilt and direct product routes
+- Keyboard- and swipe-ready product gallery with thumbnails, arrows and an accessible lightbox when approved media exists
+- Local modular bag with quantity controls, live counter and no simulated payment flow
+- Related-product module titled `COMPLEMENTA EL ECOSISTEMA`
 - Asymmetric lookbook with future image/video and lightbox support
 - Garment research, customization workflow, community channels and verified-testimonial slots
 - Responsive mobile menu, keyboard support, motion fallbacks and static 404/legal pages
@@ -64,6 +74,7 @@ Every commerce CTA reads `VITE_SHOP_URL`. If it is missing or invalid, CTAs safe
 ## Content model
 
 - `src/data/products.ts` holds product media, pricing, variants, care, shipping, availability and purchase links.
+- `src/data/campaign.ts` is the single approved campaign-media entry point for the hero.
 - `src/data/lookbook.ts` defines editorial image/video placements.
 - `src/data/categories.ts` defines the apparel category index.
 - `src/data/research.ts` holds garment research themes.
