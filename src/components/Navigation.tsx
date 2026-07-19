@@ -117,6 +117,7 @@ export function Navigation({ reducedMotion }: NavigationProps) {
           if (event.target === event.currentTarget) setOpen(false)
         }}
       >
+        <BrandMark className="mobile-menu__brand" />
         <nav aria-label="Mobile navigation">
           {navigationItems.map((item, index) => (
             <a
