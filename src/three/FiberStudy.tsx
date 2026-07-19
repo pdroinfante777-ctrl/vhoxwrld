@@ -35,12 +35,96 @@ type BatSample = {
   colors: Float32Array
 }
 
+type Point2D = readonly [number, number]
+
+const oversizedShirtOutline: Point2D[] = [
+  [-0.56, 1.61],
+  [-1.25, 1.48],
+  [-1.93, 1.08],
+  [-2.28, 0.55],
+  [-1.62, 0.14],
+  [-1.18, 0.48],
+  [-1.16, -1.75],
+  [1.16, -1.75],
+  [1.18, 0.48],
+  [1.62, 0.14],
+  [2.28, 0.55],
+  [1.93, 1.08],
+  [1.25, 1.48],
+  [0.56, 1.61],
+  [0.5, 1.41],
+  [0.38, 1.25],
+  [0.22, 1.14],
+  [0, 1.1],
+  [-0.22, 1.14],
+  [-0.38, 1.25],
+  [-0.5, 1.41],
+]
+
 function seededRandom(seed: number) {
   let value = seed % 2147483647
   return () => {
     value = value * 16807 % 2147483647
     return (value - 1) / 2147483646
   }
+}
+
+function isInsidePolygon(x: number, y: number, polygon: Point2D[]) {
+  let inside = false
+
+  for (let current = 0, previous = polygon.length - 1; current < polygon.length; previous = current, current += 1) {
+    const [currentX, currentY] = polygon[current]
+    const [previousX, previousY] = polygon[previous]
+    const crossesRay = (currentY > y) !== (previousY > y)
+      && x < ((previousX - currentX) * (y - currentY)) / (previousY - currentY) + currentX
+
+    if (crossesRay) inside = !inside
+  }
+
+  return inside
+}
+
+function createOversizedShirtTarget(count: number, random: () => number) {
+  const positions = new Float32Array(count * 3)
+  const segmentLengths = oversizedShirtOutline.map((point, index) => {
+    const next = oversizedShirtOutline[(index + 1) % oversizedShirtOutline.length]
+    return Math.hypot(next[0] - point[0], next[1] - point[1])
+  })
+  const perimeter = segmentLengths.reduce((total, length) => total + length, 0)
+
+  for (let index = 0; index < count; index += 1) {
+    const offset = index * 3
+    const useOutline = random() < 0.36
+    let x = 0
+    let y = 0
+
+    if (useOutline) {
+      let distance = random() * perimeter
+      let segmentIndex = 0
+
+      while (distance > segmentLengths[segmentIndex] && segmentIndex < segmentLengths.length - 1) {
+        distance -= segmentLengths[segmentIndex]
+        segmentIndex += 1
+      }
+
+      const start = oversizedShirtOutline[segmentIndex]
+      const end = oversizedShirtOutline[(segmentIndex + 1) % oversizedShirtOutline.length]
+      const progress = distance / Math.max(segmentLengths[segmentIndex], 0.0001)
+      x = start[0] + (end[0] - start[0]) * progress + (random() - 0.5) * 0.018
+      y = start[1] + (end[1] - start[1]) * progress + (random() - 0.5) * 0.018
+    } else {
+      do {
+        x = random() * 4.56 - 2.28
+        y = random() * 3.36 - 1.75
+      } while (!isInsidePolygon(x, y, oversizedShirtOutline))
+    }
+
+    positions[offset] = x
+    positions[offset + 1] = y
+    positions[offset + 2] = (random() - 0.5) * 0.16
+  }
+
+  return positions
 }
 
 function loadReferenceImage(source: string) {
@@ -139,7 +223,7 @@ function sampleBatSilhouette(image: HTMLImageElement, count: number): BatSample 
 
 function createTargets(count: number, bat: Float32Array) {
   const random = seededRandom(1307)
-  const shirt = new Float32Array(count * 3)
+  const shirt = createOversizedShirtTarget(count, random)
   const cap = new Float32Array(count * 3)
   const signal = new Float32Array(count * 3)
   const letterSegments = [
@@ -151,14 +235,6 @@ function createTargets(count: number, bat: Float32Array) {
 
   for (let index = 0; index < count; index += 1) {
     const offset = index * 3
-    const shirtY = random() * 3.2 - 1.6
-    const upper = shirtY > 0.48
-    const torsoWidth = 1.08 + (shirtY + 1.6) * 0.05
-    shirt[offset] = (random() - 0.5) * (upper ? 3.5 : torsoWidth * 2)
-    shirt[offset + 1] = shirtY
-    shirt[offset + 2] = (random() - 0.5) * 0.22
-    if (upper && Math.abs(shirt[offset]) > 1.1) shirt[offset + 1] -= Math.abs(shirt[offset]) * 0.28
-
     const capX = (random() - 0.5) * 3.2
     const normalizedX = Math.min(1, Math.abs(capX) / 1.65)
     const capTop = Math.sqrt(1 - normalizedX * normalizedX) * 1.35
