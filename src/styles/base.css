@@ -6,7 +6,8 @@
   --color-steel: #292929;
   --color-silver: #9a9a92;
   --color-white: #f1f1ea;
-  --color-accent: #d7ff3f;
+  --vhox-accent: #7cff00;
+  --color-accent: var(--vhox-accent);
   --line: rgba(241, 241, 234, 0.16);
   --line-strong: rgba(241, 241, 234, 0.34);
   --page-x: clamp(1.25rem, 3.4vw, 4.5rem);

@@ -1,16 +1,13 @@
 # VHOX asset intake
 
-The approved master logo and product photography are not currently present in this repository. The website therefore uses an explicitly temporary web mark and editorial placeholders; it does not invent products or commercial data.
+The approved VHOX source logo is preserved verbatim in `public/brand/vhox-logo-source.png`. Product photography is not currently present, so the website keeps explicit editorial placeholders and does not invent products or commercial data.
 
 ## Brand
 
-Add approved files to `public/brand/`:
+- `vhox-logo-source.png` — untouched approved raster source (`#7cff00`).
+- `vhox-bat-outline.svg` — deterministic exterior trace of the source silhouette, without text or internal letter counters.
 
-- `vhox-logo.svg` — primary full logo
-- `vhox-symbol.svg` — compact symbol
-- `favicon-source.png` — high-resolution square source
-
-Replace the temporary `BrandMark` implementation only after the master SVG is available. Do not auto-trace or redesign the official mark in this project.
+The navbar uses the VHOX wordmark without the previous temporary star. `BatIsotype` is available as a separate component for placements large enough to preserve the silhouette's detail. Do not regenerate or redesign either approved asset.
 
 ## Products
 
