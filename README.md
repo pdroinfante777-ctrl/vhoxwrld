@@ -52,7 +52,7 @@ Every commerce CTA reads `VITE_SHOP_URL`. If it is missing or invalid, CTAs safe
 
 ## Experience
 
-- Session-only stitched garment loader with reduced-motion handling
+- Session-only original VHOX bat-outline loader with reduced-motion handling
 - Cinematic campaign hero and cursor light for precise pointers
 - Scroll-controlled fiber morph: field → T-shirt → cap → VHOX signal
 - Movement manifesto and apparel categories

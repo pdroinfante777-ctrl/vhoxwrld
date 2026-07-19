@@ -136,7 +136,7 @@ function FiberStudy() {
       geometry = new BufferGeometry()
       geometry.setAttribute('position', new BufferAttribute(positions, 3))
       const material = new PointsMaterial({
-        color: 0xd7ff3f,
+        color: 0x7cff00,
         size: mobile ? 0.028 : 0.022,
         sizeAttenuation: true,
         transparent: true,

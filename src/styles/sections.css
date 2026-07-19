@@ -104,7 +104,7 @@
   border-radius: 50%;
   background: var(--color-accent);
   content: "";
-  box-shadow: 0 0 1rem rgba(215, 255, 63, 0.8);
+  box-shadow: 0 0 1rem rgba(124, 255, 0, 0.8);
 }
 
 .hero__axis::before { top: 18%; }
@@ -146,7 +146,7 @@
 .hero__garment-thread {
   inset: 10% 6%;
   opacity: 0.36;
-  background: repeating-linear-gradient(112deg, transparent 0 12px, rgba(215, 255, 63, 0.3) 13px, transparent 14px 22px);
+  background: repeating-linear-gradient(112deg, transparent 0 12px, rgba(124, 255, 0, 0.3) 13px, transparent 14px 22px);
   mix-blend-mode: screen;
 }
 
@@ -620,7 +620,7 @@
 }
 
 .product-card:hover .product-card__geometry {
-  border-color: rgba(215, 255, 63, 0.3);
+  border-color: rgba(124, 255, 0, 0.3);
 }
 
 .product-card__visual--slab .product-card__geometry {
@@ -704,7 +704,7 @@
   border-radius: 50%;
   background: var(--color-accent);
   content: "";
-  box-shadow: 0 0 0.7rem rgba(215, 255, 63, 0.5);
+  box-shadow: 0 0 0.7rem rgba(124, 255, 0, 0.5);
 }
 
 .product-card > p {

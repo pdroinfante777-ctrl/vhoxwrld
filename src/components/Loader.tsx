@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from '../animations/gsap'
-import { BrandMark } from './BrandMark'
+import { VHOX_BAT_PATH, VHOX_BAT_VIEWBOX } from '../assets/vhoxBat'
 
-const loaderSessionKey = 'vhox-loader-seen-v2'
+const loaderSessionKey = 'vhox-bat-loader-seen-v1'
+const loaderMaximumDuration = 2400
 
 type LoaderProps = {
   reducedMotion: boolean
@@ -10,6 +11,10 @@ type LoaderProps = {
 
 export function Loader({ reducedMotion }: LoaderProps) {
   const containerRef = useRef<HTMLDivElement>(null)
+  const innerRef = useRef<HTMLDivElement>(null)
+  const batRef = useRef<SVGSVGElement>(null)
+  const fillRef = useRef<SVGPathElement>(null)
+  const strokeRef = useRef<SVGPathElement>(null)
   const [visible, setVisible] = useState(() => {
     try {
       return sessionStorage.getItem(loaderSessionKey) !== 'true'
@@ -28,43 +33,71 @@ export function Loader({ reducedMotion }: LoaderProps) {
     }
 
     if (reducedMotion) {
-      const timeout = window.setTimeout(() => setVisible(false), 160)
+      const timeout = window.setTimeout(() => setVisible(false), 260)
       return () => window.clearTimeout(timeout)
     }
 
+    let timeline: gsap.core.Timeline | undefined
+    let maximumTimeout = 0
+
     const context = gsap.context(() => {
-      gsap.set('.loader__stitch-path', { strokeDasharray: 900, strokeDashoffset: 900 })
-      gsap.set('.loader__brand', { clipPath: 'inset(100% 0 0 0)', autoAlpha: 0 })
-      gsap.timeline({ onComplete: () => setVisible(false) })
-        .to('.loader__stitch-path', { strokeDashoffset: 0, duration: 0.95, ease: 'power2.inOut' })
-        .fromTo('.loader__needle', { x: -44, y: 28, rotate: -20 }, { x: 48, y: -34, rotate: 8, duration: 0.95, ease: 'power2.inOut' }, '<')
-        .to('.loader__brand', { clipPath: 'inset(0% 0 0 0)', autoAlpha: 1, duration: 0.46, ease: 'power3.out' }, '-=0.38')
-        .to('.loader__rule', { scaleX: 1, duration: 0.34, ease: 'power2.inOut' }, '-=0.25')
-        .to('.loader__inner', { autoAlpha: 0, y: -12, duration: 0.25, delay: 0.14 })
-        .to(containerRef.current, { autoAlpha: 0, duration: 0.28 }, '-=0.02')
+      const outlineLength = strokeRef.current?.getTotalLength() ?? 10000
+      gsap.set(strokeRef.current, { strokeDasharray: outlineLength, strokeDashoffset: outlineLength })
+      gsap.set(fillRef.current, { autoAlpha: 0 })
+      gsap.set(batRef.current, { scale: 0.98, transformOrigin: '50% 50%' })
+
+      timeline = gsap.timeline({ onComplete: () => setVisible(false) })
+        .to(strokeRef.current, { strokeDashoffset: 0, duration: 1.25, ease: 'power2.inOut' })
+        .to(fillRef.current, { autoAlpha: 1, duration: 0.3, ease: 'power2.out' }, '-=0.08')
+        .to(batRef.current, {
+          scale: 1,
+          filter: 'drop-shadow(0 0 12px rgba(124, 255, 0, 0.42))',
+          duration: 0.16,
+          ease: 'power2.out',
+        })
+        .to(batRef.current, { filter: 'drop-shadow(0 0 0 rgba(124, 255, 0, 0))', duration: 0.12 })
+        .to(innerRef.current, { autoAlpha: 0, scale: 1.008, duration: 0.24, delay: 0.06, ease: 'power2.in' })
+        .to(containerRef.current, { autoAlpha: 0, duration: 0.22 }, '-=0.08')
+
+      if (document.readyState === 'complete') timeline.timeScale(1.15)
     }, containerRef)
 
-    return () => context.revert()
+    const accelerateWhenReady = () => {
+      if (timeline) timeline.timeScale(Math.max(timeline.timeScale(), 1.25))
+    }
+    if (document.readyState !== 'complete') window.addEventListener('load', accelerateWhenReady, { once: true })
+
+    maximumTimeout = window.setTimeout(() => {
+      timeline?.progress(1)
+      setVisible(false)
+    }, loaderMaximumDuration)
+
+    return () => {
+      window.clearTimeout(maximumTimeout)
+      window.removeEventListener('load', accelerateWhenReady)
+      context.revert()
+    }
   }, [reducedMotion, visible])
 
   if (!visible) return null
 
   return (
-    <div ref={containerRef} className="loader" role="status" aria-label="VHOX is loading">
-      <div className="loader__inner" aria-hidden="true">
-        <div className="loader__embroidery">
-          <svg viewBox="0 0 260 190">
-            <path className="loader__fabric" d="M88 34 58 54 25 45 7 86l39 18 13-17v87h142V87l13 17 39-18-18-41-33 9-30-20-18 17h-48Z" />
-            <path className="loader__stitch-path" d="M88 34 58 54 25 45 7 86l39 18 13-17v87h142V87l13 17 39-18-18-41-33 9-30-20-18 17h-48Z" />
-            <g className="loader__needle">
-              <path d="M127 101 149 53" />
-              <ellipse cx="150" cy="50" rx="2.5" ry="6" transform="rotate(25 150 50)" />
-            </g>
-          </svg>
-          <BrandMark className="loader__brand" />
-        </div>
-        <span className="loader__rule" />
-        <span className="loader__meta">THREAD / FORM / MOVEMENT</span>
+    <div
+      ref={containerRef}
+      className={`loader ${reducedMotion ? 'loader--reduced-motion' : ''}`}
+      role="status"
+      aria-label="VHOX is loading"
+    >
+      <div ref={innerRef} className="loader__inner" aria-hidden="true">
+        <svg ref={batRef} className="loader__bat" viewBox={VHOX_BAT_VIEWBOX}>
+          <path ref={fillRef} className="loader__bat-fill" d={VHOX_BAT_PATH} />
+          <path
+            ref={strokeRef}
+            className="loader__bat-stroke"
+            d={VHOX_BAT_PATH}
+            pathLength="1"
+          />
+        </svg>
       </div>
     </div>
   )
