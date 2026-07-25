@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { getRelatedProducts, type Product } from '../data/products'
+import { useLocale } from '../i18n/useLocale'
 import { ProductCard } from './ProductCard'
 
 export function RelatedProducts({ product }: { product: Product }) {
+  const { t } = useLocale()
   const related = getRelatedProducts(product)
   const [page, setPage] = useState(0)
   const pageSize = 4
@@ -15,13 +17,13 @@ export function RelatedProducts({ product }: { product: Product }) {
     <section className="related-products section" aria-labelledby="related-title">
       <div className="related-products__header">
         <div>
-          <span>RELATED / {product.code}</span>
-          <h2 id="related-title">COMPLEMENTA EL ECOSISTEMA</h2>
+          <span>{t('related.label', { code: product.code })}</span>
+          <h2 id="related-title">{t('related.title')}</h2>
         </div>
-        <div className="related-products__controls" aria-label="Paginación de productos relacionados">
-          <button type="button" aria-label="Página anterior" disabled={pageCount === 1} onClick={() => setPage((current) => (current - 1 + pageCount) % pageCount)}>←</button>
+        <div className="related-products__controls" aria-label={t('related.pagination')}>
+          <button type="button" aria-label={t('related.previous')} disabled={pageCount === 1} onClick={() => setPage((current) => (current - 1 + pageCount) % pageCount)}>←</button>
           <span>{String(page + 1).padStart(2, '0')} / {String(pageCount).padStart(2, '0')}</span>
-          <button type="button" aria-label="Página siguiente" disabled={pageCount === 1} onClick={() => setPage((current) => (current + 1) % pageCount)}>→</button>
+          <button type="button" aria-label={t('related.next')} disabled={pageCount === 1} onClick={() => setPage((current) => (current + 1) % pageCount)}>→</button>
         </div>
       </div>
       <div className="related-products__grid">

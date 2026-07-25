@@ -18,10 +18,12 @@ import { CartPage } from './pages/CartPage'
 import { ProductPage } from './pages/ProductPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { getProductBySlug } from './data/products'
+import { useLocale } from './i18n/useLocale'
 
 const Lookbook = lazy(() => import('./sections/Lookbook'))
 const Research = lazy(() => import('./sections/Research'))
-const FiberStudy = lazy(() => import('./three/FiberStudy'))
+const loadFiberStudy = () => import('./three/FiberStudy')
+const FiberStudy = lazy(loadFiberStudy)
 
 type Route =
   | { type: 'home' }
@@ -39,6 +41,7 @@ function getRoute(): Route {
 }
 
 function App() {
+  const { t, locale } = useLocale()
   const rootRef = useRef<HTMLDivElement>(null)
   const reducedMotion = useReducedMotion()
   const route = getRoute()
@@ -48,8 +51,29 @@ function App() {
   usePageMotion(rootRef, reducedMotion || !isHome)
 
   useEffect(() => {
-    if (isHome) document.title = 'VHOX — Who Moves First'
-  }, [isHome])
+    if (isHome) document.title = t('meta.title')
+  }, [isHome, locale, t])
+
+  useEffect(() => {
+    if (!isHome || reducedMotion) return
+
+    const warmParticleStudy = () => {
+      void loadFiberStudy().then(({ fiberStudyPreloader }) => fiberStudyPreloader.preload())
+    }
+
+    const idleWindow = window as Window & typeof globalThis & {
+      requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number
+      cancelIdleCallback?: (handle: number) => void
+    }
+
+    if (typeof idleWindow.requestIdleCallback === 'function') {
+      const handle = idleWindow.requestIdleCallback(warmParticleStudy, { timeout: 1200 })
+      return () => idleWindow.cancelIdleCallback?.(handle)
+    }
+
+    const handle = globalThis.setTimeout(warmParticleStudy, 250)
+    return () => globalThis.clearTimeout(handle)
+  }, [isHome, reducedMotion])
 
   return (
     <div ref={rootRef} className={`site-shell site-shell--${route.type}`}>
@@ -74,7 +98,7 @@ function HomePage({ reducedMotion }: { reducedMotion: boolean }) {
     <>
       <Hero reducedMotion={reducedMotion} />
       <Manifesto />
-      <DeferredMount className="deferred-fiber-study" minHeight="360vh">
+      <DeferredMount className="deferred-fiber-study" minHeight="460vh" rootMargin="2400px 0px">
         <Suspense fallback={<SectionFallback label="Loading fiber study" />}>
           <FiberStudy />
         </Suspense>

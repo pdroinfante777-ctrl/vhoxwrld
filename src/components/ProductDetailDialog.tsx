@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
-import type { Product } from '../data/products'
+import { formatProductPrice, productDescription, type Product } from '../data/products'
 import { shopIsExternal, shopUrl } from '../config/shop'
 import { ArrowIcon } from './ArrowIcon'
+import { useLocale } from '../i18n/useLocale'
+import { useCurrency } from '../commerce/useCurrency'
 
 type ProductDetailDialogProps = {
   product: Product | null
@@ -9,6 +11,8 @@ type ProductDetailDialogProps = {
 }
 
 export function ProductDetailDialog({ product, onClose }: ProductDetailDialogProps) {
+  const { locale, t } = useLocale()
+  const { currency } = useCurrency()
   const closeRef = useRef<HTMLButtonElement>(null)
   const panelRef = useRef<HTMLElement>(null)
   const [mediaIndex, setMediaIndex] = useState(0)
@@ -57,7 +61,7 @@ export function ProductDetailDialog({ product, onClose }: ProductDetailDialogPro
       if (event.target === event.currentTarget) onClose()
     }}>
       <section ref={panelRef} role="dialog" aria-modal="true" aria-labelledby="product-dialog-title" className="product-dialog__panel">
-        <button ref={closeRef} className="product-dialog__close" type="button" onClick={onClose} aria-label="Close product details">CLOSE / ESC</button>
+        <button ref={closeRef} className="product-dialog__close" type="button" onClick={onClose} aria-label={t('lookbook.closeLabel')}>{t('lookbook.close')}</button>
         <div className="product-dialog__gallery">
           {media ? (
             media.type === 'image' ? (
@@ -68,7 +72,7 @@ export function ProductDetailDialog({ product, onClose }: ProductDetailDialogPro
           ) : (
             <div className={`product-dialog__placeholder product-card__visual--${product.visual}`}>
               <span className="product-card__geometry" aria-hidden="true" />
-              <span>APPROVED PRODUCT PHOTOGRAPHY PENDING</span>
+              <span>{t('product.mediaPending')}</span>
             </div>
           )}
           {product.media.length > 1 && (
@@ -85,20 +89,20 @@ export function ProductDetailDialog({ product, onClose }: ProductDetailDialogPro
         <div className="product-dialog__content">
           <span>{product.code} / {product.category}</span>
           <h2 id="product-dialog-title">{product.name}</h2>
-          <p>{product.description}</p>
+          <p>{productDescription(product, locale)}</p>
           <dl>
-            <div><dt>PRICE</dt><dd>{product.price ?? 'TO BE CONFIRMED'}</dd></div>
-            <div><dt>COLORS</dt><dd>{product.colors.join(' / ') || 'DATA PENDING'}</dd></div>
-            <div><dt>SIZES</dt><dd>{product.sizes.join(' / ') || 'DATA PENDING'}</dd></div>
-            <div><dt>MATERIALS</dt><dd>{product.materials ?? 'DATA PENDING'}</dd></div>
-            <div><dt>CARE</dt><dd>{product.care ?? 'DATA PENDING'}</dd></div>
-            <div><dt>SHIPPING</dt><dd>{product.shipping ?? 'DATA PENDING'}</dd></div>
+            <div><dt>PRICE</dt><dd>{formatProductPrice(product, currency, locale, t('product.pricePending'))}</dd></div>
+            <div><dt>{t('product.color')}</dt><dd>{product.colors.join(' / ') || t('product.dataPending')}</dd></div>
+            <div><dt>{t('product.size')}</dt><dd>{product.sizes.join(' / ') || t('product.dataPending')}</dd></div>
+            <div><dt>{t('product.materials')}</dt><dd>{product.materials ?? t('product.dataPending')}</dd></div>
+            <div><dt>{t('product.care')}</dt><dd>{product.care ?? t('product.dataPending')}</dd></div>
+            <div><dt>{t('product.shipping')}</dt><dd>{product.shipping ?? t('product.dataPending')}</dd></div>
           </dl>
           {(product.colors.length > 0 || product.sizes.length > 0) && (
             <div className="product-dialog__selectors">
               {product.colors.length > 0 && (
                 <fieldset>
-                  <legend>COLOR</legend>
+                  <legend>{t('product.color')}</legend>
                   {product.colors.map((color) => (
                     <button type="button" key={color} aria-pressed={selectedColor === color} onClick={() => setSelectedColor(color)}>{color}</button>
                   ))}
@@ -106,7 +110,7 @@ export function ProductDetailDialog({ product, onClose }: ProductDetailDialogPro
               )}
               {product.sizes.length > 0 && (
                 <fieldset>
-                  <legend>SIZE</legend>
+                  <legend>{t('product.size')}</legend>
                   {product.sizes.map((size) => (
                     <button type="button" key={size} aria-pressed={selectedSize === size} onClick={() => setSelectedSize(size)}>{size}</button>
                   ))}
@@ -115,9 +119,9 @@ export function ProductDetailDialog({ product, onClose }: ProductDetailDialogPro
             </div>
           )}
           <a className="button button--primary" href={destination} target={shopIsExternal ? '_blank' : undefined} rel={shopIsExternal ? 'noreferrer' : undefined}>
-            Collection access <ArrowIcon />
+            {t('closing.cta')} <ArrowIcon />
           </a>
-          <small>No payment is processed on this website. Checkout remains connected to the approved external storefront.</small>
+          <small>{t('product.commerceNote')}</small>
         </div>
       </section>
     </div>

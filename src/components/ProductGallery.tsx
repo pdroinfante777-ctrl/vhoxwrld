@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Product } from '../data/products'
+import { useLocale } from '../i18n/useLocale'
 
 export function ProductGallery({ product }: { product: Product }) {
+  const { t } = useLocale()
   const [activeIndex, setActiveIndex] = useState(0)
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const pointerStart = useRef<number | null>(null)
@@ -57,7 +59,7 @@ export function ProductGallery({ product }: { product: Product }) {
   }
 
   return (
-    <div className="product-gallery" aria-label={`Galería de ${product.name}`}>
+    <div className="product-gallery" aria-label={t('product.gallery', { name: product.name })}>
       <div
         ref={galleryRef}
         className="product-gallery__stage"
@@ -74,7 +76,7 @@ export function ProductGallery({ product }: { product: Product }) {
       >
         {activeMedia ? (
           activeMedia.type === 'image' ? (
-            <button ref={lightboxTriggerRef} className="product-gallery__lightbox-trigger" type="button" onClick={() => setLightboxOpen(true)} aria-label="Ampliar imagen">
+            <button ref={lightboxTriggerRef} className="product-gallery__lightbox-trigger" type="button" onClick={() => setLightboxOpen(true)} aria-label={t('product.enlarge')}>
               <img
                 key={activeMedia.src}
                 className="product-gallery__main-media"
@@ -90,23 +92,23 @@ export function ProductGallery({ product }: { product: Product }) {
           <div className={`product-gallery__placeholder product-card__visual--${product.visual}`}>
             <span className="product-card__geometry" aria-hidden="true" />
             <span className="product-card__garment-guide" aria-hidden="true" />
-            <span>APPROVED PRODUCT PHOTOGRAPHY PENDING</span>
+            <span>{t('product.mediaPending')}</span>
           </div>
         )}
 
         {product.media.length > 1 && (
           <div className="product-gallery__arrows">
-            <button type="button" aria-label="Imagen anterior" onClick={() => move(-1)}>←</button>
+            <button type="button" aria-label={t('product.previousImage')} onClick={() => move(-1)}>←</button>
             <span>{String(activeIndex + 1).padStart(2, '0')} / {String(product.media.length).padStart(2, '0')}</span>
-            <button type="button" aria-label="Imagen siguiente" onClick={() => move(1)}>→</button>
+            <button type="button" aria-label={t('product.nextImage')} onClick={() => move(1)}>→</button>
           </div>
         )}
       </div>
 
       {product.media.length > 1 && (
-        <div className="product-gallery__thumbs" aria-label="Miniaturas del producto">
+        <div className="product-gallery__thumbs" aria-label={t('product.thumbnails')}>
           {product.media.map((media, index) => (
-            <button key={media.src} type="button" aria-label={`Mostrar vista ${index + 1}`} aria-pressed={activeIndex === index} onClick={() => setActiveIndex(index)}>
+            <button key={media.src} type="button" aria-label={t('product.showView', { number: index + 1 })} aria-pressed={activeIndex === index} onClick={() => setActiveIndex(index)}>
               {media.thumbnail || media.type === 'image'
                 ? <img src={media.thumbnail ?? media.src} alt="" loading="lazy" />
                 : <span>{String(index + 1).padStart(2, '0')}</span>}
@@ -116,10 +118,10 @@ export function ProductGallery({ product }: { product: Product }) {
       )}
 
       {lightboxOpen && activeMedia?.type === 'image' && (
-        <div className="product-lightbox" role="dialog" aria-modal="true" aria-label={`Vista ampliada de ${product.name}`} onMouseDown={(event) => {
+        <div className="product-lightbox" role="dialog" aria-modal="true" aria-label={t('product.enlargedView', { name: product.name })} onMouseDown={(event) => {
           if (event.target === event.currentTarget) setLightboxOpen(false)
         }}>
-          <button ref={closeButtonRef} type="button" onClick={() => setLightboxOpen(false)} aria-label="Cerrar imagen ampliada">CERRAR / ESC</button>
+          <button ref={closeButtonRef} type="button" onClick={() => setLightboxOpen(false)} aria-label={t('product.closeImage')}>{t('lookbook.close')}</button>
           <img src={activeMedia.src} alt={activeMedia.alt} />
         </div>
       )}

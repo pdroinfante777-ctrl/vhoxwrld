@@ -13,7 +13,7 @@ The visual system is monochrome, industrial and editorial, with one configurable
 - Three.js for one deferred, procedural fiber study
 - CSS variables and separated base, component and section styles
 
-Three.js is dynamically loaded only as the fiber-study section approaches the viewport. The scene uses fewer particles on mobile, does not represent a product for sale, and falls back to a static garment study when WebGL or motion is unavailable.
+Three.js remains code-split, but its particle targets are prepared during browser idle time so the white-manifesto-to-black-study transition does not pause. The scene adapts particle count and scale to phone, tablet, desktop, orientation and constrained devices. It does not represent a product for sale and falls back to a static garment study when WebGL or motion is unavailable.
 
 ## Requirements
 
@@ -32,7 +32,9 @@ The Vite development server is available on the URL printed in the terminal, nor
 ## Quality checks
 
 ```bash
+npm run typecheck
 npm run lint
+npm test
 npm run build
 npm run preview
 ```
@@ -61,7 +63,7 @@ Supported routes:
 
 - Session-only sequential V H O X loader with reduced-motion handling
 - Cinematic campaign hero and cursor light for precise pointers
-- Scroll-controlled fiber morph: field → T-shirt → cap → VHOX signal
+- Scroll-controlled fiber morph: VHOX bat → oversized T-shirt → cap → hoodie → VHOX signal
 - Movement manifesto and apparel categories
 - Editorial product cards with media swap, desktop tilt and direct product routes
 - Keyboard- and swipe-ready product gallery with thumbnails, arrows and an accessible lightbox when approved media exists
@@ -78,10 +80,18 @@ Supported routes:
 - `src/data/lookbook.ts` defines editorial image/video placements.
 - `src/data/categories.ts` defines the apparel category index.
 - `src/data/research.ts` holds garment research themes.
+- `src/i18n/translations.ts` is the typed EN/ES/PT/FR copy source.
+- `src/commerce/currency.ts` contains the centralized temporary USD/MXN/EUR display rates, their date and provider label.
 - Product, lookbook and testimonial placeholders are explicit. They do not claim to be real releases, photography or customer statements.
 - `public/policies.html` and `public/terms.html` are temporary legal-copy placeholders and must be replaced with approved copy before commerce activation.
 
 See [ASSET_GUIDE.md](./ASSET_GUIDE.md) before adding logos, product photography or lookbook media.
+
+## Language and displayed currency
+
+The interface detects EN, ES, PT or FR from the browser, persists the visitor's manual choice and updates the document language, title and description. Language and currency selectors are available in desktop navigation, the mobile menu and the footer.
+
+Product prices are stored in USD as the commerce base. The selected USD, MXN or EUR value is a display estimate produced from the centralized local table in `src/commerce/currency.ts`. These temporary rates are deliberately labeled as reference values in product and cart UI; the authorized external storefront remains responsible for the final checkout currency and amount. Replace the local provider with a reviewed exchange-rate service before activating live priced commerce.
 
 ## Deployment
 

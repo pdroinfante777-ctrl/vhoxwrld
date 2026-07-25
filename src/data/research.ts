@@ -1,7 +1,13 @@
-export const researchPillars = [
-  { index: 'R-01', title: 'Materials', detail: 'Surface, weight, resistance and tactility.' },
-  { index: 'R-02', title: 'Placement', detail: 'Graphics positioned as identity, not decoration.' },
-  { index: 'R-03', title: 'Movement', detail: 'Garments understood through bodies in motion.' },
-  { index: 'R-04', title: 'Urban identity', detail: 'Built from the tension, rhythm and marks of the city.' },
-  { index: 'R-05', title: 'Craft', detail: 'Print, stitch and finish treated with intention.' },
+import type { TranslationKey } from '../i18n/translations'
+
+export const researchPillars: {
+  index: string
+  titleKey: TranslationKey
+  detailKey: TranslationKey
+}[] = [
+  { index: 'R-01', titleKey: 'research.materials', detailKey: 'research.materialsDetail' },
+  { index: 'R-02', titleKey: 'research.placement', detailKey: 'research.placementDetail' },
+  { index: 'R-03', titleKey: 'research.movement', detailKey: 'research.movementDetail' },
+  { index: 'R-04', titleKey: 'research.urban', detailKey: 'research.urbanDetail' },
+  { index: 'R-05', titleKey: 'research.craft', detailKey: 'research.craftDetail' },
 ]

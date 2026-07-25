@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react'
 import { useCart } from '../cart/useCart'
-import { formatProductPrice, productPath, type Product } from '../data/products'
+import { formatProductPrice, productDescription, productPath, type Product } from '../data/products'
 import { ArrowIcon } from './ArrowIcon'
+import { useLocale } from '../i18n/useLocale'
+import { useCurrency } from '../commerce/useCurrency'
 
 type ProductCardProps = {
   product: Product
@@ -10,6 +12,8 @@ type ProductCardProps = {
 }
 
 export function ProductCard({ product, index, compact = false }: ProductCardProps) {
+  const { locale, t } = useLocale()
+  const { currency } = useCurrency()
   const cardRef = useRef<HTMLElement>(null)
   const { addItem } = useCart()
   const primary = product.media[0]
@@ -44,7 +48,7 @@ export function ProductCard({ product, index, compact = false }: ProductCardProp
       <a
         className={`product-card__visual product-card__visual--${product.visual}`}
         href={productPath(product)}
-        aria-label={`Ver ${product.name}`}
+        aria-label={`${t('product.view')} ${product.name}`}
       >
         <span className="product-card__number">{String(index + 1).padStart(2, '0')}</span>
         {primary ? (
@@ -79,7 +83,7 @@ export function ProductCard({ product, index, compact = false }: ProductCardProp
           </>
         )}
         <span className="product-card__media-status">
-          <span>{primary ? 'APPROVED PRODUCT MEDIA' : 'PRODUCT MEDIA PENDING'}</span>
+          <span>{primary ? t('product.mediaApproved') : t('product.mediaPending')}</span>
           <span>{product.code}</span>
         </span>
       </a>
@@ -89,17 +93,17 @@ export function ProductCard({ product, index, compact = false }: ProductCardProp
           <span>{product.category}</span>
           <h3><a href={productPath(product)}>{product.name}</a></h3>
         </div>
-        <span className="status-dot">{product.availability.replace('-', ' ')}</span>
+        <span className="status-dot">{t(`product.${product.availability === 'coming-soon' ? 'comingSoon' : product.availability}`)}</span>
       </div>
       <div className="product-card__commerce">
-        <span>{formatProductPrice(product)}</span>
-        {product.compareAtPrice !== null && <del>${product.compareAtPrice.toFixed(2)}</del>}
+        <span>{formatProductPrice(product, currency, locale, t('product.pricePending'))}</span>
+        {product.compareAtPrice !== null && <del>{formatProductPrice({ ...product, price: product.compareAtPrice }, currency, locale)}</del>}
       </div>
-      {!compact && <p>{product.description}</p>}
+      {!compact && <p>{productDescription(product, locale)}</p>}
       <div className="product-card__actions">
-        <a className="product-card__link" href={productPath(product)}>Ver producto <ArrowIcon /></a>
-        <button type="button" onClick={() => addItem(product)} aria-label={`Agregar ${product.name} al carrito`}>
-          Agregar al carrito
+        <a className="product-card__link" href={productPath(product)}>{t('product.view')} <ArrowIcon /></a>
+        <button type="button" onClick={() => addItem(product)} aria-label={`${t('product.add')} ${product.name}`}>
+          {t('product.add')}
         </button>
       </div>
     </article>

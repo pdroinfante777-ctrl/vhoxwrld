@@ -6,11 +6,17 @@ import './styles/components.css'
 import './styles/sections.css'
 import App from './App'
 import { CartProvider } from './cart/CartContext'
+import { LocaleProvider } from './i18n/LocaleContext'
+import { CurrencyProvider } from './commerce/CurrencyContext'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <CartProvider>
-      <App />
-    </CartProvider>
+    <LocaleProvider>
+      <CurrencyProvider>
+        <CartProvider>
+          <App />
+        </CartProvider>
+      </CurrencyProvider>
+    </LocaleProvider>
   </StrictMode>,
 )

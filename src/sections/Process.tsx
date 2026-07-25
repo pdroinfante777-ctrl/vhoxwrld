@@ -1,34 +1,37 @@
 import { SectionHeading } from '../components/SectionHeading'
+import { useLocale } from '../i18n/useLocale'
 
 const processSteps = [
-  { index: 'P-01', title: 'IDENTITY', detail: 'Define the graphic, message and placement that belong to the VHOX movement.' },
-  { index: 'P-02', title: 'FORM', detail: 'Match the approved concept to the garment, cap or future object.' },
-  { index: 'P-03', title: 'MAKE', detail: 'Production details and availability are confirmed before anything is offered for purchase.' },
-]
+  { index: 'P-01', titleKey: 'process.identity', detailKey: 'process.identityDetail' },
+  { index: 'P-02', titleKey: 'process.form', detailKey: 'process.formDetail' },
+  { index: 'P-03', titleKey: 'process.make', detailKey: 'process.makeDetail' },
+] as const
 
 export function Process() {
+  const { t } = useLocale()
+
   return (
     <section id="process" className="process section" aria-labelledby="process-title">
       <SectionHeading
         id="process-title"
         index="07"
-        label="CUSTOMIZATION / WORKFLOW"
-        title="FROM SIGNAL TO GARMENT."
-        description="A transparent framework for customized VHOX pieces. Final production methods, lead times and ordering terms remain subject to confirmation."
+        label={t('process.label')}
+        title={t('process.title')}
+        description={t('process.description')}
       />
       <ol className="process__steps">
         {processSteps.map((step) => (
           <li key={step.index} data-reveal>
             <span>{step.index}</span>
-            <h3>{step.title}</h3>
-            <p>{step.detail}</p>
+            <h3>{t(step.titleKey)}</h3>
+            <p>{t(step.detailKey)}</p>
           </li>
         ))}
       </ol>
       <div className="next-drop" data-reveal>
-        <span>NEXT DROP / DATE TO BE ANNOUNCED</span>
-        <p>New work enters the world only when the product, imagery and release details are real.</p>
-        <a href="mailto:contact@vhoxwrld.com?subject=VHOX%20drop%20updates">REQUEST DROP UPDATES</a>
+        <span>{t('process.next')}</span>
+        <p>{t('process.nextDetail')}</p>
+        <a href="mailto:contact@vhoxwrld.com?subject=VHOX%20drop%20updates">{t('process.updates')}</a>
       </div>
     </section>
   )

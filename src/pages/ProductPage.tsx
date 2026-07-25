@@ -1,24 +1,29 @@
 import { useEffect, useState } from 'react'
 import { useCart } from '../cart/useCart'
+import { useCurrency } from '../commerce/useCurrency'
 import { ProductGallery } from '../components/ProductGallery'
 import { RelatedProducts } from '../components/RelatedProducts'
-import { formatProductPrice, type Product } from '../data/products'
+import { formatProductPrice, productDescription, type Product } from '../data/products'
+import { useLocale } from '../i18n/useLocale'
 
 export function ProductPage({ product }: { product: Product }) {
   const { addItem } = useCart()
+  const { locale, t } = useLocale()
+  const { currency } = useCurrency()
   const [size, setSize] = useState(product.sizes[0] ?? '')
   const [color, setColor] = useState(product.colors[0] ?? '')
   const [quantity, setQuantity] = useState(1)
   const [announcement, setAnnouncement] = useState('')
+  const description = productDescription(product, locale)
 
   useEffect(() => {
     document.title = `${product.name} — VHOX`
     window.scrollTo(0, 0)
-  }, [product])
+  }, [product, locale])
 
   const addToCart = () => {
     addItem(product, { quantity, size, color })
-    setAnnouncement(`${product.name} agregado a la bolsa`)
+    setAnnouncement(t('product.added', { name: product.name }))
   }
 
   return (
@@ -29,19 +34,21 @@ export function ProductPage({ product }: { product: Product }) {
         </div>
 
         <div className="product-page__info">
-          <div className="product-page__breadcrumb"><a href="/#collection">TIENDA</a><span>/</span><span>{product.code}</span></div>
+          <div className="product-page__breadcrumb"><a href="/#collection">{t('product.shop')}</a><span>/</span><span>{product.code}</span></div>
           <span className="product-page__category">{product.category}</span>
           <h1 id="product-title">{product.name}</h1>
           {product.subtitle && <p className="product-page__subtitle">{product.subtitle}</p>}
           <div className="product-page__price">
-            <span>{formatProductPrice(product)}</span>
-            {product.compareAtPrice !== null && <del>${product.compareAtPrice.toFixed(2)}</del>}
+            <span>{formatProductPrice(product, currency, locale, t('product.pricePending'))}</span>
+            {product.compareAtPrice !== null && (
+              <del>{formatProductPrice({ ...product, price: product.compareAtPrice }, currency, locale)}</del>
+            )}
           </div>
-          <p className="product-page__description">{product.description}</p>
+          <p className="product-page__description">{description}</p>
 
           {product.colors.length > 0 && (
             <fieldset className="product-options">
-              <legend>COLOR <span>{color}</span></legend>
+              <legend>{t('product.color')} <span>{color}</span></legend>
               <div>
                 {product.colors.map((item) => <button type="button" key={item} aria-pressed={color === item} onClick={() => setColor(item)}>{item}</button>)}
               </div>
@@ -50,7 +57,7 @@ export function ProductPage({ product }: { product: Product }) {
 
           {product.sizes.length > 0 && (
             <fieldset className="product-options">
-              <legend>TALLA <span>{size}</span></legend>
+              <legend>{t('product.size')} <span>{size}</span></legend>
               <div>
                 {product.sizes.map((item) => <button type="button" key={item} aria-pressed={size === item} onClick={() => setSize(item)}>{item}</button>)}
               </div>
@@ -58,23 +65,26 @@ export function ProductPage({ product }: { product: Product }) {
           )}
 
           <div className="product-purchase">
-            <div className="quantity-control" aria-label="Cantidad">
-              <button type="button" aria-label="Reducir cantidad" onClick={() => setQuantity((current) => Math.max(1, current - 1))}>−</button>
+            <div className="quantity-control" aria-label={t('product.quantity')}>
+              <button type="button" aria-label={t('product.decrease')} onClick={() => setQuantity((current) => Math.max(1, current - 1))}>−</button>
               <output aria-live="polite">{quantity}</output>
-              <button type="button" aria-label="Aumentar cantidad" onClick={() => setQuantity((current) => Math.min(10, current + 1))}>+</button>
+              <button type="button" aria-label={t('product.increase')} onClick={() => setQuantity((current) => Math.min(10, current + 1))}>+</button>
             </div>
-            <button className="button button--primary product-purchase__add" type="button" onClick={addToCart}>AGREGAR AL CARRITO</button>
+            <button className="button button--primary product-purchase__add" type="button" onClick={addToCart}>{t('product.add')}</button>
           </div>
-          <p className="product-page__commerce-note">La bolsa es local y no procesa pagos. Precio y disponibilidad se muestran únicamente cuando VHOX los confirma.</p>
+          <p className="product-page__commerce-note">{t('product.commerceNote')}</p>
+          {product.price !== null && (
+            <p className="product-page__commerce-note">{t('product.displayCurrencyNote', { currency })}</p>
+          )}
           <p className="sr-only" aria-live="polite">{announcement}</p>
 
           <div className="product-specs">
-            <details open><summary>DESCRIPCIÓN</summary><p>{product.description}</p></details>
-            <details><summary>MATERIALES</summary><p>{product.materials ?? 'Información pendiente de confirmación.'}</p></details>
-            <details><summary>CARACTERÍSTICAS</summary><p>{product.features.join(' / ') || 'Información pendiente de confirmación.'}</p></details>
-            <details><summary>FIT</summary><p>{product.fit ?? 'Información pendiente de confirmación.'}</p></details>
-            <details><summary>CUIDADOS</summary><p>{product.care ?? 'Información pendiente de confirmación.'}</p></details>
-            <details><summary>ENVÍO</summary><p>{product.shipping ?? 'Información pendiente de confirmación.'}</p></details>
+            <details open><summary>{t('product.description')}</summary><p>{description}</p></details>
+            <details><summary>{t('product.materials')}</summary><p>{product.materials ?? t('product.infoPending')}</p></details>
+            <details><summary>{t('product.features')}</summary><p>{product.features.join(' / ') || t('product.infoPending')}</p></details>
+            <details><summary>{t('product.fit')}</summary><p>{product.fit ?? t('product.infoPending')}</p></details>
+            <details><summary>{t('product.care')}</summary><p>{product.care ?? t('product.infoPending')}</p></details>
+            <details><summary>{t('product.shipping')}</summary><p>{product.shipping ?? t('product.infoPending')}</p></details>
           </div>
         </div>
       </article>

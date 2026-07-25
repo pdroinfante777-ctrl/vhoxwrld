@@ -1,22 +1,25 @@
 import { useEffect, useRef, useState } from 'react'
 import { useCart } from '../cart/useCart'
+import { useLocale } from '../i18n/useLocale'
 import { BagIcon } from './BagIcon'
 import { BrandMark } from './BrandMark'
+import { MarketControls } from './MarketControls'
 
 const navigationItems = [
-  { label: 'Inicio', href: '/#top' },
-  { label: 'Tienda', href: '/#collection' },
-  { label: 'Lookbook', href: '/#lookbook' },
-  { label: 'Investigación', href: '/#research' },
-  { label: 'Testimonios', href: '/#testimonials' },
-  { label: 'Contacto', href: '/#contact' },
-]
+  { labelKey: 'nav.home', href: '/#top' },
+  { labelKey: 'nav.shop', href: '/#collection' },
+  { labelKey: 'nav.lookbook', href: '/#lookbook' },
+  { labelKey: 'nav.research', href: '/#research' },
+  { labelKey: 'nav.testimonials', href: '/#testimonials' },
+  { labelKey: 'nav.contact', href: '/#contact' },
+] as const
 
 type NavigationProps = {
   reducedMotion: boolean
 }
 
 export function Navigation({ reducedMotion }: NavigationProps) {
+  const { t } = useLocale()
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [hidden, setHidden] = useState(false)
@@ -47,7 +50,7 @@ export function Navigation({ reducedMotion }: NavigationProps) {
       if (event.key !== 'Tab' || !open) return
 
       const focusable = [
-        ...Array.from(mobileMenuRef.current?.querySelectorAll<HTMLElement>('a[href]') ?? []),
+        ...Array.from(mobileMenuRef.current?.querySelectorAll<HTMLElement>('a[href], select') ?? []),
         toggleRef.current,
       ].filter(Boolean) as HTMLElement[]
       if (!focusable.length) return
@@ -91,19 +94,20 @@ export function Navigation({ reducedMotion }: NavigationProps) {
 
   return (
     <header className={headerClasses}>
-      <a className="brand header-wordmark" href="/#top" aria-label="VHOX home" onClick={() => setOpen(false)}>
-        VHOX
+      <a className="brand header-wordmark" href="/#top" aria-label={t('nav.homeLabel')} onClick={() => setOpen(false)}>
+        <BrandMark />
       </a>
 
-      <nav className="desktop-nav" aria-label="Primary navigation">
-        {navigationItems.map((item) => <a key={item.label} href={item.href}>{item.label}</a>)}
+      <nav className="desktop-nav" aria-label={t('nav.primary')}>
+        {navigationItems.map((item) => <a key={item.labelKey} href={item.href}>{t(item.labelKey)}</a>)}
       </nav>
 
       <div className="header-actions">
+        <MarketControls placement="desktop" />
         <a
           className={`bag-link ${bagAnimating ? 'bag-link--pulse' : ''}`}
           href="/cart"
-          aria-label={`Bolsa de compra, ${totalQuantity} ${totalQuantity === 1 ? 'producto' : 'productos'}`}
+          aria-label={totalQuantity === 1 ? t('bag.labelOne') : t('bag.label', { count: totalQuantity })}
         >
           <BagIcon />
           {totalQuantity > 0 && <span className="bag-link__count" aria-hidden="true">{totalQuantity}</span>}
@@ -114,7 +118,7 @@ export function Navigation({ reducedMotion }: NavigationProps) {
           type="button"
           aria-expanded={open}
           aria-controls="mobile-menu"
-          aria-label={open ? 'Cerrar menú de navegación' : 'Abrir menú de navegación'}
+          aria-label={open ? t('nav.close') : t('nav.open')}
           onClick={() => setOpen((current) => !current)}
         >
           <span />
@@ -133,19 +137,20 @@ export function Navigation({ reducedMotion }: NavigationProps) {
         }}
       >
         <BrandMark className="mobile-menu__brand" />
-        <nav aria-label="Mobile navigation">
+        <nav aria-label={t('nav.mobile')}>
           {navigationItems.map((item, index) => (
             <a
-              key={item.label}
+              key={item.labelKey}
               href={item.href}
               tabIndex={open ? 0 : -1}
               onClick={() => setOpen(false)}
             >
               <span>{String(index + 1).padStart(2, '0')}</span>
-              {item.label}
+              {t(item.labelKey)}
             </a>
           ))}
         </nav>
+        <MarketControls placement="mobile" tabIndex={open ? 0 : -1} />
         <p>WHO MOVES FIRST. / VHOX WRLD</p>
       </div>
     </header>

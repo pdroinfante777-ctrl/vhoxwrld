@@ -138,7 +138,9 @@ Run from the repository root with Node 20:
 
 ```bash
 npm ci
+npm run typecheck
 npm run lint
+npm test
 npm run build
 npm run preview
 ```

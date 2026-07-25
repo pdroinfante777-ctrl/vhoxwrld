@@ -5,9 +5,16 @@ type DeferredMountProps = {
   id?: string
   className?: string
   minHeight: string
+  rootMargin?: string
 }
 
-export function DeferredMount({ children, id, className = '', minHeight }: DeferredMountProps) {
+export function DeferredMount({
+  children,
+  id,
+  className = '',
+  minHeight,
+  rootMargin = '700px 0px',
+}: DeferredMountProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [ready, setReady] = useState(false)
 
@@ -25,11 +32,11 @@ export function DeferredMount({ children, id, className = '', minHeight }: Defer
         setReady(true)
         observer.disconnect()
       }
-    }, { rootMargin: '700px 0px' })
+    }, { rootMargin })
 
     observer.observe(element)
     return () => observer.disconnect()
-  }, [])
+  }, [rootMargin])
 
   return (
     <div ref={containerRef} id={id} className={className} style={{ minHeight }}>

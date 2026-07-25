@@ -1,23 +1,27 @@
 import { SectionHeading } from '../components/SectionHeading'
+import { CategoryVisual } from '../components/CategoryVisual'
 import { categories } from '../data/categories'
+import { useLocale } from '../i18n/useLocale'
 
 export function Categories() {
+  const { t } = useLocale()
+
   return (
     <section id="categories" className="categories section" aria-labelledby="categories-title">
       <SectionHeading
         id="categories-title"
         index="03"
-        label="GARMENT INDEX / VHOX"
-        title="THE MOVEMENT TAKES FORM."
-        description="VHOX is a custom apparel movement. These categories define the current direction without claiming unreleased products as available."
+        label={t('categories.label')}
+        title={t('categories.title')}
+        description={t('categories.description')}
       />
       <div className="categories__list">
         {categories.map((category) => (
-          <article className={`category-row category-row--${category.visual}`} key={category.index} data-reveal>
+          <article className={`category-row category-row--${category.visual}`} key={category.index} tabIndex={0} data-reveal>
             <span className="category-row__index">{category.index}</span>
-            <h3>{category.name}</h3>
-            <span className="category-row__state">{category.state}</span>
-            <span className="category-row__form" aria-hidden="true" />
+            <h3>{t(category.nameKey)}</h3>
+            <span className="category-row__state">{t(category.stateKey)}</span>
+            <CategoryVisual visual={category.visual} />
           </article>
         ))}
       </div>
