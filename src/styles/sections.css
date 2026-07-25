@@ -345,7 +345,7 @@
 
 .fiber-study {
   position: relative;
-  min-height: 360vh;
+  min-height: 460vh;
   background: #060606;
 }
 
@@ -394,13 +394,23 @@
   place-items: center;
 }
 
+.fiber-study__fallback svg,
 .fiber-study__fallback img {
   width: min(58rem, 68vw);
   max-width: 88%;
-  height: auto;
+  max-height: 72%;
   mix-blend-mode: screen;
   object-fit: contain;
   opacity: 0.92;
+}
+
+.fiber-study__fallback path {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.25;
+  vector-effect: non-scaling-stroke;
 }
 
 .fiber-study__copy {
@@ -1314,13 +1324,14 @@
   .testimonials__grid { grid-template-columns: 1fr; }
   .testimonial-slot { min-height: 20rem; }
 
-  .fiber-study { min-height: 260vh; }
+  .fiber-study { min-height: 360vh; }
   .fiber-study__sticky { padding-bottom: 1rem; }
   .fiber-study__header p { display: none; }
-  .fiber-study__copy { bottom: 8.5rem; max-width: min(100%, 25rem); }
+  .fiber-study__copy { bottom: 10.5rem; max-width: min(100%, 25rem); }
   .fiber-study__copy h2 { font-size: clamp(2.9rem, 13.5vw, 5.8rem); }
   .fiber-study__timeline { right: auto; bottom: 1rem; left: 0; width: 100%; }
   .fiber-study__timeline li { grid-template-columns: 2rem 1fr; padding-block: 0.42rem; }
+  .fiber-study__fallback svg,
   .fiber-study__fallback img { width: min(86vw, 31rem); max-width: 86%; }
 
   .category-row {
@@ -1359,7 +1370,7 @@
 }
 
 @media (max-height: 36rem) and (orientation: landscape) and (max-width: 64rem) {
-  .fiber-study { min-height: 300vh; }
+  .fiber-study { min-height: 400vh; }
 
   .fiber-study__sticky {
     padding: calc(var(--header-height) + 0.3rem) 1rem 0.55rem;
@@ -1395,7 +1406,7 @@
     left: 0;
     display: grid;
     width: 100%;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 
   .fiber-study__timeline li {
@@ -1412,6 +1423,7 @@
 
   .fiber-study__timeline li.is-active { padding-left: 0.35rem; }
   .fiber-study__fallback { justify-items: end; }
+  .fiber-study__fallback svg,
   .fiber-study__fallback img { width: 58%; max-height: 72%; }
 }
 
