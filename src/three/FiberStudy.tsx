@@ -22,6 +22,7 @@ import {
 
 const batReferenceSource = '/brand/vhox-bat-particle-source.png'
 const batWorldWidth = 6.35
+const particleFieldHeight = 4.95
 
 const stages = [
   { index: '01', name: 'T-SHIRT FORM', detail: 'BOXY CUT / DROPPED SHOULDER / PREMIUM OUTLINE' },
@@ -42,6 +43,20 @@ type PixelCandidate = {
 type BatSample = {
   positions: Float32Array
   colors: Float32Array
+}
+
+type MorphState = {
+  progress: number
+  energy: number
+}
+
+type MotionField = {
+  phase: Float32Array
+  speed: Float32Array
+  strength: Float32Array
+  direction: Float32Array
+  driftX: Float32Array
+  driftY: Float32Array
 }
 
 function seededRandom(seed: number) {
@@ -132,18 +147,39 @@ function sampleBatSilhouette(image: HTMLImageElement, count: number): BatSample 
     const candidate = pool[Math.floor(random() * pool.length)]
     const jitterX = (random() - 0.5) * 0.36
     const jitterY = (random() - 0.5) * 0.36
-    const brightness = 0.84 + random() * 0.2
+    const brightness = 0.72 + random() * 0.26
 
     positions[offset] = ((candidate.x + jitterX - centerX) / silhouetteWidth) * batWorldWidth
     positions[offset + 1] = -((candidate.y + jitterY - centerY) / silhouetteWidth) * batWorldWidth
     positions[offset + 2] = (random() - 0.5) * 0.075
 
-    colors[offset] = Math.min(1, (candidate.red / 255) * brightness)
-    colors[offset + 1] = Math.min(1, (candidate.green / 255) * brightness)
-    colors[offset + 2] = Math.min(1, (candidate.blue / 255) * brightness)
+    colors[offset] = (0x7c / 255) * brightness
+    colors[offset + 1] = brightness
+    colors[offset + 2] = 0
   }
 
   return { positions, colors }
+}
+
+function createMotionField(count: number): MotionField {
+  const random = seededRandom(25072026)
+  const phase = new Float32Array(count)
+  const speed = new Float32Array(count)
+  const strength = new Float32Array(count)
+  const direction = new Float32Array(count)
+  const driftX = new Float32Array(count)
+  const driftY = new Float32Array(count)
+
+  for (let index = 0; index < count; index += 1) {
+    phase[index] = random() * Math.PI * 2
+    speed[index] = 0.72 + random() * 0.68
+    strength[index] = 0.35 + random() * 0.65
+    direction[index] = random() > 0.22 ? 1 : -0.55
+    driftX[index] = random() * 2 - 1
+    driftY[index] = random() * 2 - 1
+  }
+
+  return { phase, speed, strength, direction, driftX, driftY }
 }
 
 function createTargets(count: number, bat: Float32Array) {
@@ -166,42 +202,42 @@ function getParticleProfile() {
 
   if (phone) {
     return {
-      count: constrained ? 3400 : 4600,
-      minimumCount: 2600,
-      pointSize: 0.016,
+      count: constrained ? 3800 : 5000,
+      pointSize: 0.0155,
       maximumPixelRatio: 1.5,
     }
   }
 
   if (tablet) {
     return {
-      count: constrained ? 5400 : 7200,
-      minimumCount: 4400,
-      pointSize: 0.0135,
+      count: constrained ? 6000 : 8000,
+      pointSize: 0.013,
       maximumPixelRatio: 1.75,
     }
   }
 
   return {
-    count: constrained ? 8800 : 12000,
-    minimumCount: 7200,
-    pointSize: 0.0115,
+    count: constrained ? 9800 : 14000,
+    pointSize: 0.011,
     maximumPixelRatio: 2,
   }
 }
 
-function resolveMorphProgress(rawProgress: number, targetCount: number) {
+function resolveMorphState(rawProgress: number, targetCount: number): MorphState {
   const scaledProgress = Math.min(1, Math.max(0, rawProgress)) * (targetCount - 1)
   const fromIndex = Math.min(targetCount - 1, Math.floor(scaledProgress))
   const toIndex = Math.min(targetCount - 1, fromIndex + 1)
 
-  if (fromIndex === toIndex) return fromIndex
+  if (fromIndex === toIndex) return { progress: fromIndex, energy: 0 }
 
   const localProgress = scaledProgress - fromIndex
-  const transitionProgress = Math.min(1, Math.max(0, (localProgress - 0.18) / 0.64))
+  const transitionProgress = Math.min(1, Math.max(0, (localProgress - 0.2) / 0.6))
   const easedProgress = transitionProgress * transitionProgress * (3 - 2 * transitionProgress)
 
-  return fromIndex + easedProgress
+  return {
+    progress: fromIndex + easedProgress,
+    energy: Math.sin(easedProgress * Math.PI),
+  }
 }
 
 function getResponsiveLayout(camera: PerspectiveCamera, width: number, height: number) {
@@ -213,36 +249,43 @@ function getResponsiveLayout(camera: PerspectiveCamera, width: number, height: n
   const phone = Math.min(viewportWidth, viewportHeight) <= 480 && Math.max(viewportWidth, viewportHeight) <= 960
   const landscape = viewportWidth > viewportHeight
   const tablet = !phone && Math.max(viewportWidth, viewportHeight) <= 1180
+  const fitScale = (widthRatio: number, heightRatio: number) => Math.min(
+    (visibleWidth * widthRatio) / batWorldWidth,
+    (visibleHeight * heightRatio) / particleFieldHeight,
+  )
 
   if (phone && !landscape) {
     const compactPortrait = viewportHeight < 650
     return {
-      scale: Math.min(0.42, Math.max(0.22, (visibleWidth * (compactPortrait ? 0.68 : 0.84)) / batWorldWidth)),
+      scale: Math.min(
+        compactPortrait ? 0.32 : 0.38,
+        Math.max(0.18, fitScale(compactPortrait ? 0.64 : 0.82, compactPortrait ? 0.36 : 0.5)),
+      ),
       x: 0,
-      y: visibleHeight * (compactPortrait ? 0.25 : 0.13),
+      y: visibleHeight * (compactPortrait ? 0.27 : 0.17),
     }
   }
 
   if (phone && landscape) {
     return {
-      scale: Math.min(0.98, Math.max(0.48, (visibleWidth * 0.56) / batWorldWidth)),
-      x: visibleWidth * 0.2,
-      y: visibleHeight * 0.04,
+      scale: Math.min(0.86, Math.max(0.38, fitScale(0.62, 0.78))),
+      x: visibleWidth * 0.21,
+      y: visibleHeight * 0.07,
     }
   }
 
   if (tablet) {
     return {
-      scale: Math.min(0.9, Math.max(0.46, (visibleWidth * (landscape ? 0.62 : 0.68)) / batWorldWidth)),
-      x: landscape ? visibleWidth * 0.08 : 0,
-      y: visibleHeight * (landscape ? 0.07 : 0.16),
+      scale: Math.min(0.82, Math.max(0.38, fitScale(landscape ? 0.58 : 0.68, landscape ? 0.66 : 0.6))),
+      x: landscape ? visibleWidth * 0.18 : 0,
+      y: visibleHeight * (landscape ? 0.09 : 0.17),
     }
   }
 
   return {
-    scale: Math.min(1.02, Math.max(0.68, (visibleWidth * 0.54) / batWorldWidth)),
-    x: 0,
-    y: visibleHeight * 0.15,
+    scale: Math.min(0.9, Math.max(0.58, fitScale(0.52, 0.72))),
+    x: visibleWidth * 0.13,
+    y: visibleHeight * 0.11,
   }
 }
 
@@ -292,14 +335,11 @@ function FiberStudy() {
     let frame = 0
     let scrollTrigger: ScrollTrigger | null = null
     let progress = 0
+    let transitionEnergy = 0
     let pointerX = 0
     let pointerY = 0
     let layoutX = 0
     let layoutY = 0
-    let previousRenderTime = 0
-    let measuredDuration = 0
-    let measuredFrames = 0
-    let qualityAdjusted = false
     const precisePointer = window.matchMedia('(pointer: fine)').matches
 
     const onPointerMove = (event: PointerEvent) => {
@@ -318,6 +358,7 @@ function FiberStudy() {
         const sampledBat = sampleBatSilhouette(image, profile.count)
         const batSample = sortParticleField(sampledBat.positions, sampledBat.colors)
         const targets = createTargets(profile.count, batSample.positions)
+        const motion = createMotionField(profile.count)
         const positions = targets[0].slice()
 
         try {
@@ -387,9 +428,11 @@ function FiberStudy() {
           trigger: section,
           start: 'top top',
           end: 'bottom bottom',
-          scrub: 0.55,
+          scrub: 0.75,
           onUpdate: (self) => {
-            progress = resolveMorphProgress(self.progress, targets.length)
+            const morph = resolveMorphState(self.progress, targets.length)
+            progress = morph.progress
+            transitionEnergy = morph.energy
             const stage = Math.min(targets.length - 1, Math.round(progress))
             if (stage !== previousStage) {
               previousStage = stage
@@ -401,38 +444,61 @@ function FiberStudy() {
         const render = (time = 0) => {
           if (!renderer || !camera || !geometry || !points || !material || cancelled) return
 
-          if (previousRenderTime > 0 && measuredFrames < 90) {
-            measuredDuration += time - previousRenderTime
-            measuredFrames += 1
-
-            if (measuredFrames === 90 && measuredDuration / measuredFrames > 22 && !qualityAdjusted) {
-              geometry.setDrawRange(0, Math.min(profile.minimumCount, profile.count))
-              qualityAdjusted = true
-            }
-          }
-
-          previousRenderTime = time
-
           const fromIndex = Math.floor(progress)
           const toIndex = Math.min(targets.length - 1, fromIndex + 1)
           const mix = progress - fromIndex
+          const transitionDirection = fromIndex % 2 === 0 ? 1 : -1
+          const cloudScale = 1 + transitionEnergy * 0.12
+          const ambientX = Math.sin(time * 0.00055)
+          const ambientY = Math.cos(time * 0.00048)
           const from = targets[fromIndex]
           const to = targets[toIndex]
           const attribute = geometry.getAttribute('position')
           const array = attribute.array as Float32Array
 
-          for (let index = 0; index < array.length; index += 1) {
-            const desired = from[index] + (to[index] - from[index]) * mix
-            array[index] += (desired - array[index]) * 0.085
+          for (let particleIndex = 0; particleIndex < profile.count; particleIndex += 1) {
+            const offset = particleIndex * 3
+            const phase = motion.phase[particleIndex]
+              + time * 0.00042 * motion.speed[particleIndex] * motion.direction[particleIndex]
+              + mix * Math.PI * 1.75 * transitionDirection
+            const orbitCosine = Math.cos(phase)
+            const orbitSine = Math.sin(phase)
+            const stagger = (motion.strength[particleIndex] - 0.5) * 0.14
+              + orbitSine * 0.035
+            const particleMix = Math.min(1, Math.max(0, mix + transitionEnergy * stagger))
+            const baseX = from[offset] + (to[offset] - from[offset]) * particleMix
+            const baseY = from[offset + 1] + (to[offset + 1] - from[offset + 1]) * particleMix
+            const baseZ = from[offset + 2] + (to[offset + 2] - from[offset + 2]) * particleMix
+            const twist = transitionEnergy
+              * transitionDirection
+              * (0.16 + motion.strength[particleIndex] * 0.16)
+              * motion.direction[particleIndex]
+            const rotatedX = (baseX - baseY * twist) * cloudScale
+            const rotatedY = (baseY + baseX * twist) * cloudScale
+            const orbitAmplitude = 0.008 + transitionEnergy * (0.055 + motion.strength[particleIndex] * 0.09)
+            const noiseAmplitude = 0.004 + transitionEnergy * 0.024
+            const desiredX = rotatedX
+              + orbitCosine * orbitAmplitude
+              + motion.driftX[particleIndex] * ambientX * noiseAmplitude
+            const desiredY = rotatedY
+              + orbitSine * orbitAmplitude
+              + motion.driftY[particleIndex] * ambientY * noiseAmplitude
+            const desiredZ = baseZ
+              + orbitSine * transitionEnergy * 0.19
+            const damping = 0.11 + transitionEnergy * 0.015
+
+            array[offset] += (desiredX - array[offset]) * damping
+            array[offset + 1] += (desiredY - array[offset + 1]) * damping
+            array[offset + 2] += (desiredZ - array[offset + 2]) * damping
           }
 
           attribute.needsUpdate = true
           points.position.x += ((layoutX + pointerX * 0.08) - points.position.x) * 0.04
           points.position.y += ((layoutY - pointerY * 0.05 + Math.sin(time * 0.00048) * 0.018) - points.position.y) * 0.04
-          points.rotation.y += ((pointerX * 0.055 + progress * 0.012) - points.rotation.y) * 0.025
+          points.rotation.y += ((pointerX * 0.055 + progress * 0.012 + transitionEnergy * 0.035 * transitionDirection) - points.rotation.y) * 0.025
           points.rotation.x += ((-pointerY * 0.035) - points.rotation.x) * 0.025
-          points.rotation.z = Math.sin(time * 0.00022) * 0.0035
-          material.opacity = 0.89 + Math.sin(time * 0.0007) * 0.025
+          points.rotation.z = Math.sin(time * 0.00022) * 0.0035 + transitionEnergy * 0.008 * transitionDirection
+          material.opacity = 0.89 + Math.sin(time * 0.0007) * 0.025 - transitionEnergy * 0.035
 
           renderer.render(scene, camera)
           frame = window.requestAnimationFrame(render)
