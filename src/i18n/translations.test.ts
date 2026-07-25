@@ -29,4 +29,18 @@ describe('VHOX translations', () => {
     expect(value).toContain('4')
     expect(value).not.toContain('{count}')
   })
+
+  it('positions VHOX as an independent brand in every locale', () => {
+    const forbiddenPositioning = /personaliz|custom garment|custom apparel|custom clothing|made by you|print-on-demand/i
+
+    for (const locale of locales) {
+      const visibleCopy = Object.values(translations[locale]).join(' ')
+      expect(visibleCopy).not.toMatch(forbiddenPositioning)
+    }
+
+    expect(translate('en', 'brand.exclusiveMovement')).toBe('EXCLUSIVE MOVEMENT')
+    expect(translate('es', 'brand.exclusiveMovement')).toBe('MOVIMIENTO EXCLUSIVO')
+    expect(translate('pt', 'brand.exclusiveMovement')).toBe('MOVIMENTO EXCLUSIVO')
+    expect(translate('fr', 'brand.exclusiveMovement')).toBe('MOUVEMENT EXCLUSIF')
+  })
 })

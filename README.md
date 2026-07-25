@@ -1,6 +1,6 @@
 # VHOX WRLD
 
-Experiential frontend for [vhoxwrld.com](https://vhoxwrld.com), built as a static React application with Vite and TypeScript. VHOX is presented as a custom apparel movement—T-shirts, caps, footwear and future forms—not as a technology company.
+Experiential frontend for [vhoxwrld.com](https://vhoxwrld.com), built as a static React application with Vite and TypeScript. VHOX is presented as an independent premium streetwear brand with original design, selected materials and a distinct visual language.
 
 The visual system is monochrome, industrial and editorial, with one configurable accent (`--color-accent` in `src/styles/base.css`).
 
@@ -70,7 +70,7 @@ Supported routes:
 - Local modular bag with quantity controls, live counter and no simulated payment flow
 - Related-product module titled `COMPLEMENTA EL ECOSISTEMA`
 - Asymmetric lookbook with future image/video and lightbox support
-- Garment research, customization workflow, community channels and verified-testimonial slots
+- Design and construction study, community channels and verified-testimonial slots
 - Responsive mobile menu, keyboard support, motion fallbacks and static 404/legal pages
 
 ## Content model

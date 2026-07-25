@@ -61,7 +61,7 @@ export function Hero({ reducedMotion }: HeroProps) {
       <div className="hero__content hero__content--centered">
         <div className="hero__eyebrow">
           <span>{t('hero.eyebrowOne')}</span>
-          <span>{t('hero.eyebrowTwo')}</span>
+          <span>{t('brand.exclusiveMovement')}</span>
         </div>
         <h1 id="hero-title" className="hero__title" aria-label={t('hero.title')}>
           <span className="hero__line"><span className="hero__line-inner">{t('hero.lineOne')}</span></span>

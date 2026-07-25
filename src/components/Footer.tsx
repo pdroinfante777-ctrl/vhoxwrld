@@ -21,7 +21,10 @@ export function Footer() {
       <span className="site-footer__rule" aria-hidden="true" />
       <div className="site-footer__intro">
         <a href="/#top" aria-label={t('nav.homeLabel')}><BrandMark /></a>
-        <p>JUST BE YOURSELF.</p>
+        <div className="site-footer__signature">
+          <p>JUST BE YOURSELF.</p>
+          <span>{t('footer.movement')}</span>
+        </div>
       </div>
       <div className="site-footer__monument" aria-hidden="true">VHOX</div>
 
