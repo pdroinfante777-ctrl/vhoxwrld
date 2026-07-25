@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from 'react'
 import { useSectionMotion } from '../animations/useSectionMotion'
 import { SectionHeading } from '../components/SectionHeading'
 import { lookbookFrames, type LookbookFrame } from '../data/lookbook'
+import { useLocale } from '../i18n/useLocale'
 
 function Lookbook() {
+  const { t } = useLocale()
   const sectionRef = useRef<HTMLElement>(null)
   const [activeFrame, setActiveFrame] = useState<LookbookFrame | null>(null)
   useSectionMotion(sectionRef)
@@ -27,9 +29,9 @@ function Lookbook() {
       <SectionHeading
         id="lookbook-title"
         index="05"
-        label="LOOKBOOK / FIELD STUDIES"
-        title="MOVEMENT, HELD IN FRAME."
-        description="The editorial layout is ready for approved VHOX photography and motion. Placeholders remain explicit until real assets enter the repository."
+        label={t('lookbook.label')}
+        title={t('lookbook.title')}
+        description={t('lookbook.description')}
       />
 
       <div className="lookbook__grid">
@@ -37,7 +39,7 @@ function Lookbook() {
           <figure className={`lookbook-frame lookbook-frame--${frame.format}`} key={frame.id} data-reveal>
             <div className="lookbook-frame__viewport">
               {frame.src ? (
-                <button type="button" className="lookbook-frame__media-button" onClick={() => setActiveFrame(frame)} aria-label={`Open ${frame.label}`}>
+                <button type="button" className="lookbook-frame__media-button" onClick={() => setActiveFrame(frame)} aria-label={t('lookbook.open', { label: frame.label })}>
                   {frame.mediaType === 'image' ? (
                     <img src={frame.src} alt={frame.alt} loading="lazy" decoding="async" data-parallax={frame.parallax} />
                   ) : (
@@ -48,7 +50,7 @@ function Lookbook() {
                 <div className={`lookbook-frame__placeholder lookbook-frame__placeholder--${index + 1}`} data-parallax={frame.parallax} aria-hidden="true">
                   <span className="lookbook-frame__cross" />
                   <span className="lookbook-frame__index">{String(index + 1).padStart(2, '0')}</span>
-                  <span className="lookbook-frame__stamp">VHOX / APPROVED MEDIA PENDING</span>
+                  <span className="lookbook-frame__stamp">{t('lookbook.pending')}</span>
                 </div>
               )}
             </div>
@@ -62,7 +64,7 @@ function Lookbook() {
           if (event.target === event.currentTarget) setActiveFrame(null)
         }}>
           <div role="dialog" aria-modal="true" aria-label={activeFrame.label}>
-            <button type="button" onClick={() => setActiveFrame(null)} aria-label="Close lookbook media">CLOSE / ESC</button>
+            <button type="button" onClick={() => setActiveFrame(null)} aria-label={t('lookbook.closeLabel')}>{t('lookbook.close')}</button>
             {activeFrame.mediaType === 'image' ? (
               <img src={activeFrame.src} alt={activeFrame.alt} />
             ) : (

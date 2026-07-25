@@ -1,20 +1,23 @@
 import { SectionHeading } from '../components/SectionHeading'
+import { useLocale } from '../i18n/useLocale'
 
 const testimonialSlots = [
-  { index: 'T-01', label: 'VERIFIED VOICE', status: 'AWAITING APPROVED TESTIMONIAL' },
-  { index: 'T-02', label: 'FIELD RESPONSE', status: 'AWAITING APPROVED TESTIMONIAL' },
-  { index: 'T-03', label: 'COMMUNITY NOTE', status: 'AWAITING APPROVED TESTIMONIAL' },
-]
+  { index: 'T-01', labelKey: 'testimonials.voice' },
+  { index: 'T-02', labelKey: 'testimonials.response' },
+  { index: 'T-03', labelKey: 'testimonials.note' },
+] as const
 
 export function Testimonials() {
+  const { t } = useLocale()
+
   return (
     <section id="testimonials" className="testimonials section" aria-labelledby="testimonials-title">
       <SectionHeading
         id="testimonials-title"
         index="09"
-        label="TESTIMONIALS / RESERVED"
-        title="REAL SIGNAL. NO FICTION."
-        description="This modular field will only publish statements supplied or verified by VHOX. No names, ratings or endorsements have been fabricated."
+        label={t('testimonials.label')}
+        title={t('testimonials.title')}
+        description={t('testimonials.description')}
       />
 
       <div className="testimonials__grid">
@@ -22,8 +25,8 @@ export function Testimonials() {
           <article key={slot.index} className="testimonial-slot" data-reveal>
             <span>{slot.index}</span>
             <div className="testimonial-slot__mark" aria-hidden="true">“</div>
-            <p>{slot.status}</p>
-            <footer>{slot.label}</footer>
+            <p>{t('testimonials.pending')}</p>
+            <footer>{t(slot.labelKey)}</footer>
           </article>
         ))}
       </div>

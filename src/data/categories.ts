@@ -1,6 +1,15 @@
-export const categories = [
-  { index: '01', name: 'T-SHIRTS', state: 'CUSTOM GRAPHIC GARMENTS', visual: 'shirt' },
-  { index: '02', name: 'CAPS', state: 'HEADWEAR / FUTURE MEDIA', visual: 'cap' },
-  { index: '03', name: 'FOOTWEAR', state: 'FUTURE DEVELOPMENT', visual: 'shoe' },
-  { index: '04', name: 'FUTURE DROPS', state: 'NEW FORMS / NO DATE SET', visual: 'future' },
+import type { TranslationKey } from '../i18n/translations'
+
+export type CategoryVisualName = 'shirt' | 'cap' | 'shoe' | 'future'
+
+export const categories: {
+  index: string
+  nameKey: TranslationKey
+  stateKey: TranslationKey
+  visual: CategoryVisualName
+}[] = [
+  { index: '01', nameKey: 'categories.shirt.name', stateKey: 'categories.shirt.state', visual: 'shirt' },
+  { index: '02', nameKey: 'categories.cap.name', stateKey: 'categories.cap.state', visual: 'cap' },
+  { index: '03', nameKey: 'categories.shoe.name', stateKey: 'categories.shoe.state', visual: 'shoe' },
+  { index: '04', nameKey: 'categories.future.name', stateKey: 'categories.future.state', visual: 'future' },
 ] as const

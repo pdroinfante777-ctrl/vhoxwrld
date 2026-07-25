@@ -1,9 +1,9 @@
 import type { ParticleShape } from './particleShapes'
 
 type SampledPath = {
-  element: SVGPathElement
   length: number
   weightedLength: number
+  samples: Float32Array
 }
 
 function seededRandom(seed: number) {
@@ -30,19 +30,28 @@ function createSampledPaths(shape: ParticleShape) {
     element.setAttribute('d', path.d)
     container.append(element)
     const length = element.getTotalLength()
+    const sampleCount = Math.max(48, Math.min(512, Math.ceil(length / 3)))
+    const samples = new Float32Array((sampleCount + 1) * 2)
+
+    for (let index = 0; index <= sampleCount; index += 1) {
+      const point = element.getPointAtLength((index / sampleCount) * length)
+      samples[index * 2] = point.x
+      samples[index * 2 + 1] = point.y
+    }
 
     return {
-      element,
       length,
       weightedLength: length * (path.weight ?? 1),
+      samples,
     }
   })
 
-  return { container, paths }
+  container.remove()
+  return paths
 }
 
 export function sampleParticleShape(shape: ParticleShape, count: number, seed: number) {
-  const { container, paths } = createSampledPaths(shape)
+  const paths = createSampledPaths(shape)
   const totalWeightedLength = paths.reduce((total, path) => total + path.weightedLength, 0)
   const [viewBoxX, viewBoxY, viewBoxWidth, viewBoxHeight] = shape.viewBox
   const centerX = viewBoxX + viewBoxWidth * 0.5
@@ -52,32 +61,37 @@ export function sampleParticleShape(shape: ParticleShape, count: number, seed: n
   const goldenSelector = 0.618033988749895
   const goldenDistance = 0.754877666246693
 
-  try {
-    for (let index = 0; index < count; index += 1) {
-      const offset = index * 3
-      let selector = ((index * goldenSelector + random() * 0.035) % 1) * totalWeightedLength
-      let selectedPath = paths[paths.length - 1]
+  for (let index = 0; index < count; index += 1) {
+    const offset = index * 3
+    let selector = ((index * goldenSelector + random() * 0.035) % 1) * totalWeightedLength
+    let selectedPath = paths[paths.length - 1]
 
-      for (const path of paths) {
-        if (selector <= path.weightedLength) {
-          selectedPath = path
-          break
-        }
-
-        selector -= path.weightedLength
+    for (const path of paths) {
+      if (selector <= path.weightedLength) {
+        selectedPath = path
+        break
       }
 
-      const distance = ((index * goldenDistance + random() * 0.045) % 1) * selectedPath.length
-      const point = selectedPath.element.getPointAtLength(distance)
-      const jitterX = (random() - 0.5) * shape.jitter
-      const jitterY = (random() - 0.5) * shape.jitter
-
-      positions[offset] = ((point.x - centerX) / viewBoxWidth) * shape.worldWidth + jitterX
-      positions[offset + 1] = -((point.y - centerY) / viewBoxWidth) * shape.worldWidth + jitterY
-      positions[offset + 2] = (random() - 0.5) * 0.11
+      selector -= path.weightedLength
     }
-  } finally {
-    container.remove()
+
+    const normalizedDistance = (index * goldenDistance + random() * 0.045) % 1
+    const sampleCount = selectedPath.samples.length / 2 - 1
+    const samplePosition = normalizedDistance * sampleCount
+    const sampleIndex = Math.min(sampleCount - 1, Math.floor(samplePosition))
+    const sampleMix = samplePosition - sampleIndex
+    const sampleOffset = sampleIndex * 2
+    const nextOffset = sampleOffset + 2
+    const pointX = selectedPath.samples[sampleOffset]
+      + (selectedPath.samples[nextOffset] - selectedPath.samples[sampleOffset]) * sampleMix
+    const pointY = selectedPath.samples[sampleOffset + 1]
+      + (selectedPath.samples[nextOffset + 1] - selectedPath.samples[sampleOffset + 1]) * sampleMix
+    const jitterX = (random() - 0.5) * shape.jitter
+    const jitterY = (random() - 0.5) * shape.jitter
+
+    positions[offset] = ((pointX - centerX) / viewBoxWidth) * shape.worldWidth + jitterX
+    positions[offset + 1] = -((pointY - centerY) / viewBoxWidth) * shape.worldWidth + jitterY
+    positions[offset + 2] = (random() - 0.5) * 0.11
   }
 
   return positions
@@ -87,20 +101,20 @@ export function sortParticleField(positions: Float32Array, colors?: Float32Array
   const count = positions.length / 3
   const sectorCount = 96
   const indexes = Array.from({ length: count }, (_, index) => index)
+  const sectors = new Uint8Array(count)
+  const radii = new Float32Array(count)
+
+  for (let index = 0; index < count; index += 1) {
+    const offset = index * 3
+    const angle = Math.atan2(positions[offset + 1], positions[offset])
+    sectors[index] = Math.min(sectorCount - 1, Math.floor(((angle + Math.PI) / (Math.PI * 2)) * sectorCount))
+    radii[index] = Math.hypot(positions[offset], positions[offset + 1])
+  }
 
   indexes.sort((first, second) => {
-    const firstOffset = first * 3
-    const secondOffset = second * 3
-    const firstAngle = Math.atan2(positions[firstOffset + 1], positions[firstOffset])
-    const secondAngle = Math.atan2(positions[secondOffset + 1], positions[secondOffset])
-    const firstSector = Math.floor(((firstAngle + Math.PI) / (Math.PI * 2)) * sectorCount)
-    const secondSector = Math.floor(((secondAngle + Math.PI) / (Math.PI * 2)) * sectorCount)
+    if (sectors[first] !== sectors[second]) return sectors[first] - sectors[second]
 
-    if (firstSector !== secondSector) return firstSector - secondSector
-
-    const firstRadius = Math.hypot(positions[firstOffset], positions[firstOffset + 1])
-    const secondRadius = Math.hypot(positions[secondOffset], positions[secondOffset + 1])
-    return firstRadius - secondRadius
+    return radii[first] - radii[second]
   })
 
   const sortedPositions = new Float32Array(positions.length)

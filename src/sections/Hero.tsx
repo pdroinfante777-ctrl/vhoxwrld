@@ -2,12 +2,14 @@ import { useEffect, useRef } from 'react'
 import { gsap } from '../animations/gsap'
 import { ArrowIcon } from '../components/ArrowIcon'
 import { heroCampaignMedia } from '../data/campaign'
+import { useLocale } from '../i18n/useLocale'
 
 type HeroProps = {
   reducedMotion: boolean
 }
 
 export function Hero({ reducedMotion }: HeroProps) {
+  const { t } = useLocale()
   const sectionRef = useRef<HTMLElement>(null)
   const glowRef = useRef<HTMLDivElement>(null)
 
@@ -50,7 +52,7 @@ export function Hero({ reducedMotion }: HeroProps) {
           <div className="hero__garment-study" data-parallax="3">
             <span className="hero__garment-outline" />
             <span className="hero__garment-thread" />
-            <span className="hero__garment-label">CAMPAIGN PHOTOGRAPHY PENDING</span>
+            <span className="hero__garment-label">{t('product.mediaPending')}</span>
           </div>
         </div>
       )}
@@ -58,22 +60,22 @@ export function Hero({ reducedMotion }: HeroProps) {
 
       <div className="hero__content hero__content--centered">
         <div className="hero__eyebrow">
-          <span>VHOX WRLD / MOVEMENT 001</span>
-          <span>CUSTOM GARMENTS — GLOBAL MOVEMENT</span>
+          <span>{t('hero.eyebrowOne')}</span>
+          <span>{t('hero.eyebrowTwo')}</span>
         </div>
-        <h1 id="hero-title" className="hero__title" aria-label="Who move first.">
-          <span className="hero__line"><span className="hero__line-inner">WHO MOVE</span></span>
-          <span className="hero__line"><span className="hero__line-inner">FIRST.</span></span>
+        <h1 id="hero-title" className="hero__title" aria-label={t('hero.title')}>
+          <span className="hero__line"><span className="hero__line-inner">{t('hero.lineOne')}</span></span>
+          <span className="hero__line"><span className="hero__line-inner">{t('hero.lineTwo')}</span></span>
         </h1>
-        <p className="hero__support">FOR THE ONES WHO CREATE THE MOVEMENT.</p>
+        <p className="hero__support">{t('hero.support')}</p>
         <div className="hero__actions">
-          <a className="button button--primary" href="#collection">VER COLECCIÓN <ArrowIcon /></a>
-          <a className="text-link" href="#manifesto">LEER MANIFIESTO</a>
+          <a className="button button--primary" href="#collection">{t('hero.collection')} <ArrowIcon /></a>
+          <a className="text-link" href="#manifesto">{t('hero.manifesto')}</a>
         </div>
       </div>
 
       <div className="hero__system" aria-hidden="true">
-        <span>SCROLL TO INITIATE</span>
+        <span>{t('hero.scroll')}</span>
         <span className="hero__scroll-line" />
         <span>01 / 07</span>
       </div>

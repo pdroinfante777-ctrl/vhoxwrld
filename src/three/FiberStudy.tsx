@@ -11,6 +11,8 @@ import {
 } from 'three'
 import { ScrollTrigger } from '../animations/gsap'
 import { useReducedMotion } from '../hooks/useReducedMotion'
+import { useLocale } from '../i18n/useLocale'
+import { fiberStages } from './fiberStages'
 import { sampleParticleShape, sortParticleField } from './particleShapeSampler'
 import {
   garmentShapes,
@@ -24,21 +26,9 @@ const batReferenceSource = '/brand/vhox-bat-particle-source.png'
 const batWorldWidth = 6.35
 const particleFieldHeight = 4.95
 
-const stages = [
-  { index: '01', name: 'VHOX BAT', detail: 'OFFICIAL SILHOUETTE / PARTICLE FIELD' },
-  { index: '02', name: 'T-SHIRT FORM', detail: 'BOXY CUT / DROPPED SHOULDER / PREMIUM OUTLINE' },
-  { index: '03', name: 'CAP FORM', detail: 'STRUCTURED CROWN / CURVED BRIM / PREMIUM OUTLINE' },
-  { index: '04', name: 'HOODIE FORM', detail: 'HEAVYWEIGHT FRAME / DOUBLE HOOD / PREMIUM OUTLINE' },
-  { index: '05', name: 'VHOX SIGNAL', detail: 'MOVEMENT CONDENSED INTO A MARK' },
-]
-
-type PixelCandidate = {
-  x: number
-  y: number
-  red: number
-  green: number
-  blue: number
-}
+const stageScale = [1, 0.93, 0.91, 0.9, 0.97]
+const stageOffsetX = [0, 0.02, 0.025, 0.02, 0.01]
+const stageOffsetY = [0, -0.01, 0.025, -0.015, 0]
 
 type BatSample = {
   positions: Float32Array
@@ -59,6 +49,18 @@ type MotionField = {
   driftY: Float32Array
 }
 
+type ParticleProfile = ReturnType<typeof getParticleProfile>
+
+type PreparedFiberResources = {
+  profile: ParticleProfile
+  targets: Float32Array[]
+  colors: Float32Array
+  motion: MotionField
+  preparationMs: number
+}
+
+let preparedResources: { key: string; promise: Promise<PreparedFiberResources> } | null = null
+
 function seededRandom(seed: number) {
   let value = seed % 2147483647
   return () => {
@@ -78,7 +80,7 @@ function loadReferenceImage(source: string) {
 }
 
 function sampleBatSilhouette(image: HTMLImageElement, count: number): BatSample {
-  const width = 768
+  const width = 512
   const height = Math.max(1, Math.round(width * (image.naturalHeight / image.naturalWidth)))
   const samplingCanvas = document.createElement('canvas')
   samplingCanvas.width = width
@@ -93,7 +95,7 @@ function sampleBatSilhouette(image: HTMLImageElement, count: number): BatSample 
 
   const pixels = context.getImageData(0, 0, width, height).data
   const mask = new Uint8Array(width * height)
-  const candidates: PixelCandidate[] = []
+  const candidates: number[] = []
   let minimumX = width
   let maximumX = 0
   let minimumY = height
@@ -111,7 +113,7 @@ function sampleBatSilhouette(image: HTMLImageElement, count: number): BatSample 
       if (!belongsToMark) continue
 
       mask[y * width + x] = 1
-      candidates.push({ x, y, red, green, blue })
+      candidates.push(y * width + x)
       minimumX = Math.min(minimumX, x)
       maximumX = Math.max(maximumX, x)
       minimumY = Math.min(minimumY, y)
@@ -121,8 +123,9 @@ function sampleBatSilhouette(image: HTMLImageElement, count: number): BatSample 
 
   if (candidates.length < 100) throw new Error('The VHOX bat silhouette could not be sampled')
 
-  const edgeCandidates = candidates.filter(({ x, y }) => {
-    const index = y * width + x
+  const edgeCandidates = candidates.filter((index) => {
+    const x = index % width
+    const y = Math.floor(index / width)
     return x === 0
       || x === width - 1
       || y === 0
@@ -144,13 +147,15 @@ function sampleBatSilhouette(image: HTMLImageElement, count: number): BatSample 
     const offset = index * 3
     const useEdge = edgeCandidates.length > 0 && random() < 0.48
     const pool = useEdge ? edgeCandidates : candidates
-    const candidate = pool[Math.floor(random() * pool.length)]
+    const candidateIndex = pool[Math.floor(random() * pool.length)]
+    const candidateX = candidateIndex % width
+    const candidateY = Math.floor(candidateIndex / width)
     const jitterX = (random() - 0.5) * 0.36
     const jitterY = (random() - 0.5) * 0.36
     const brightness = 0.72 + random() * 0.26
 
-    positions[offset] = ((candidate.x + jitterX - centerX) / silhouetteWidth) * batWorldWidth
-    positions[offset + 1] = -((candidate.y + jitterY - centerY) / silhouetteWidth) * batWorldWidth
+    positions[offset] = ((candidateX + jitterX - centerX) / silhouetteWidth) * batWorldWidth
+    positions[offset + 1] = -((candidateY + jitterY - centerY) / silhouetteWidth) * batWorldWidth
     positions[offset + 2] = (random() - 0.5) * 0.075
 
     colors[offset] = (0x7c / 255) * brightness
@@ -202,7 +207,7 @@ function getParticleProfile() {
 
   if (phone) {
     return {
-      count: constrained ? 4300 : 5800,
+      count: constrained ? 3600 : 5000,
       pointSize: 0.0145,
       maximumPixelRatio: 1.5,
     }
@@ -210,17 +215,54 @@ function getParticleProfile() {
 
   if (tablet) {
     return {
-      count: constrained ? 6800 : 9200,
+      count: constrained ? 6000 : 8500,
       pointSize: 0.012,
       maximumPixelRatio: 1.75,
     }
   }
 
   return {
-    count: constrained ? 11000 : 16000,
+    count: constrained ? 9500 : 14000,
     pointSize: 0.0105,
     maximumPixelRatio: 2,
   }
+}
+
+function profileKey(profile: ParticleProfile) {
+  return `${profile.count}:${profile.pointSize}:${profile.maximumPixelRatio}`
+}
+
+async function prepareFiberResources(profile = getParticleProfile()): Promise<PreparedFiberResources> {
+  const key = profileKey(profile)
+  if (preparedResources?.key === key) return preparedResources.promise
+
+  const promise = (async () => {
+    const startedAt = performance.now()
+    const image = await loadReferenceImage(batReferenceSource)
+    const sampledBat = sampleBatSilhouette(image, profile.count)
+    const batSample = sortParticleField(sampledBat.positions, sampledBat.colors)
+    const targets = createTargets(profile.count, batSample.positions)
+
+    return {
+      profile,
+      targets,
+      colors: batSample.colors ?? sampledBat.colors,
+      motion: createMotionField(profile.count),
+      preparationMs: performance.now() - startedAt,
+    }
+  })()
+
+  preparedResources = { key, promise }
+  return promise
+}
+
+// This named export lets App warm the same cached resources before the lazy component mounts.
+// eslint-disable-next-line react-refresh/only-export-components
+export const fiberStudyPreloader = {
+  async preload() {
+    if (typeof window === 'undefined' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    await prepareFiberResources()
+  },
 }
 
 function resolveMorphState(rawProgress: number, targetCount: number): MorphState {
@@ -312,6 +354,7 @@ function FiberFallback({ stage }: { stage: number }) {
 }
 
 function FiberStudy() {
+  const { t } = useLocale()
   const sectionRef = useRef<HTMLElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const reducedMotion = useReducedMotion()
@@ -340,6 +383,10 @@ function FiberStudy() {
     let pointerY = 0
     let layoutX = 0
     let layoutY = 0
+    let layoutScale = 1
+    let measuredFrames = 0
+    let measuredDuration = 0
+    let previousFrameTime = 0
     const precisePointer = window.matchMedia('(pointer: fine)').matches
 
     const onPointerMove = (event: PointerEvent) => {
@@ -351,14 +398,11 @@ function FiberStudy() {
 
     const setup = async () => {
       try {
-        const profile = getParticleProfile()
-        const image = await loadReferenceImage(batReferenceSource)
+        const setupStartedAt = performance.now()
+        const prepared = await prepareFiberResources()
         if (cancelled) return
 
-        const sampledBat = sampleBatSilhouette(image, profile.count)
-        const batSample = sortParticleField(sampledBat.positions, sampledBat.colors)
-        const targets = createTargets(profile.count, batSample.positions)
-        const motion = createMotionField(profile.count)
+        const { profile, targets, motion } = prepared
         const positions = targets[0].slice()
 
         try {
@@ -382,7 +426,7 @@ function FiberStudy() {
 
         geometry = new BufferGeometry()
         geometry.setAttribute('position', new BufferAttribute(positions, 3))
-        geometry.setAttribute('color', new BufferAttribute(batSample.colors ?? sampledBat.colors, 3))
+        geometry.setAttribute('color', new BufferAttribute(prepared.colors, 3))
 
         material = new PointsMaterial({
           color: 0xffffff,
@@ -397,6 +441,9 @@ function FiberStudy() {
 
         points = new Points(geometry, material)
         scene.add(points)
+        section.dataset.preparationMs = prepared.preparationMs.toFixed(1)
+        section.dataset.setupMs = (performance.now() - setupStartedAt).toFixed(1)
+        section.dataset.particleCount = String(profile.count)
 
         const resize = () => {
           if (!renderer || !camera || !points) return
@@ -407,7 +454,8 @@ function FiberStudy() {
           camera.updateProjectionMatrix()
 
           const layout = getResponsiveLayout(camera, bounds.width, bounds.height)
-          points.scale.setScalar(layout.scale)
+          layoutScale = layout.scale
+          points.scale.setScalar(layoutScale)
           layoutX = layout.x
           layoutY = layout.y
           points.position.set(layoutX, layoutY, 0)
@@ -447,6 +495,12 @@ function FiberStudy() {
           const fromIndex = Math.floor(progress)
           const toIndex = Math.min(targets.length - 1, fromIndex + 1)
           const mix = progress - fromIndex
+          const responsiveStageScale = stageScale[fromIndex]
+            + (stageScale[toIndex] - stageScale[fromIndex]) * mix
+          const responsiveOffsetX = stageOffsetX[fromIndex]
+            + (stageOffsetX[toIndex] - stageOffsetX[fromIndex]) * mix
+          const responsiveOffsetY = stageOffsetY[fromIndex]
+            + (stageOffsetY[toIndex] - stageOffsetY[fromIndex]) * mix
           const transitionDirection = fromIndex % 2 === 0 ? 1 : -1
           const cloudScale = 1 + transitionEnergy * 0.16
           const ambientX = Math.sin(time * 0.00055)
@@ -508,14 +562,26 @@ function FiberStudy() {
           }
 
           attribute.needsUpdate = true
-          points.position.x += ((layoutX + pointerX * 0.08) - points.position.x) * 0.04
-          points.position.y += ((layoutY - pointerY * 0.05 + Math.sin(time * 0.00048) * 0.018) - points.position.y) * 0.04
+          points.scale.x += ((layoutScale * responsiveStageScale) - points.scale.x) * 0.05
+          points.scale.y = points.scale.x
+          points.scale.z = points.scale.x
+          points.position.x += ((layoutX + responsiveOffsetX + pointerX * 0.08) - points.position.x) * 0.04
+          points.position.y += ((layoutY + responsiveOffsetY - pointerY * 0.05 + Math.sin(time * 0.00048) * 0.018) - points.position.y) * 0.04
           points.rotation.y += ((pointerX * 0.055 + progress * 0.012 + transitionEnergy * 0.045 * transitionDirection) - points.rotation.y) * 0.025
           points.rotation.x += ((-pointerY * 0.035) - points.rotation.x) * 0.025
           points.rotation.z = Math.sin(time * 0.00022) * 0.0045 + transitionEnergy * 0.012 * transitionDirection
           material.opacity = 0.89 + Math.sin(time * 0.0007) * 0.03 - transitionEnergy * 0.045
 
           renderer.render(scene, camera)
+
+          if (previousFrameTime > 0 && measuredFrames < 180) {
+            measuredDuration += time - previousFrameTime
+            measuredFrames += 1
+            if (measuredFrames === 180 && measuredDuration > 0) {
+              section.dataset.averageFps = ((measuredFrames * 1000) / measuredDuration).toFixed(1)
+            }
+          }
+          previousFrameTime = time
           frame = window.requestAnimationFrame(render)
         }
 
@@ -552,7 +618,7 @@ function FiberStudy() {
       start: 'top top',
       end: 'bottom bottom',
       onUpdate: (self) => {
-        setActiveStage(Math.min(stages.length - 1, Math.round(self.progress * (stages.length - 1))))
+        setActiveStage(Math.min(fiberStages.length - 1, Math.round(self.progress * (fiberStages.length - 1))))
       },
     })
 
@@ -563,21 +629,21 @@ function FiberStudy() {
     <section ref={sectionRef} id="fiber-study" className="fiber-study" aria-labelledby="fiber-study-title">
       <div className="fiber-study__sticky">
         <div className="fiber-study__header">
-          <span>02 / FIBER STUDY</span>
-          <p>AN ABSTRACT MOTION STUDY. PROCEDURAL FORMS DO NOT REPRESENT PRODUCTS FOR SALE.</p>
+          <span>{t('fiber.label')}</span>
+          <p>{t('fiber.note')}</p>
         </div>
         <div className="fiber-study__stage">
           {!useFallback && <canvas ref={canvasRef} className="fiber-study__canvas" aria-hidden="true" />}
           {useFallback && <FiberFallback stage={activeStage} />}
           <div className="fiber-study__copy" aria-live="polite">
-            <span>{stages[activeStage].index} / 05</span>
-            <h2 id="fiber-study-title">{stages[activeStage].name}</h2>
-            <p>{stages[activeStage].detail}</p>
+            <span>{fiberStages[activeStage].index} / 05</span>
+            <h2 id="fiber-study-title">{t(fiberStages[activeStage].nameKey)}</h2>
+            <p>{t(fiberStages[activeStage].detailKey)}</p>
           </div>
-          <ol className="fiber-study__timeline" aria-label="Fiber study stages">
-            {stages.map((stage, index) => (
+          <ol className="fiber-study__timeline" aria-label={t('fiber.timeline')}>
+            {fiberStages.map((stage, index) => (
               <li key={stage.index} className={activeStage === index ? 'is-active' : ''}>
-                <span>{stage.index}</span>{stage.name}
+                <span>{stage.index}</span>{t(stage.nameKey)}
               </li>
             ))}
           </ol>

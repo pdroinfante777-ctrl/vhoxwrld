@@ -506,19 +506,28 @@
 .category-row__form {
   position: absolute;
   right: 8%;
-  width: 9rem;
-  aspect-ratio: 1;
-  transform: translateY(65%) rotate(12deg);
-  opacity: 0;
-  background: var(--color-black);
-  clip-path: polygon(30% 0, 70% 0, 100% 28%, 78% 48%, 70% 38%, 70% 100%, 30% 100%, 30% 38%, 22% 48%, 0 28%);
+  width: clamp(8rem, 13vw, 13rem);
+  height: auto;
+  transform: translateY(12%) rotate(3deg);
+  opacity: 0.055;
+  fill: none;
+  stroke: var(--color-black);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.6;
   transition: transform 550ms var(--ease-out), opacity 350ms ease;
 }
 
-.category-row--cap .category-row__form { clip-path: ellipse(47% 34% at 45% 47%); }
-.category-row--shoe .category-row__form { clip-path: polygon(5% 46%, 32% 25%, 52% 56%, 95% 65%, 100% 88%, 10% 88%); }
-.category-row--future .category-row__form { clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
-.category-row:hover .category-row__form { transform: translateY(0) rotate(0); opacity: 0.1; }
+.category-visual__detail {
+  opacity: 0.42;
+  stroke-width: 1.25;
+}
+
+.category-row:hover .category-row__form,
+.category-row:focus-visible .category-row__form {
+  transform: translateY(0) rotate(0);
+  opacity: 0.2;
+}
 
 .collection__grid {
   display: grid;
@@ -1355,7 +1364,11 @@
 @media (hover: none), (pointer: coarse) {
   .hero__cursor-glow { display: none; }
   .product-card:hover .product-card__visual { transform: none; }
-  .category-row .category-row__form { display: none; }
+  .category-row .category-row__form {
+    display: block;
+    transform: none;
+    opacity: 0.1;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
