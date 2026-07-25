@@ -25,10 +25,10 @@ const batWorldWidth = 6.35
 const particleFieldHeight = 4.95
 
 const stages = [
-  { index: '01', name: 'T-SHIRT FORM', detail: 'BOXY CUT / DROPPED SHOULDER / PREMIUM OUTLINE' },
-  { index: '02', name: 'CAP FORM', detail: 'STRUCTURED CROWN / CURVED BRIM / PREMIUM OUTLINE' },
-  { index: '03', name: 'HOODIE FORM', detail: 'HEAVYWEIGHT FRAME / DOUBLE HOOD / PREMIUM OUTLINE' },
-  { index: '04', name: 'VHOX BAT', detail: 'OFFICIAL SILHOUETTE / PARTICLE FIELD' },
+  { index: '01', name: 'VHOX BAT', detail: 'OFFICIAL SILHOUETTE / PARTICLE FIELD' },
+  { index: '02', name: 'T-SHIRT FORM', detail: 'BOXY CUT / DROPPED SHOULDER / PREMIUM OUTLINE' },
+  { index: '03', name: 'CAP FORM', detail: 'STRUCTURED CROWN / CURVED BRIM / PREMIUM OUTLINE' },
+  { index: '04', name: 'HOODIE FORM', detail: 'HEAVYWEIGHT FRAME / DOUBLE HOOD / PREMIUM OUTLINE' },
   { index: '05', name: 'VHOX SIGNAL', detail: 'MOVEMENT CONDENSED INTO A MARK' },
 ]
 
@@ -184,10 +184,10 @@ function createMotionField(count: number): MotionField {
 
 function createTargets(count: number, bat: Float32Array) {
   return [
+    bat,
     sortParticleField(sampleParticleShape(premiumTshirt, count, 1307)).positions,
     sortParticleField(sampleParticleShape(premiumCap, count, 2307)).positions,
     sortParticleField(sampleParticleShape(premiumHoodie, count, 3307)).positions,
-    bat,
     sortParticleField(sampleParticleShape(vhoxWordmark, count, 4307)).positions,
   ]
 }
@@ -202,23 +202,23 @@ function getParticleProfile() {
 
   if (phone) {
     return {
-      count: constrained ? 3800 : 5000,
-      pointSize: 0.0155,
+      count: constrained ? 4300 : 5800,
+      pointSize: 0.0145,
       maximumPixelRatio: 1.5,
     }
   }
 
   if (tablet) {
     return {
-      count: constrained ? 6000 : 8000,
-      pointSize: 0.013,
+      count: constrained ? 6800 : 9200,
+      pointSize: 0.012,
       maximumPixelRatio: 1.75,
     }
   }
 
   return {
-    count: constrained ? 9800 : 14000,
-    pointSize: 0.011,
+    count: constrained ? 11000 : 16000,
+    pointSize: 0.0105,
     maximumPixelRatio: 2,
   }
 }
@@ -290,7 +290,7 @@ function getResponsiveLayout(camera: PerspectiveCamera, width: number, height: n
 }
 
 function FiberFallback({ stage }: { stage: number }) {
-  if (stage === 3) {
+  if (stage === 0) {
     return (
       <div className="fiber-study__fallback" aria-hidden="true">
         <img src={batReferenceSource} alt="" />
@@ -298,7 +298,7 @@ function FiberFallback({ stage }: { stage: number }) {
     )
   }
 
-  const shape = stage === 4 ? vhoxWordmark : garmentShapes[Math.min(stage, garmentShapes.length - 1)]
+  const shape = stage === 4 ? vhoxWordmark : garmentShapes[Math.min(stage - 1, garmentShapes.length - 1)]
 
   return (
     <div className="fiber-study__fallback" aria-hidden="true">
@@ -448,7 +448,7 @@ function FiberStudy() {
           const toIndex = Math.min(targets.length - 1, fromIndex + 1)
           const mix = progress - fromIndex
           const transitionDirection = fromIndex % 2 === 0 ? 1 : -1
-          const cloudScale = 1 + transitionEnergy * 0.12
+          const cloudScale = 1 + transitionEnergy * 0.16
           const ambientX = Math.sin(time * 0.00055)
           const ambientY = Math.cos(time * 0.00048)
           const from = targets[fromIndex]
@@ -471,21 +471,36 @@ function FiberStudy() {
             const baseZ = from[offset + 2] + (to[offset + 2] - from[offset + 2]) * particleMix
             const twist = transitionEnergy
               * transitionDirection
-              * (0.16 + motion.strength[particleIndex] * 0.16)
+              * (0.18 + motion.strength[particleIndex] * 0.2)
               * motion.direction[particleIndex]
             const rotatedX = (baseX - baseY * twist) * cloudScale
             const rotatedY = (baseY + baseX * twist) * cloudScale
-            const orbitAmplitude = 0.008 + transitionEnergy * (0.055 + motion.strength[particleIndex] * 0.09)
-            const noiseAmplitude = 0.004 + transitionEnergy * 0.024
+            const radius = Math.max(0.001, Math.hypot(baseX, baseY))
+            const radialX = baseX / radius
+            const radialY = baseY / radius
+            const tangentX = -radialY * transitionDirection
+            const tangentY = radialX * transitionDirection
+            const vortexAmplitude = transitionEnergy
+              * (0.06 + motion.strength[particleIndex] * 0.13)
+              * (0.35 + Math.abs(orbitSine) * 0.65)
+            const releaseAmplitude = transitionEnergy
+              * (0.025 + motion.strength[particleIndex] * 0.07)
+              * orbitCosine
+            const orbitAmplitude = 0.012 + transitionEnergy * (0.07 + motion.strength[particleIndex] * 0.11)
+            const noiseAmplitude = 0.006 + transitionEnergy * 0.032
             const desiredX = rotatedX
               + orbitCosine * orbitAmplitude
+              + tangentX * vortexAmplitude
+              + radialX * releaseAmplitude
               + motion.driftX[particleIndex] * ambientX * noiseAmplitude
             const desiredY = rotatedY
               + orbitSine * orbitAmplitude
+              + tangentY * vortexAmplitude
+              + radialY * releaseAmplitude
               + motion.driftY[particleIndex] * ambientY * noiseAmplitude
             const desiredZ = baseZ
-              + orbitSine * transitionEnergy * 0.19
-            const damping = 0.11 + transitionEnergy * 0.015
+              + orbitSine * transitionEnergy * (0.16 + motion.strength[particleIndex] * 0.08)
+            const damping = 0.105 + transitionEnergy * 0.018
 
             array[offset] += (desiredX - array[offset]) * damping
             array[offset + 1] += (desiredY - array[offset + 1]) * damping
@@ -495,10 +510,10 @@ function FiberStudy() {
           attribute.needsUpdate = true
           points.position.x += ((layoutX + pointerX * 0.08) - points.position.x) * 0.04
           points.position.y += ((layoutY - pointerY * 0.05 + Math.sin(time * 0.00048) * 0.018) - points.position.y) * 0.04
-          points.rotation.y += ((pointerX * 0.055 + progress * 0.012 + transitionEnergy * 0.035 * transitionDirection) - points.rotation.y) * 0.025
+          points.rotation.y += ((pointerX * 0.055 + progress * 0.012 + transitionEnergy * 0.045 * transitionDirection) - points.rotation.y) * 0.025
           points.rotation.x += ((-pointerY * 0.035) - points.rotation.x) * 0.025
-          points.rotation.z = Math.sin(time * 0.00022) * 0.0035 + transitionEnergy * 0.008 * transitionDirection
-          material.opacity = 0.89 + Math.sin(time * 0.0007) * 0.025 - transitionEnergy * 0.035
+          points.rotation.z = Math.sin(time * 0.00022) * 0.0045 + transitionEnergy * 0.012 * transitionDirection
+          material.opacity = 0.89 + Math.sin(time * 0.0007) * 0.03 - transitionEnergy * 0.045
 
           renderer.render(scene, camera)
           frame = window.requestAnimationFrame(render)
