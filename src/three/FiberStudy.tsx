@@ -11,15 +11,24 @@ import {
 } from 'three'
 import { ScrollTrigger } from '../animations/gsap'
 import { useReducedMotion } from '../hooks/useReducedMotion'
+import { sampleParticleShape, sortParticleField } from './particleShapeSampler'
+import {
+  garmentShapes,
+  premiumCap,
+  premiumHoodie,
+  premiumTshirt,
+  vhoxWordmark,
+} from './particleShapes'
 
 const batReferenceSource = '/brand/vhox-bat-particle-source.png'
 const batWorldWidth = 6.35
 
 const stages = [
-  { index: '01', name: 'VHOX BAT SIGNAL', detail: 'OFFICIAL SILHOUETTE / PARTICLE FIELD' },
-  { index: '02', name: 'T-SHIRT FORM', detail: 'PROCEDURAL SILHOUETTE / NOT A PRODUCT' },
-  { index: '03', name: 'CAP FORM', detail: 'PROCEDURAL SILHOUETTE / NOT A PRODUCT' },
-  { index: '04', name: 'VHOX SIGNAL', detail: 'MOVEMENT CONDENSED INTO A MARK' },
+  { index: '01', name: 'T-SHIRT FORM', detail: 'BOXY CUT / DROPPED SHOULDER / PREMIUM OUTLINE' },
+  { index: '02', name: 'CAP FORM', detail: 'STRUCTURED CROWN / CURVED BRIM / PREMIUM OUTLINE' },
+  { index: '03', name: 'HOODIE FORM', detail: 'HEAVYWEIGHT FRAME / DOUBLE HOOD / PREMIUM OUTLINE' },
+  { index: '04', name: 'VHOX BAT', detail: 'OFFICIAL SILHOUETTE / PARTICLE FIELD' },
+  { index: '05', name: 'VHOX SIGNAL', detail: 'MOVEMENT CONDENSED INTO A MARK' },
 ]
 
 type PixelCandidate = {
@@ -138,43 +147,13 @@ function sampleBatSilhouette(image: HTMLImageElement, count: number): BatSample 
 }
 
 function createTargets(count: number, bat: Float32Array) {
-  const random = seededRandom(1307)
-  const shirt = new Float32Array(count * 3)
-  const cap = new Float32Array(count * 3)
-  const signal = new Float32Array(count * 3)
-  const letterSegments = [
-    [[-3.2, 1], [-2.7, -1]], [[-2.7, -1], [-2.2, 1]],
-    [[-1.7, 1], [-1.7, -1]], [[-0.7, 1], [-0.7, -1]], [[-1.7, 0], [-0.7, 0]],
-    [[0.1, 0.9], [0.1, -0.9]], [[0.1, 0.9], [1.1, 0.9]], [[1.1, 0.9], [1.1, -0.9]], [[0.1, -0.9], [1.1, -0.9]],
-    [[1.8, 1], [3.1, -1]], [[3.1, 1], [1.8, -1]],
+  return [
+    sortParticleField(sampleParticleShape(premiumTshirt, count, 1307)).positions,
+    sortParticleField(sampleParticleShape(premiumCap, count, 2307)).positions,
+    sortParticleField(sampleParticleShape(premiumHoodie, count, 3307)).positions,
+    bat,
+    sortParticleField(sampleParticleShape(vhoxWordmark, count, 4307)).positions,
   ]
-
-  for (let index = 0; index < count; index += 1) {
-    const offset = index * 3
-    const shirtY = random() * 3.2 - 1.6
-    const upper = shirtY > 0.48
-    const torsoWidth = 1.08 + (shirtY + 1.6) * 0.05
-    shirt[offset] = (random() - 0.5) * (upper ? 3.5 : torsoWidth * 2)
-    shirt[offset + 1] = shirtY
-    shirt[offset + 2] = (random() - 0.5) * 0.22
-    if (upper && Math.abs(shirt[offset]) > 1.1) shirt[offset + 1] -= Math.abs(shirt[offset]) * 0.28
-
-    const capX = (random() - 0.5) * 3.2
-    const normalizedX = Math.min(1, Math.abs(capX) / 1.65)
-    const capTop = Math.sqrt(1 - normalizedX * normalizedX) * 1.35
-    const inBrim = random() > 0.78
-    cap[offset] = inBrim ? 1.1 + random() * 1.5 : capX
-    cap[offset + 1] = inBrim ? -0.42 + random() * 0.24 : -0.42 + random() * capTop
-    cap[offset + 2] = (random() - 0.5) * (inBrim ? 0.18 : 0.48)
-
-    const segment = letterSegments[index % letterSegments.length]
-    const segmentProgress = random()
-    signal[offset] = segment[0][0] + (segment[1][0] - segment[0][0]) * segmentProgress + (random() - 0.5) * 0.05
-    signal[offset + 1] = segment[0][1] + (segment[1][1] - segment[0][1]) * segmentProgress + (random() - 0.5) * 0.05
-    signal[offset + 2] = (random() - 0.5) * 0.14
-  }
-
-  return [bat, shirt, cap, signal]
 }
 
 function getParticleProfile() {
@@ -182,10 +161,47 @@ function getParticleProfile() {
   const longestSide = Math.max(window.innerWidth, window.innerHeight)
   const phone = shortestSide <= 480 && longestSide <= 960
   const tablet = !phone && longestSide <= 1180
+  const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 4
+  const constrained = (navigator.hardwareConcurrency ?? 4) <= 4 || memory <= 3
 
-  if (phone) return { count: 6200, pointSize: 0.0175, maximumPixelRatio: 1.5 }
-  if (tablet) return { count: 8200, pointSize: 0.0145, maximumPixelRatio: 1.75 }
-  return { count: 11200, pointSize: 0.0125, maximumPixelRatio: 2 }
+  if (phone) {
+    return {
+      count: constrained ? 3400 : 4600,
+      minimumCount: 2600,
+      pointSize: 0.016,
+      maximumPixelRatio: 1.5,
+    }
+  }
+
+  if (tablet) {
+    return {
+      count: constrained ? 5400 : 7200,
+      minimumCount: 4400,
+      pointSize: 0.0135,
+      maximumPixelRatio: 1.75,
+    }
+  }
+
+  return {
+    count: constrained ? 8800 : 12000,
+    minimumCount: 7200,
+    pointSize: 0.0115,
+    maximumPixelRatio: 2,
+  }
+}
+
+function resolveMorphProgress(rawProgress: number, targetCount: number) {
+  const scaledProgress = Math.min(1, Math.max(0, rawProgress)) * (targetCount - 1)
+  const fromIndex = Math.min(targetCount - 1, Math.floor(scaledProgress))
+  const toIndex = Math.min(targetCount - 1, fromIndex + 1)
+
+  if (fromIndex === toIndex) return fromIndex
+
+  const localProgress = scaledProgress - fromIndex
+  const transitionProgress = Math.min(1, Math.max(0, (localProgress - 0.18) / 0.64))
+  const easedProgress = transitionProgress * transitionProgress * (3 - 2 * transitionProgress)
+
+  return fromIndex + easedProgress
 }
 
 function getResponsiveLayout(camera: PerspectiveCamera, width: number, height: number) {
@@ -230,10 +246,24 @@ function getResponsiveLayout(camera: PerspectiveCamera, width: number, height: n
   }
 }
 
-function FiberFallback() {
+function FiberFallback({ stage }: { stage: number }) {
+  if (stage === 3) {
+    return (
+      <div className="fiber-study__fallback" aria-hidden="true">
+        <img src={batReferenceSource} alt="" />
+      </div>
+    )
+  }
+
+  const shape = stage === 4 ? vhoxWordmark : garmentShapes[Math.min(stage, garmentShapes.length - 1)]
+
   return (
     <div className="fiber-study__fallback" aria-hidden="true">
-      <img src={batReferenceSource} alt="" />
+      <svg viewBox={shape.viewBox.join(' ')} role="presentation">
+        {shape.paths.map((path, index) => (
+          <path key={`${path.d}-${index}`} d={path.d} />
+        ))}
+      </svg>
     </div>
   )
 }
@@ -244,6 +274,7 @@ function FiberStudy() {
   const reducedMotion = useReducedMotion()
   const [activeStage, setActiveStage] = useState(0)
   const [webglFailed, setWebglFailed] = useState(false)
+  const useFallback = reducedMotion || webglFailed
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -265,6 +296,10 @@ function FiberStudy() {
     let pointerY = 0
     let layoutX = 0
     let layoutY = 0
+    let previousRenderTime = 0
+    let measuredDuration = 0
+    let measuredFrames = 0
+    let qualityAdjusted = false
     const precisePointer = window.matchMedia('(pointer: fine)').matches
 
     const onPointerMove = (event: PointerEvent) => {
@@ -280,7 +315,8 @@ function FiberStudy() {
         const image = await loadReferenceImage(batReferenceSource)
         if (cancelled) return
 
-        const batSample = sampleBatSilhouette(image, profile.count)
+        const sampledBat = sampleBatSilhouette(image, profile.count)
+        const batSample = sortParticleField(sampledBat.positions, sampledBat.colors)
         const targets = createTargets(profile.count, batSample.positions)
         const positions = targets[0].slice()
 
@@ -305,7 +341,7 @@ function FiberStudy() {
 
         geometry = new BufferGeometry()
         geometry.setAttribute('position', new BufferAttribute(positions, 3))
-        geometry.setAttribute('color', new BufferAttribute(batSample.colors, 3))
+        geometry.setAttribute('color', new BufferAttribute(batSample.colors ?? sampledBat.colors, 3))
 
         material = new PointsMaterial({
           color: 0xffffff,
@@ -353,7 +389,7 @@ function FiberStudy() {
           end: 'bottom bottom',
           scrub: 0.55,
           onUpdate: (self) => {
-            progress = self.progress * (targets.length - 1)
+            progress = resolveMorphProgress(self.progress, targets.length)
             const stage = Math.min(targets.length - 1, Math.round(progress))
             if (stage !== previousStage) {
               previousStage = stage
@@ -364,6 +400,18 @@ function FiberStudy() {
 
         const render = (time = 0) => {
           if (!renderer || !camera || !geometry || !points || !material || cancelled) return
+
+          if (previousRenderTime > 0 && measuredFrames < 90) {
+            measuredDuration += time - previousRenderTime
+            measuredFrames += 1
+
+            if (measuredFrames === 90 && measuredDuration / measuredFrames > 22 && !qualityAdjusted) {
+              geometry.setDrawRange(0, Math.min(profile.minimumCount, profile.count))
+              qualityAdjusted = true
+            }
+          }
+
+          previousRenderTime = time
 
           const fromIndex = Math.floor(progress)
           const toIndex = Math.min(targets.length - 1, fromIndex + 1)
@@ -414,7 +462,21 @@ function FiberStudy() {
     }
   }, [reducedMotion])
 
-  const useFallback = reducedMotion || webglFailed
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section || !useFallback) return
+
+    const fallbackTrigger = ScrollTrigger.create({
+      trigger: section,
+      start: 'top top',
+      end: 'bottom bottom',
+      onUpdate: (self) => {
+        setActiveStage(Math.min(stages.length - 1, Math.round(self.progress * (stages.length - 1))))
+      },
+    })
+
+    return () => fallbackTrigger.kill()
+  }, [useFallback])
 
   return (
     <section ref={sectionRef} id="fiber-study" className="fiber-study" aria-labelledby="fiber-study-title">
@@ -425,9 +487,9 @@ function FiberStudy() {
         </div>
         <div className="fiber-study__stage">
           {!useFallback && <canvas ref={canvasRef} className="fiber-study__canvas" aria-hidden="true" />}
-          {useFallback && <FiberFallback />}
+          {useFallback && <FiberFallback stage={activeStage} />}
           <div className="fiber-study__copy" aria-live="polite">
-            <span>{stages[activeStage].index} / 04</span>
+            <span>{stages[activeStage].index} / 05</span>
             <h2 id="fiber-study-title">{stages[activeStage].name}</h2>
             <p>{stages[activeStage].detail}</p>
           </div>
