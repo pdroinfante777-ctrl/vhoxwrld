@@ -10,7 +10,7 @@ export function Collection() {
     <section id="collection" className="collection section" aria-labelledby="collection-title">
       <SectionHeading
         id="collection-title"
-        index="04"
+        index="05"
         label={t('collection.label')}
         title={t('collection.title')}
         description={t('collection.description')}

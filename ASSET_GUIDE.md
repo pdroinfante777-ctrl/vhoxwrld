@@ -15,11 +15,20 @@ Add real product media to `public/products/`, preferably optimized WebP/AVIF ima
 
 Each product supports image/video galleries, price, color, size, materials, care, shipping, availability and an external purchase URL. Leave unknown fields empty instead of fabricating them.
 
-## Campaign hero
+## DROP 001 campaign
 
-Add one approved campaign image or video to `public/campaign/`, then set its exact path and metadata in `src/data/campaign.ts`. Until that happens, the homepage deliberately renders an abstract industrial fallback labelled `CAMPAIGN PHOTOGRAPHY PENDING`; it never requests a missing file or presents generated art as a VHOX garment.
+The hero currently presents BAT, ROSE and VOID through code-native abstract scenes defined in `src/data/editorial.ts`; it does not present generated art as a real product.
 
-Provide intrinsic width and height for images, and a poster for video, so the hero can reserve space without layout shift. Keep the source free of embedded third-party branding and confirm VHOX has the right to publish it.
+When approved campaign photography or video exists, add it to `public/campaign/` and extend the corresponding scene with exact media metadata. Provide intrinsic width and height for images and a poster for video so the layout can reserve space without shifting. Keep every source free of embedded third-party branding and confirm VHOX has the right to publish it.
+
+The next useful deliverables are:
+
+- one desktop and one vertical campaign master for each BAT / ROSE / VOID chapter;
+- verified product views for every item in `src/data/products.ts`;
+- approved material, fit, care, availability and price data;
+- approved journal photography or video;
+- the mailing-service endpoint for the private-access form;
+- final VHOX Instagram, TikTok and YouTube profile URLs.
 
 ## Lookbook
 

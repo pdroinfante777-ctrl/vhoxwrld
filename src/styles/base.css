@@ -1,11 +1,11 @@
 :root {
   color-scheme: dark;
   --color-black: #050505;
-  --color-ink: #090909;
-  --color-carbon: #111111;
+  --color-ink: #0b0b0b;
+  --color-carbon: #171717;
   --color-steel: #292929;
-  --color-silver: #9a9a92;
-  --color-white: #f1f1ea;
+  --color-silver: #8a8a86;
+  --color-white: #f2f0eb;
   --vhox-accent: #7cff00;
   --color-accent: var(--vhox-accent);
   --line: rgba(241, 241, 234, 0.16);
@@ -15,6 +15,7 @@
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --font-display: "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
   --font-body: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   font-family: var(--font-body);
   font-synthesis: none;
   text-rendering: optimizeLegibility;

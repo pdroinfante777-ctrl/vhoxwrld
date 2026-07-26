@@ -48,6 +48,8 @@ Copy `.env.example` to `.env.local` and replace the public placeholders:
 ```bash
 VITE_SHOP_URL=https://approved-storefront.example
 VITE_INSTAGRAM_URL=https://instagram.com/approved-vhox-profile
+VITE_TIKTOK_URL=https://tiktok.com/@approved-vhox-profile
+VITE_YOUTUBE_URL=https://youtube.com/@approved-vhox-channel
 ```
 
 Product CTAs use the local, persistent VHOX bag. The bag stores only product IDs, selected variants and quantities in the visitor's browser. Checkout is enabled only when an approved `VITE_SHOP_URL` and confirmed product prices exist; this repository contains no credentials, payment logic or secret keys.
@@ -62,27 +64,28 @@ Supported routes:
 ## Experience
 
 - Session-only sequential V H O X loader with reduced-motion handling
-- Cinematic campaign hero and cursor light for precise pointers
+- Cinematic BAT / ROSE / VOID campaign sequence with manual controls, a pause control and cursor light for precise pointers
 - Scroll-controlled fiber morph: VHOX bat → oversized T-shirt → cap → hoodie → VHOX signal
-- Movement manifesto and apparel categories
+- `BEYOND FORM` manifesto and asymmetric DROP 001 chapters
+- Macro construction studies for embroidery, textile, seam and silhouette
 - Editorial product cards with media swap, desktop tilt and direct product routes
 - Keyboard- and swipe-ready product gallery with thumbnails, arrows and an accessible lightbox when approved media exists
 - Local modular bag with quantity controls, live counter and no simulated payment flow
 - Related-product module titled `COMPLEMENTA EL ECOSISTEMA`
-- Asymmetric lookbook with future image/video and lightbox support
-- Design and construction study, community channels and verified-testimonial slots
+- Immersive VHOX WRLD chapter, three-column journal and private-access interface
 - Responsive mobile menu, keyboard support, motion fallbacks and static 404/legal pages
 
 ## Content model
 
 - `src/data/products.ts` holds product media, pricing, variants, care, shipping, availability and purchase links.
-- `src/data/campaign.ts` is the single approved campaign-media entry point for the hero.
+- `src/data/editorial.ts` defines the BAT / ROSE / VOID hero sequence, DROP 001 chapters, construction studies and journal entries.
 - `src/data/lookbook.ts` defines editorial image/video placements.
 - `src/data/categories.ts` defines the apparel category index.
 - `src/data/research.ts` holds garment research themes.
 - `src/i18n/translations.ts` is the typed EN/ES/PT/FR copy source.
 - `src/commerce/currency.ts` contains the centralized temporary USD/MXN/EUR display rates, their date and provider label.
-- Product, lookbook and testimonial placeholders are explicit. They do not claim to be real releases, photography or customer statements.
+- Product and editorial placeholders are explicit. They do not claim to be real releases, photography, specifications or customer statements.
+- The private-access form is a validated interface only. Connect an approved mailing provider before expecting live registrations.
 - `public/policies.html` and `public/terms.html` are temporary legal-copy placeholders and must be replaced with approved copy before commerce activation.
 
 See [ASSET_GUIDE.md](./ASSET_GUIDE.md) before adding logos, product photography or lookbook media.

@@ -1,3 +1,6 @@
+import { formatCurrency, type CurrencyCode } from '../commerce/currency'
+import type { Locale } from '../i18n/translations'
+
 export type ProductAvailability = 'coming-soon' | 'available' | 'archived'
 export type ProductObjectFit = 'cover' | 'contain'
 
@@ -37,24 +40,24 @@ export type Product = {
   visual: 'slab' | 'aperture' | 'axis'
 }
 
-// These are structured product slots, not announced releases. Commercial fields
-// remain null or empty until VHOX supplies approved product data and photography.
+// These entries define the editorial chapters of DROP 001. Commercial fields
+// remain empty until VHOX supplies approved product data and photography.
 export const products: Product[] = [
   {
-    id: 'shadow',
-    slug: 'shadow',
-    name: 'SHADOW',
+    id: 'bat',
+    slug: 'bat',
+    name: 'BAT',
     subtitle: null,
-    code: 'VHX-001',
-    category: 'T-SHIRT / MEDIA PENDING',
+    code: 'VHX-D001-01',
+    category: 'DROP 001 / MEDIA PENDING',
     price: null,
     compareAtPrice: null,
     currency: 'USD',
     description: {
-      en: 'Reserved for an approved VHOX T-shirt and its real campaign photography.',
-      es: 'Reservado para una camiseta VHOX aprobada y su fotografía real de campaña.',
-      pt: 'Reservado para uma camiseta VHOX aprovada e sua fotografia real de campanha.',
-      fr: 'Réservé à un T-shirt VHOX approuvé et à sa véritable photographie de campagne.',
+      en: 'The first chapter of DROP 001. Final product media and verified release details are pending approval.',
+      es: 'El primer capítulo de DROP 001. Los medios finales del producto y los detalles verificados del lanzamiento están pendientes de aprobación.',
+      pt: 'O primeiro capítulo do DROP 001. A mídia final do produto e os detalhes verificados do lançamento aguardam aprovação.',
+      fr: 'Le premier chapitre de DROP 001. Les médias finaux du produit et les détails vérifiés de la sortie sont en attente de validation.',
     },
     media: [],
     thumbnails: [],
@@ -66,25 +69,55 @@ export const products: Product[] = [
     care: null,
     shipping: null,
     availability: 'coming-soon',
-    related: ['void', 'origin'],
+    related: ['rose', 'void'],
     purchaseUrl: null,
     visual: 'slab',
+  },
+  {
+    id: 'rose',
+    slug: 'rose',
+    name: 'ROSE',
+    subtitle: null,
+    code: 'VHX-D001-02',
+    category: 'DROP 001 / MEDIA PENDING',
+    price: null,
+    compareAtPrice: null,
+    currency: 'USD',
+    description: {
+      en: 'The second chapter of DROP 001. Approved campaign imagery and confirmed commercial data will be added here.',
+      es: 'El segundo capítulo de DROP 001. Aquí se añadirá la imagen de campaña aprobada y la información comercial confirmada.',
+      pt: 'O segundo capítulo do DROP 001. A imagem de campanha aprovada e os dados comerciais confirmados serão adicionados aqui.',
+      fr: 'Le deuxième chapitre de DROP 001. Les visuels de campagne approuvés et les données commerciales confirmées seront ajoutés ici.',
+    },
+    media: [],
+    thumbnails: [],
+    sizes: [],
+    colors: [],
+    materials: null,
+    features: [],
+    fit: null,
+    care: null,
+    shipping: null,
+    availability: 'coming-soon',
+    related: ['bat', 'void'],
+    purchaseUrl: null,
+    visual: 'aperture',
   },
   {
     id: 'void',
     slug: 'void',
     name: 'VOID',
     subtitle: null,
-    code: 'VHX-002',
-    category: 'CAP / MEDIA PENDING',
+    code: 'VHX-D001-03',
+    category: 'DROP 001 / MEDIA PENDING',
     price: null,
     compareAtPrice: null,
     currency: 'USD',
     description: {
-      en: 'Reserved for an approved VHOX cap, detail views and availability data.',
-      es: 'Reservado para una gorra VHOX aprobada, vistas de detalle y datos de disponibilidad.',
-      pt: 'Reservado para um boné VHOX aprovado, detalhes e dados de disponibilidade.',
-      fr: 'Réservé à une casquette VHOX approuvée, aux vues de détail et aux données de disponibilité.',
+      en: 'The closing chapter of DROP 001. This space is ready for verified product, material and availability data.',
+      es: 'El capítulo final de DROP 001. Este espacio está preparado para datos verificados de producto, materiales y disponibilidad.',
+      pt: 'O capítulo final do DROP 001. Este espaço está preparado para dados verificados de produto, materiais e disponibilidade.',
+      fr: 'Le chapitre final de DROP 001. Cet espace est prêt pour les données vérifiées du produit, des matières et de la disponibilité.',
     },
     media: [],
     thumbnails: [],
@@ -96,37 +129,7 @@ export const products: Product[] = [
     care: null,
     shipping: null,
     availability: 'coming-soon',
-    related: ['shadow', 'origin'],
-    purchaseUrl: null,
-    visual: 'aperture',
-  },
-  {
-    id: 'origin',
-    slug: 'origin',
-    name: 'ORIGIN',
-    subtitle: null,
-    code: 'VHX-003',
-    category: 'FOOTWEAR / FUTURE DROP',
-    price: null,
-    compareAtPrice: null,
-    currency: 'USD',
-    description: {
-      en: 'A future footwear slot prepared for verified product and commerce data.',
-      es: 'Un espacio futuro de calzado preparado para datos verificados de producto y comercio.',
-      pt: 'Um espaço futuro de calçado preparado para dados verificados de produto e comércio.',
-      fr: 'Un futur espace chaussure préparé pour des données produit et commerciales vérifiées.',
-    },
-    media: [],
-    thumbnails: [],
-    sizes: [],
-    colors: [],
-    materials: null,
-    features: [],
-    fit: null,
-    care: null,
-    shipping: null,
-    availability: 'coming-soon',
-    related: ['shadow', 'void'],
+    related: ['bat', 'rose'],
     purchaseUrl: null,
     visual: 'axis',
   },
@@ -163,5 +166,3 @@ export function productDescription(product: Product, locale: Locale) {
 export function productPath(product: Product) {
   return `/product/${product.slug}`
 }
-import { formatCurrency, type CurrencyCode } from '../commerce/currency'
-import type { Locale } from '../i18n/translations'

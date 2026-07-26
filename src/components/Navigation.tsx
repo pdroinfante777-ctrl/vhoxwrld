@@ -7,10 +7,11 @@ import { MarketControls } from './MarketControls'
 
 const navigationItems = [
   { labelKey: 'nav.home', href: '/#top' },
-  { labelKey: 'nav.shop', href: '/#collection' },
-  { labelKey: 'nav.lookbook', href: '/#lookbook' },
-  { labelKey: 'nav.research', href: '/#research' },
-  { labelKey: 'nav.testimonials', href: '/#testimonials' },
+  { labelKey: 'nav.shop', href: '/#drop-001' },
+  { labelKey: 'nav.details', href: '/#details' },
+  { labelKey: 'nav.world', href: '/#vhox-world' },
+  { labelKey: 'nav.journal', href: '/#journal' },
+  { labelKey: 'nav.access', href: '/#inner-circle' },
   { labelKey: 'nav.contact', href: '/#contact' },
 ] as const
 
@@ -94,16 +95,28 @@ export function Navigation({ reducedMotion }: NavigationProps) {
 
   return (
     <header className={headerClasses}>
+      <button
+        ref={toggleRef}
+        className="menu-toggle"
+        type="button"
+        aria-expanded={open}
+        aria-controls="mobile-menu"
+        aria-label={open ? t('nav.close') : t('nav.open')}
+        onClick={() => setOpen((current) => !current)}
+      >
+        <span />
+        <span />
+        <span />
+        <b>{t('nav.menuLabel')}</b>
+      </button>
+
       <a className="brand header-wordmark" href="/#top" aria-label={t('nav.homeLabel')} onClick={() => setOpen(false)}>
         <BrandMark />
       </a>
 
-      <nav className="desktop-nav" aria-label={t('nav.primary')}>
-        {navigationItems.map((item) => <a key={item.labelKey} href={item.href}>{t(item.labelKey)}</a>)}
-      </nav>
-
       <div className="header-actions">
-        <MarketControls placement="desktop" />
+        <a className="header-drop-link" href="/#drop-001">{t('nav.drop001')}</a>
+        <a className="header-access-link" href="/#inner-circle">{t('nav.access')}</a>
         <a
           className={`bag-link ${bagAnimating ? 'bag-link--pulse' : ''}`}
           href="/cart"
@@ -112,19 +125,6 @@ export function Navigation({ reducedMotion }: NavigationProps) {
           <BagIcon />
           {totalQuantity > 0 && <span className="bag-link__count" aria-hidden="true">{totalQuantity}</span>}
         </a>
-        <button
-          ref={toggleRef}
-          className="menu-toggle"
-          type="button"
-          aria-expanded={open}
-          aria-controls="mobile-menu"
-          aria-label={open ? t('nav.close') : t('nav.open')}
-          onClick={() => setOpen((current) => !current)}
-        >
-          <span />
-          <span />
-          <span />
-        </button>
       </div>
 
       <div
@@ -136,22 +136,30 @@ export function Navigation({ reducedMotion }: NavigationProps) {
           if (event.target === event.currentTarget) setOpen(false)
         }}
       >
-        <BrandMark className="mobile-menu__brand" />
-        <nav aria-label={t('nav.mobile')}>
-          {navigationItems.map((item, index) => (
-            <a
-              key={item.labelKey}
-              href={item.href}
-              tabIndex={open ? 0 : -1}
-              onClick={() => setOpen(false)}
-            >
-              <span>{String(index + 1).padStart(2, '0')}</span>
-              {t(item.labelKey)}
-            </a>
-          ))}
-        </nav>
-        <MarketControls placement="mobile" tabIndex={open ? 0 : -1} />
-        <p>WHO MOVES FIRST. / VHOX WRLD</p>
+        <div className="mobile-menu__topline">
+          <BrandMark className="mobile-menu__brand" />
+          <span>DROP 001 / BEYOND FORM</span>
+        </div>
+        <div className="mobile-menu__body">
+          <nav aria-label={t('nav.mobile')}>
+            {navigationItems.map((item, index) => (
+              <a
+                key={item.labelKey}
+                href={item.href}
+                tabIndex={open ? 0 : -1}
+                onClick={() => setOpen(false)}
+              >
+                <span>{String(index + 1).padStart(2, '0')}</span>
+                {t(item.labelKey)}
+              </a>
+            ))}
+          </nav>
+          <aside>
+            <p>{t('nav.overlayCopy')}</p>
+            <MarketControls placement="mobile" tabIndex={open ? 0 : -1} />
+          </aside>
+        </div>
+        <p className="mobile-menu__footer">VHOX WRLD / {t('brand.exclusiveMovement')}</p>
       </div>
     </header>
   )
