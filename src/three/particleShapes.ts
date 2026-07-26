@@ -114,21 +114,14 @@ export const premiumHoodie: ParticleShape = {
   ],
 }
 
-export const vhoxWordmark: ParticleShape = {
-  id: 'vhox-wordmark',
-  label: 'VHOX wordmark',
-  viewBox: [-3.45, -1.2, 6.9, 2.4],
-  worldWidth: 6.3,
-  jitter: 0.006,
-  paths: [
-    { d: 'M-3.22 -0.96 L-2.68 0.96 L-2.14 -0.96', weight: 1.36 },
-    { d: 'M-1.72 -0.96 L-1.72 0.96 M-0.7 -0.96 L-0.7 0.96 M-1.72 0 L-0.7 0', weight: 1.34 },
-    {
-      d: 'M0.45 -0.96 C0.18 -0.96 0.04 -0.79 0.04 -0.51 L0.04 0.51 C0.04 0.79 0.18 0.96 0.45 0.96 L0.92 0.96 C1.19 0.96 1.33 0.79 1.33 0.51 L1.33 -0.51 C1.33 -0.79 1.19 -0.96 0.92 -0.96 Z',
-      weight: 1.42,
-    },
-    { d: 'M1.86 -0.96 L3.18 0.96 M3.18 -0.96 L1.86 0.96', weight: 1.36 },
-  ],
-}
-
 export const garmentShapes = [premiumTshirt, premiumCap, premiumHoodie] as const
+
+export {
+  vhoxWordmark,
+  vhoxWordmarkSourceName,
+  wordmarkH,
+  wordmarkLetterBounds,
+  wordmarkO,
+  wordmarkV,
+  wordmarkX,
+} from './vhoxWordmark'

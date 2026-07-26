@@ -6,6 +6,31 @@ type SampledPath = {
   samples: Float32Array
 }
 
+export function allocateWeightedSamples(weightedLengths: readonly number[], count: number) {
+  if (count < 0 || !Number.isInteger(count)) throw new Error('Particle count must be a non-negative integer')
+  if (weightedLengths.length === 0) return new Uint32Array()
+
+  const totalLength = weightedLengths.reduce((total, length) => {
+    if (!Number.isFinite(length) || length <= 0) throw new Error('Particle paths must have a finite positive length')
+    return total + length
+  }, 0)
+  const allocations = new Uint32Array(weightedLengths.length)
+  const fractions = weightedLengths.map((length, index) => {
+    const ideal = (length / totalLength) * count
+    const allocated = Math.floor(ideal)
+    allocations[index] = allocated
+    return { index, fraction: ideal - allocated }
+  })
+  const remaining = count - allocations.reduce((total, value) => total + value, 0)
+
+  fractions.sort((first, second) => second.fraction - first.fraction || first.index - second.index)
+  for (let index = 0; index < remaining; index += 1) {
+    allocations[fractions[index % fractions.length].index] += 1
+  }
+
+  return allocations
+}
+
 function seededRandom(seed: number) {
   let value = seed % 2147483647
 
@@ -52,47 +77,44 @@ function createSampledPaths(shape: ParticleShape) {
 
 export function sampleParticleShape(shape: ParticleShape, count: number, seed: number) {
   const paths = createSampledPaths(shape)
-  const totalWeightedLength = paths.reduce((total, path) => total + path.weightedLength, 0)
+  const allocations = allocateWeightedSamples(paths.map((path) => path.weightedLength), count)
   const [viewBoxX, viewBoxY, viewBoxWidth, viewBoxHeight] = shape.viewBox
   const centerX = viewBoxX + viewBoxWidth * 0.5
   const centerY = viewBoxY + viewBoxHeight * 0.5
   const random = seededRandom(seed)
   const positions = new Float32Array(count * 3)
-  const goldenSelector = 0.618033988749895
-  const goldenDistance = 0.754877666246693
+  let particleIndex = 0
 
-  for (let index = 0; index < count; index += 1) {
-    const offset = index * 3
-    let selector = ((index * goldenSelector + random() * 0.035) % 1) * totalWeightedLength
-    let selectedPath = paths[paths.length - 1]
+  paths.forEach((selectedPath, pathIndex) => {
+    const pathParticleCount = allocations[pathIndex]
 
-    for (const path of paths) {
-      if (selector <= path.weightedLength) {
-        selectedPath = path
-        break
-      }
+    for (let localIndex = 0; localIndex < pathParticleCount; localIndex += 1) {
+      const offset = particleIndex * 3
+      const normalizedDistance = Math.min(
+        1,
+        Math.max(0, (localIndex + 0.5 + (random() - 0.5) * 0.08) / pathParticleCount),
+      )
+      const sampleCount = selectedPath.samples.length / 2 - 1
+      const samplePosition = normalizedDistance * sampleCount
+      const sampleIndex = Math.min(sampleCount - 1, Math.floor(samplePosition))
+      const sampleMix = samplePosition - sampleIndex
+      const sampleOffset = sampleIndex * 2
+      const nextOffset = sampleOffset + 2
+      const pointX = selectedPath.samples[sampleOffset]
+        + (selectedPath.samples[nextOffset] - selectedPath.samples[sampleOffset]) * sampleMix
+      const pointY = selectedPath.samples[sampleOffset + 1]
+        + (selectedPath.samples[nextOffset + 1] - selectedPath.samples[sampleOffset + 1]) * sampleMix
+      const jitterX = (random() - 0.5) * shape.jitter
+      const jitterY = (random() - 0.5) * shape.jitter
 
-      selector -= path.weightedLength
+      positions[offset] = ((pointX - centerX) / viewBoxWidth) * shape.worldWidth + jitterX
+      positions[offset + 1] = -((pointY - centerY) / viewBoxWidth) * shape.worldWidth + jitterY
+      positions[offset + 2] = (random() - 0.5) * 0.11
+      particleIndex += 1
     }
+  })
 
-    const normalizedDistance = (index * goldenDistance + random() * 0.045) % 1
-    const sampleCount = selectedPath.samples.length / 2 - 1
-    const samplePosition = normalizedDistance * sampleCount
-    const sampleIndex = Math.min(sampleCount - 1, Math.floor(samplePosition))
-    const sampleMix = samplePosition - sampleIndex
-    const sampleOffset = sampleIndex * 2
-    const nextOffset = sampleOffset + 2
-    const pointX = selectedPath.samples[sampleOffset]
-      + (selectedPath.samples[nextOffset] - selectedPath.samples[sampleOffset]) * sampleMix
-    const pointY = selectedPath.samples[sampleOffset + 1]
-      + (selectedPath.samples[nextOffset + 1] - selectedPath.samples[sampleOffset + 1]) * sampleMix
-    const jitterX = (random() - 0.5) * shape.jitter
-    const jitterY = (random() - 0.5) * shape.jitter
-
-    positions[offset] = ((pointX - centerX) / viewBoxWidth) * shape.worldWidth + jitterX
-    positions[offset + 1] = -((pointY - centerY) / viewBoxWidth) * shape.worldWidth + jitterY
-    positions[offset + 2] = (random() - 0.5) * 0.11
-  }
+  if (particleIndex !== count) throw new Error(`Particle allocation mismatch: expected ${count}, received ${particleIndex}`)
 
   return positions
 }

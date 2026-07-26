@@ -20,6 +20,8 @@ import {
   premiumHoodie,
   premiumTshirt,
   vhoxWordmark,
+  vhoxWordmarkSourceName,
+  wordmarkLetterBounds,
 } from './particleShapes'
 
 const batReferenceSource = '/brand/vhox-bat-particle-source.png'
@@ -60,6 +62,9 @@ type PreparedFiberResources = {
 }
 
 let preparedResources: { key: string; promise: Promise<PreparedFiberResources> } | null = null
+const wordmarkDebugEnabled = import.meta.env.DEV
+  && typeof window !== 'undefined'
+  && new URLSearchParams(window.location.search).get('fiberDebug') === 'wordmark'
 
 function seededRandom(seed: number) {
   let value = seed % 2147483647
@@ -188,13 +193,27 @@ function createMotionField(count: number): MotionField {
 }
 
 function createTargets(count: number, bat: Float32Array) {
-  return [
+  const targets = [
     bat,
     sortParticleField(sampleParticleShape(premiumTshirt, count, 1307)).positions,
     sortParticleField(sampleParticleShape(premiumCap, count, 2307)).positions,
     sortParticleField(sampleParticleShape(premiumHoodie, count, 3307)).positions,
     sortParticleField(sampleParticleShape(vhoxWordmark, count, 4307)).positions,
   ]
+
+  targets.forEach((target, stageIndex) => {
+    if (target.length !== count * 3) {
+      throw new Error(`Invalid particle target length at stage ${stageIndex}`)
+    }
+
+    for (let index = 0; index < target.length; index += 1) {
+      if (!Number.isFinite(target[index])) {
+        throw new Error(`Invalid particle coordinate at stage ${stageIndex}, index ${index}`)
+      }
+    }
+  })
+
+  return targets
 }
 
 function getParticleProfile() {
@@ -353,12 +372,39 @@ function FiberFallback({ stage }: { stage: number }) {
   )
 }
 
+function WordmarkDebug({ stage, particleCount }: { stage: number; particleCount: number }) {
+  if (!wordmarkDebugEnabled) return null
+
+  return (
+    <aside className="fiber-study__debug" aria-label="Wordmark particle diagnostics">
+      <svg viewBox={vhoxWordmark.viewBox.join(' ')} role="img" aria-label="VHOX wordmark paths and letter bounds">
+        {wordmarkLetterBounds.map((bounds) => (
+          <g key={bounds.letter}>
+            <rect x={bounds.x} y={bounds.y} width={bounds.width} height={bounds.height} />
+            <text x={bounds.x + 6} y={bounds.y + 15}>{bounds.letter}</text>
+          </g>
+        ))}
+        {vhoxWordmark.paths.map((path, index) => (
+          <path className="fiber-study__debug-path" key={`${path.d}-${index}`} d={path.d} pathLength="100" />
+        ))}
+        {vhoxWordmark.paths.map((path, index) => (
+          <path className="fiber-study__debug-targets" key={`targets-${path.d}-${index}`} d={path.d} pathLength="100" />
+        ))}
+      </svg>
+      <span>ACTIVE {stage + 1} / 05</span>
+      <span>TARGETS {particleCount}</span>
+      <span>EXCESS 0</span>
+    </aside>
+  )
+}
+
 function FiberStudy() {
   const { t } = useLocale()
   const sectionRef = useRef<HTMLElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const reducedMotion = useReducedMotion()
   const [activeStage, setActiveStage] = useState(0)
+  const [particleCount, setParticleCount] = useState(0)
   const [webglFailed, setWebglFailed] = useState(false)
   const useFallback = reducedMotion || webglFailed
 
@@ -387,6 +433,7 @@ function FiberStudy() {
     let measuredFrames = 0
     let measuredDuration = 0
     let previousFrameTime = 0
+    let wordmarkSettled = false
     const precisePointer = window.matchMedia('(pointer: fine)').matches
 
     const onPointerMove = (event: PointerEvent) => {
@@ -444,6 +491,9 @@ function FiberStudy() {
         section.dataset.preparationMs = prepared.preparationMs.toFixed(1)
         section.dataset.setupMs = (performance.now() - setupStartedAt).toFixed(1)
         section.dataset.particleCount = String(profile.count)
+        section.dataset.wordmarkSource = vhoxWordmarkSourceName
+        section.dataset.wordmarkExcess = '0'
+        setParticleCount(profile.count)
 
         const resize = () => {
           if (!renderer || !camera || !points) return
@@ -481,7 +531,10 @@ function FiberStudy() {
             const morph = resolveMorphState(self.progress, targets.length)
             progress = morph.progress
             transitionEnergy = morph.energy
-            const stage = Math.min(targets.length - 1, Math.round(progress))
+            const finalStageIndex = targets.length - 1
+            const stage = progress >= finalStageIndex - 0.08
+              ? finalStageIndex
+              : Math.min(finalStageIndex - 1, Math.round(progress))
             if (stage !== previousStage) {
               previousStage = stage
               setActiveStage(stage)
@@ -495,6 +548,14 @@ function FiberStudy() {
           const fromIndex = Math.floor(progress)
           const toIndex = Math.min(targets.length - 1, fromIndex + 1)
           const mix = progress - fromIndex
+          const finalStageIndex = targets.length - 1
+          const wordmarkRest = fromIndex === finalStageIndex && toIndex === finalStageIndex
+          const wordmarkArrival = toIndex === finalStageIndex && fromIndex !== finalStageIndex
+            ? Math.min(1, Math.max(0, (mix - 0.55) / 0.45))
+            : 0
+          const wordmarkStability = wordmarkRest
+            ? 1
+            : wordmarkArrival * wordmarkArrival * (3 - 2 * wordmarkArrival)
           const responsiveStageScale = stageScale[fromIndex]
             + (stageScale[toIndex] - stageScale[fromIndex]) * mix
           const responsiveOffsetX = stageOffsetX[fromIndex]
@@ -509,6 +570,13 @@ function FiberStudy() {
           const to = targets[toIndex]
           const attribute = geometry.getAttribute('position')
           const array = attribute.array as Float32Array
+
+          if (wordmarkRest && !wordmarkSettled) {
+            array.set(targets[finalStageIndex])
+            wordmarkSettled = true
+          } else if (!wordmarkRest) {
+            wordmarkSettled = false
+          }
 
           for (let particleIndex = 0; particleIndex < profile.count; particleIndex += 1) {
             const offset = particleIndex * 3
@@ -540,8 +608,12 @@ function FiberStudy() {
             const releaseAmplitude = transitionEnergy
               * (0.025 + motion.strength[particleIndex] * 0.07)
               * orbitCosine
-            const orbitAmplitude = 0.012 + transitionEnergy * (0.07 + motion.strength[particleIndex] * 0.11)
-            const noiseAmplitude = 0.006 + transitionEnergy * 0.032
+            const transitionNoise = transitionEnergy * (0.032 + motion.strength[particleIndex] * 0.008)
+            const restNoise = 0.006 + (0.00065 - 0.006) * wordmarkStability
+            const orbitAmplitude = 0.012
+              + (0.0008 - 0.012) * wordmarkStability
+              + transitionEnergy * (0.07 + motion.strength[particleIndex] * 0.11)
+            const noiseAmplitude = restNoise + transitionNoise
             const desiredX = rotatedX
               + orbitCosine * orbitAmplitude
               + tangentX * vortexAmplitude
@@ -554,7 +626,7 @@ function FiberStudy() {
               + motion.driftY[particleIndex] * ambientY * noiseAmplitude
             const desiredZ = baseZ
               + orbitSine * transitionEnergy * (0.16 + motion.strength[particleIndex] * 0.08)
-            const damping = 0.105 + transitionEnergy * 0.018
+            const damping = 0.105 + transitionEnergy * 0.018 + wordmarkStability * 0.22
 
             array[offset] += (desiredX - array[offset]) * damping
             array[offset + 1] += (desiredY - array[offset + 1]) * damping
@@ -565,12 +637,16 @@ function FiberStudy() {
           points.scale.x += ((layoutScale * responsiveStageScale) - points.scale.x) * 0.05
           points.scale.y = points.scale.x
           points.scale.z = points.scale.x
-          points.position.x += ((layoutX + responsiveOffsetX + pointerX * 0.08) - points.position.x) * 0.04
-          points.position.y += ((layoutY + responsiveOffsetY - pointerY * 0.05 + Math.sin(time * 0.00048) * 0.018) - points.position.y) * 0.04
-          points.rotation.y += ((pointerX * 0.055 + progress * 0.012 + transitionEnergy * 0.045 * transitionDirection) - points.rotation.y) * 0.025
-          points.rotation.x += ((-pointerY * 0.035) - points.rotation.x) * 0.025
-          points.rotation.z = Math.sin(time * 0.00022) * 0.0045 + transitionEnergy * 0.012 * transitionDirection
-          material.opacity = 0.89 + Math.sin(time * 0.0007) * 0.03 - transitionEnergy * 0.045
+          const restMotionFactor = 1 - wordmarkStability * 0.92
+          points.position.x += ((layoutX + responsiveOffsetX + pointerX * 0.08 * restMotionFactor) - points.position.x) * 0.04
+          points.position.y += ((layoutY + responsiveOffsetY - pointerY * 0.05 * restMotionFactor
+            + Math.sin(time * 0.00048) * 0.018 * restMotionFactor) - points.position.y) * 0.04
+          points.rotation.y += ((pointerX * 0.055 * restMotionFactor + progress * 0.012 * restMotionFactor
+            + transitionEnergy * 0.045 * transitionDirection) - points.rotation.y) * 0.025
+          points.rotation.x += ((-pointerY * 0.035 * restMotionFactor) - points.rotation.x) * 0.025
+          points.rotation.z = Math.sin(time * 0.00022) * 0.0045 * restMotionFactor
+            + transitionEnergy * 0.012 * transitionDirection
+          material.opacity = 0.89 + Math.sin(time * 0.0007) * 0.03 * restMotionFactor - transitionEnergy * 0.045
 
           renderer.render(scene, camera)
 
@@ -635,6 +711,7 @@ function FiberStudy() {
         <div className="fiber-study__stage">
           {!useFallback && <canvas ref={canvasRef} className="fiber-study__canvas" aria-hidden="true" />}
           {useFallback && <FiberFallback stage={activeStage} />}
+          <WordmarkDebug stage={activeStage} particleCount={particleCount} />
           <div className="fiber-study__copy" aria-live="polite">
             <span>{fiberStages[activeStage].index} / 05</span>
             <h2 id="fiber-study-title">{t(fiberStages[activeStage].nameKey)}</h2>
