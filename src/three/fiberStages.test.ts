@@ -3,6 +3,7 @@ import { fiberStageOrder, fiberStages } from './fiberStages'
 import { allocateWeightedSamples } from './particleShapeSampler'
 import {
   garmentShapes,
+  premiumCap,
   premiumTshirt,
   vhoxWordmark,
   wordmarkH,
@@ -26,6 +27,14 @@ describe('VHOX particle narrative', () => {
     ])
     expect(premiumTshirt.paths.length).toBeGreaterThanOrEqual(5)
     expect(premiumTshirt.paths[0].d).toContain('L468 540')
+  })
+
+  it('keeps the cap structured with a tall crown and a restrained premium visor', () => {
+    expect(premiumCap.paths.length).toBeGreaterThanOrEqual(8)
+    expect(premiumCap.paths[0].d).toContain('M94 308 C91 236')
+    expect(premiumCap.paths[0].d).toContain('C472 73 532 126 556 214')
+    expect(premiumCap.paths[1].weight).toBeLessThan(premiumCap.paths[0].weight ?? 0)
+    expect(premiumCap.paths.some(({ d }) => d.includes('C360 45 370 35 384 35'))).toBe(true)
   })
 
   it('builds VHOX from four clean, separately bounded vector letters', () => {
