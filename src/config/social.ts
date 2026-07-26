@@ -10,3 +10,5 @@ function resolvePublicUrl(value: string | undefined, fallback: string) {
 }
 
 export const instagramUrl = resolvePublicUrl(import.meta.env.VITE_INSTAGRAM_URL, 'https://instagram.com/')
+export const tiktokUrl = resolvePublicUrl(import.meta.env.VITE_TIKTOK_URL, 'https://tiktok.com/')
+export const youtubeUrl = resolvePublicUrl(import.meta.env.VITE_YOUTUBE_URL, 'https://youtube.com/')

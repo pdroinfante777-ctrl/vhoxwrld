@@ -75,6 +75,8 @@ Optionally add the approved public social profile:
 
 ```text
 VITE_INSTAGRAM_URL=https://instagram.com/the-approved-vhox-profile
+VITE_TIKTOK_URL=https://tiktok.com/@the-approved-vhox-profile
+VITE_YOUTUBE_URL=https://youtube.com/@the-approved-vhox-channel
 ```
 
 Use the final HTTPS storefront destination approved by VHOX. Vite injects this value at build time, so trigger a new deployment after changing it. Never place Storefront API private tokens, Stripe secret keys, passwords or other secrets in a `VITE_*` variable; values with that prefix are public in the browser bundle.

@@ -8,20 +8,18 @@ import { useReducedMotion } from './hooks/useReducedMotion'
 import { usePageMotion } from './animations/usePageMotion'
 import { Hero } from './sections/Hero'
 import { Manifesto } from './sections/Manifesto'
-import { Categories } from './sections/Categories'
+import { DropChapters } from './sections/DropChapters'
+import { MaterialDetails } from './sections/MaterialDetails'
 import { Collection } from './sections/Collection'
-import { Process } from './sections/Process'
-import { Community } from './sections/Community'
-import { Testimonials } from './sections/Testimonials'
-import { Closing } from './sections/Closing'
+import { VhoxWorld } from './sections/VhoxWorld'
+import { Journal } from './sections/Journal'
+import { InnerCircle } from './sections/InnerCircle'
 import { CartPage } from './pages/CartPage'
 import { ProductPage } from './pages/ProductPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { getProductBySlug } from './data/products'
 import { useLocale } from './i18n/useLocale'
 
-const Lookbook = lazy(() => import('./sections/Lookbook'))
-const Research = lazy(() => import('./sections/Research'))
 const loadFiberStudy = () => import('./three/FiberStudy')
 const FiberStudy = lazy(loadFiberStudy)
 
@@ -98,27 +96,17 @@ function HomePage({ reducedMotion }: { reducedMotion: boolean }) {
     <>
       <Hero reducedMotion={reducedMotion} />
       <Manifesto />
+      <DropChapters />
       <DeferredMount className="deferred-fiber-study" minHeight="460vh" rootMargin="2400px 0px">
         <Suspense fallback={<SectionFallback label="Loading fiber study" />}>
           <FiberStudy />
         </Suspense>
       </DeferredMount>
-      <Categories />
+      <MaterialDetails />
       <Collection />
-      <DeferredMount id="lookbook" className="deferred-lookbook" minHeight="105vh">
-        <Suspense fallback={<SectionFallback label="Loading editorial study" />}>
-          <Lookbook />
-        </Suspense>
-      </DeferredMount>
-      <DeferredMount id="research" className="deferred-research" minHeight="90vh">
-        <Suspense fallback={<SectionFallback label="Loading research index" />}>
-          <Research />
-        </Suspense>
-      </DeferredMount>
-      <Process />
-      <Community />
-      <Testimonials />
-      <Closing />
+      <VhoxWorld />
+      <Journal />
+      <InnerCircle />
     </>
   )
 }
