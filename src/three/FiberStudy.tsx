@@ -13,6 +13,14 @@ import { ScrollTrigger } from '../animations/gsap'
 import { useReducedMotion } from '../hooks/useReducedMotion'
 import { useLocale } from '../i18n/useLocale'
 import { fiberStages } from './fiberStages'
+import {
+  createParticleMotionField,
+  getLayerDistribution,
+  particleLayer,
+  resolveAdaptiveParticleQuality,
+  resolveParticleMotionPhase,
+  type ParticleMotionField,
+} from './particleMotion'
 import { sampleParticleShape, sortParticleField } from './particleShapeSampler'
 import {
   garmentShapes,
@@ -42,22 +50,13 @@ type MorphState = {
   energy: number
 }
 
-type MotionField = {
-  phase: Float32Array
-  speed: Float32Array
-  strength: Float32Array
-  direction: Float32Array
-  driftX: Float32Array
-  driftY: Float32Array
-}
-
 type ParticleProfile = ReturnType<typeof getParticleProfile>
 
 type PreparedFiberResources = {
   profile: ParticleProfile
   targets: Float32Array[]
   colors: Float32Array
-  motion: MotionField
+  motion: ParticleMotionField
   preparationMs: number
 }
 
@@ -171,27 +170,6 @@ function sampleBatSilhouette(image: HTMLImageElement, count: number): BatSample 
   return { positions, colors }
 }
 
-function createMotionField(count: number): MotionField {
-  const random = seededRandom(25072026)
-  const phase = new Float32Array(count)
-  const speed = new Float32Array(count)
-  const strength = new Float32Array(count)
-  const direction = new Float32Array(count)
-  const driftX = new Float32Array(count)
-  const driftY = new Float32Array(count)
-
-  for (let index = 0; index < count; index += 1) {
-    phase[index] = random() * Math.PI * 2
-    speed[index] = 0.72 + random() * 0.68
-    strength[index] = 0.35 + random() * 0.65
-    direction[index] = random() > 0.22 ? 1 : -0.55
-    driftX[index] = random() * 2 - 1
-    driftY[index] = random() * 2 - 1
-  }
-
-  return { phase, speed, strength, direction, driftX, driftY }
-}
-
 function createTargets(count: number, bat: Float32Array) {
   const targets = [
     bat,
@@ -229,6 +207,8 @@ function getParticleProfile() {
       count: constrained ? 3600 : 5000,
       pointSize: 0.0145,
       maximumPixelRatio: 1.5,
+      orbitalRatio: constrained ? 0.09 : 0.12,
+      freeRatio: constrained ? 0.02 : 0.03,
     }
   }
 
@@ -237,6 +217,8 @@ function getParticleProfile() {
       count: constrained ? 6000 : 8500,
       pointSize: 0.012,
       maximumPixelRatio: 1.75,
+      orbitalRatio: constrained ? 0.11 : 0.13,
+      freeRatio: constrained ? 0.025 : 0.035,
     }
   }
 
@@ -244,11 +226,19 @@ function getParticleProfile() {
     count: constrained ? 9500 : 14000,
     pointSize: 0.0105,
     maximumPixelRatio: 2,
+    orbitalRatio: constrained ? 0.12 : 0.15,
+    freeRatio: constrained ? 0.03 : 0.04,
   }
 }
 
 function profileKey(profile: ParticleProfile) {
-  return `${profile.count}:${profile.pointSize}:${profile.maximumPixelRatio}`
+  return [
+    profile.count,
+    profile.pointSize,
+    profile.maximumPixelRatio,
+    profile.orbitalRatio,
+    profile.freeRatio,
+  ].join(':')
 }
 
 async function prepareFiberResources(profile = getParticleProfile()): Promise<PreparedFiberResources> {
@@ -266,7 +256,10 @@ async function prepareFiberResources(profile = getParticleProfile()): Promise<Pr
       profile,
       targets,
       colors: batSample.colors ?? sampledBat.colors,
-      motion: createMotionField(profile.count),
+      motion: createParticleMotionField(profile.count, {
+        orbital: profile.orbitalRatio,
+        free: profile.freeRatio,
+      }),
       preparationMs: performance.now() - startedAt,
     }
   })()
@@ -423,7 +416,8 @@ function FiberStudy() {
     let resizeHandler: (() => void) | null = null
     let frame = 0
     let scrollTrigger: ScrollTrigger | null = null
-    let progress = 0
+    let scrollProgress = 0
+    let scrollDirection = 1
     let transitionEnergy = 0
     let pointerX = 0
     let pointerY = 0
@@ -433,7 +427,6 @@ function FiberStudy() {
     let measuredFrames = 0
     let measuredDuration = 0
     let previousFrameTime = 0
-    let wordmarkSettled = false
     const precisePointer = window.matchMedia('(pointer: fine)').matches
 
     const onPointerMove = (event: PointerEvent) => {
@@ -451,6 +444,10 @@ function FiberStudy() {
 
         const { profile, targets, motion } = prepared
         const positions = targets[0].slice()
+        const velocities = new Float32Array(profile.count * 3)
+        const layerDistribution = getLayerDistribution(motion.layer)
+        let adaptiveQuality = resolveAdaptiveParticleQuality(60)
+        let previousMotionPhase = ''
 
         try {
           renderer = new WebGLRenderer({
@@ -493,6 +490,12 @@ function FiberStudy() {
         section.dataset.particleCount = String(profile.count)
         section.dataset.wordmarkSource = vhoxWordmarkSourceName
         section.dataset.wordmarkExcess = '0'
+        section.dataset.motionLayers = [
+          `contour:${layerDistribution.contour}`,
+          `orbital:${layerDistribution.orbital}`,
+          `free:${layerDistribution.free}`,
+        ].join(',')
+        section.dataset.adaptiveQuality = adaptiveQuality.name
         setParticleCount(profile.count)
 
         const resize = () => {
@@ -529,12 +532,13 @@ function FiberStudy() {
           scrub: 0.75,
           onUpdate: (self) => {
             const morph = resolveMorphState(self.progress, targets.length)
-            progress = morph.progress
+            scrollProgress = morph.progress
+            scrollDirection = self.direction || scrollDirection
             transitionEnergy = morph.energy
             const finalStageIndex = targets.length - 1
-            const stage = progress >= finalStageIndex - 0.08
+            const stage = scrollProgress >= finalStageIndex - 0.08
               ? finalStageIndex
-              : Math.min(finalStageIndex - 1, Math.round(progress))
+              : Math.min(finalStageIndex - 1, Math.round(scrollProgress))
             if (stage !== previousStage) {
               previousStage = stage
               setActiveStage(stage)
@@ -545,9 +549,13 @@ function FiberStudy() {
         const render = (time = 0) => {
           if (!renderer || !camera || !geometry || !points || !material || cancelled) return
 
-          const fromIndex = Math.floor(progress)
+          const deltaSeconds = previousFrameTime > 0
+            ? Math.min(0.04, Math.max(1 / 240, (time - previousFrameTime) / 1000))
+            : 1 / 60
+          const simulationTime = time * 0.001
+          const fromIndex = Math.floor(scrollProgress)
           const toIndex = Math.min(targets.length - 1, fromIndex + 1)
-          const mix = progress - fromIndex
+          const mix = scrollProgress - fromIndex
           const finalStageIndex = targets.length - 1
           const wordmarkRest = fromIndex === finalStageIndex && toIndex === finalStageIndex
           const wordmarkArrival = toIndex === finalStageIndex && fromIndex !== finalStageIndex
@@ -562,38 +570,61 @@ function FiberStudy() {
             + (stageOffsetX[toIndex] - stageOffsetX[fromIndex]) * mix
           const responsiveOffsetY = stageOffsetY[fromIndex]
             + (stageOffsetY[toIndex] - stageOffsetY[fromIndex]) * mix
-          const transitionDirection = fromIndex % 2 === 0 ? 1 : -1
-          const cloudScale = 1 + transitionEnergy * 0.16
-          const ambientX = Math.sin(time * 0.00055)
-          const ambientY = Math.cos(time * 0.00048)
+          const transitionDirection = scrollDirection >= 0 ? 1 : -1
+          const cloudScale = 1 + transitionEnergy * 0.085
+          const ambientX = Math.sin(simulationTime * 0.53)
+          const ambientY = Math.cos(simulationTime * 0.47)
           const from = targets[fromIndex]
           const to = targets[toIndex]
           const attribute = geometry.getAttribute('position')
           const array = attribute.array as Float32Array
+          const motionPhase = resolveParticleMotionPhase(mix, transitionEnergy, scrollDirection)
 
-          if (wordmarkRest && !wordmarkSettled) {
-            array.set(targets[finalStageIndex])
-            wordmarkSettled = true
-          } else if (!wordmarkRest) {
-            wordmarkSettled = false
+          if (motionPhase !== previousMotionPhase) {
+            previousMotionPhase = motionPhase
+            section.dataset.motionPhase = motionPhase
           }
 
           for (let particleIndex = 0; particleIndex < profile.count; particleIndex += 1) {
             const offset = particleIndex * 3
+            const layer = motion.layer[particleIndex]
+            const isContour = layer === particleLayer.contour
+            const isOrbital = layer === particleLayer.orbital
+            const density = isContour
+              ? 1
+              : isOrbital
+                ? adaptiveQuality.orbitalDensity
+                : adaptiveQuality.freeDensity
+            const layerActivity = motion.qualityRank[particleIndex] <= density ? 1 : 0
             const phase = motion.phase[particleIndex]
-              + time * 0.00042 * motion.speed[particleIndex] * motion.direction[particleIndex]
-              + mix * Math.PI * 1.75 * transitionDirection
+              + simulationTime * 0.58 * motion.speed[particleIndex] * motion.direction[particleIndex]
+              + mix * Math.PI * 1.35 * transitionDirection
             const orbitCosine = Math.cos(phase)
             const orbitSine = Math.sin(phase)
-            const stagger = (motion.strength[particleIndex] - 0.5) * 0.14
-              + orbitSine * 0.035
-            const particleMix = Math.min(1, Math.max(0, mix + transitionEnergy * stagger))
-            const baseX = from[offset] + (to[offset] - from[offset]) * particleMix
-            const baseY = from[offset + 1] + (to[offset + 1] - from[offset + 1]) * particleMix
+            const rawParticleMix = Math.min(1, Math.max(
+              0,
+              mix + transitionEnergy * (motion.delay[particleIndex] + orbitSine * 0.022),
+            ))
+            const particleMix = rawParticleMix * rawParticleMix * (3 - 2 * rawParticleMix)
+            const deltaX = to[offset] - from[offset]
+            const deltaY = to[offset + 1] - from[offset + 1]
+            const pathDistance = Math.max(0.001, Math.hypot(deltaX, deltaY))
+            const curveEnvelope = 4 * particleMix * (1 - particleMix)
+            const curveLayerScale = isContour ? 0.72 : isOrbital ? 1 : 1.28
+            const curveAmplitude = transitionEnergy
+              * curveEnvelope
+              * (0.045 + Math.min(0.34, pathDistance * 0.055))
+              * curveLayerScale
+              * motion.direction[particleIndex]
+              * transitionDirection
+            const curveNormalX = -deltaY / pathDistance
+            const curveNormalY = deltaX / pathDistance
+            const baseX = from[offset] + deltaX * particleMix + curveNormalX * curveAmplitude
+            const baseY = from[offset + 1] + deltaY * particleMix + curveNormalY * curveAmplitude
             const baseZ = from[offset + 2] + (to[offset + 2] - from[offset + 2]) * particleMix
             const twist = transitionEnergy
               * transitionDirection
-              * (0.18 + motion.strength[particleIndex] * 0.2)
+              * (0.025 + motion.strength[particleIndex] * 0.04)
               * motion.direction[particleIndex]
             const rotatedX = (baseX - baseY * twist) * cloudScale
             const rotatedY = (baseY + baseX * twist) * cloudScale
@@ -602,35 +633,88 @@ function FiberStudy() {
             const radialY = baseY / radius
             const tangentX = -radialY * transitionDirection
             const tangentY = radialX * transitionDirection
+            const wordmarkLayerScale = wordmarkStability > 0
+              ? isContour
+                ? 1 - wordmarkStability * 0.58
+                : isOrbital
+                  ? 1 - wordmarkStability * 0.82
+                  : 1 - wordmarkStability * 0.92
+              : 1
+            const transitionLayerScale = isContour ? 0.52 : isOrbital ? 0.9 : 1.25
             const vortexAmplitude = transitionEnergy
-              * (0.06 + motion.strength[particleIndex] * 0.13)
-              * (0.35 + Math.abs(orbitSine) * 0.65)
+              * (0.022 + motion.strength[particleIndex] * 0.055)
+              * (0.4 + Math.abs(orbitSine) * 0.6)
+              * transitionLayerScale
+              * layerActivity
             const releaseAmplitude = transitionEnergy
-              * (0.025 + motion.strength[particleIndex] * 0.07)
+              * (0.012 + motion.strength[particleIndex] * 0.035)
               * orbitCosine
-            const transitionNoise = transitionEnergy * (0.032 + motion.strength[particleIndex] * 0.008)
-            const restNoise = 0.006 + (0.00065 - 0.006) * wordmarkStability
-            const orbitAmplitude = 0.012
-              + (0.0008 - 0.012) * wordmarkStability
-              + transitionEnergy * (0.07 + motion.strength[particleIndex] * 0.11)
-            const noiseAmplitude = restNoise + transitionNoise
+              * transitionLayerScale
+              * layerActivity
+            const orbitAmplitude = (
+              motion.orbitRadius[particleIndex] * wordmarkLayerScale
+              + transitionEnergy * (isContour ? 0.016 : isOrbital ? 0.042 : 0.078)
+            ) * layerActivity
+            const freeArcAmplitude = layer === particleLayer.free
+              ? (0.012 + motion.strength[particleIndex] * 0.028)
+                * (0.42 + transitionEnergy * 0.58)
+                * layerActivity
+                * wordmarkLayerScale
+              : 0
+            const curlPhase = phase * 0.73 + baseY * 1.18 - baseX * 0.84
+            const curlX = Math.sin(curlPhase + simulationTime * 0.17)
+            const curlY = Math.cos(curlPhase * 1.07 - simulationTime * 0.15)
+            const curlAmplitude = (
+              isContour ? 0.00075 : isOrbital ? 0.0055 : 0.012
+            ) * layerActivity * wordmarkLayerScale
+            const breathAmplitude = (
+              isContour ? 0.0014 : isOrbital ? 0.0045 : 0.007
+            ) * wordmarkLayerScale * (0.7 + motion.strength[particleIndex] * 0.3)
             const desiredX = rotatedX
               + orbitCosine * orbitAmplitude
-              + tangentX * vortexAmplitude
+              + tangentX * (vortexAmplitude + freeArcAmplitude * Math.sin(phase * 0.61))
               + radialX * releaseAmplitude
-              + motion.driftX[particleIndex] * ambientX * noiseAmplitude
+              + radialX * ambientX * breathAmplitude
+              + curlX * curlAmplitude
+              + motion.driftX[particleIndex] * ambientY * curlAmplitude * 0.35
             const desiredY = rotatedY
               + orbitSine * orbitAmplitude
-              + tangentY * vortexAmplitude
+              + tangentY * (vortexAmplitude + freeArcAmplitude * Math.sin(phase * 0.61))
               + radialY * releaseAmplitude
-              + motion.driftY[particleIndex] * ambientY * noiseAmplitude
+              + radialY * ambientX * breathAmplitude
+              + curlY * curlAmplitude
+              + motion.driftY[particleIndex] * ambientY * curlAmplitude * 0.35
             const desiredZ = baseZ
-              + orbitSine * transitionEnergy * (0.16 + motion.strength[particleIndex] * 0.08)
-            const damping = 0.105 + transitionEnergy * 0.018 + wordmarkStability * 0.22
+              + orbitSine
+                * motion.depth[particleIndex]
+                * adaptiveQuality.depth
+                * layerActivity
+                * wordmarkLayerScale
+              + transitionEnergy
+                * tangentX
+                * (isContour ? 0.025 : isOrbital ? 0.07 : 0.12)
+                * adaptiveQuality.depth
+                * layerActivity
+            const spring = 48
+              + (isContour ? 14 : isOrbital ? 6 : 0)
+              + wordmarkStability * (isContour ? 32 : 18)
+              - transitionEnergy * 5
+            const damping = 13.5 + wordmarkStability * 3.5
+            const velocityDecay = Math.exp(-damping * deltaSeconds)
 
-            array[offset] += (desiredX - array[offset]) * damping
-            array[offset + 1] += (desiredY - array[offset + 1]) * damping
-            array[offset + 2] += (desiredZ - array[offset + 2]) * damping
+            velocities[offset] = (
+              velocities[offset] + (desiredX - array[offset]) * spring * deltaSeconds
+            ) * velocityDecay
+            velocities[offset + 1] = (
+              velocities[offset + 1] + (desiredY - array[offset + 1]) * spring * deltaSeconds
+            ) * velocityDecay
+            velocities[offset + 2] = (
+              velocities[offset + 2] + (desiredZ - array[offset + 2]) * spring * deltaSeconds
+            ) * velocityDecay
+
+            array[offset] += velocities[offset] * deltaSeconds
+            array[offset + 1] += velocities[offset + 1] * deltaSeconds
+            array[offset + 2] += velocities[offset + 2] * deltaSeconds
           }
 
           attribute.needsUpdate = true
@@ -640,21 +724,30 @@ function FiberStudy() {
           const restMotionFactor = 1 - wordmarkStability * 0.92
           points.position.x += ((layoutX + responsiveOffsetX + pointerX * 0.08 * restMotionFactor) - points.position.x) * 0.04
           points.position.y += ((layoutY + responsiveOffsetY - pointerY * 0.05 * restMotionFactor
-            + Math.sin(time * 0.00048) * 0.018 * restMotionFactor) - points.position.y) * 0.04
-          points.rotation.y += ((pointerX * 0.055 * restMotionFactor + progress * 0.012 * restMotionFactor
+            + Math.sin(simulationTime * 0.48) * 0.018 * restMotionFactor) - points.position.y) * 0.04
+          points.rotation.y += ((pointerX * 0.055 * restMotionFactor + scrollProgress * 0.012 * restMotionFactor
             + transitionEnergy * 0.045 * transitionDirection) - points.rotation.y) * 0.025
           points.rotation.x += ((-pointerY * 0.035 * restMotionFactor) - points.rotation.x) * 0.025
-          points.rotation.z = Math.sin(time * 0.00022) * 0.0045 * restMotionFactor
+          points.rotation.z = Math.sin(simulationTime * 0.22) * 0.0045 * restMotionFactor
             + transitionEnergy * 0.012 * transitionDirection
-          material.opacity = 0.89 + Math.sin(time * 0.0007) * 0.03 * restMotionFactor - transitionEnergy * 0.045
+          material.opacity = (
+            0.89
+            + Math.sin(simulationTime * 0.7) * 0.022 * restMotionFactor
+            - transitionEnergy * 0.035
+          ) * (0.92 + adaptiveQuality.glow * 0.08)
 
           renderer.render(scene, camera)
 
-          if (previousFrameTime > 0 && measuredFrames < 180) {
+          if (previousFrameTime > 0 && time - previousFrameTime < 250) {
             measuredDuration += time - previousFrameTime
             measuredFrames += 1
-            if (measuredFrames === 180 && measuredDuration > 0) {
-              section.dataset.averageFps = ((measuredFrames * 1000) / measuredDuration).toFixed(1)
+            if (measuredFrames >= 150 && measuredDuration > 0) {
+              const averageFps = (measuredFrames * 1000) / measuredDuration
+              adaptiveQuality = resolveAdaptiveParticleQuality(averageFps)
+              section.dataset.averageFps = averageFps.toFixed(1)
+              section.dataset.adaptiveQuality = adaptiveQuality.name
+              measuredFrames = 0
+              measuredDuration = 0
             }
           }
           previousFrameTime = time
