@@ -5,8 +5,8 @@ import {
   BufferGeometry,
   PerspectiveCamera,
   Points,
-  PointsMaterial,
   Scene,
+  ShaderMaterial,
   WebGLRenderer,
 } from 'three'
 import { ScrollTrigger } from '../animations/gsap'
@@ -39,6 +39,51 @@ const particleFieldHeight = 4.95
 const stageScale = [1, 0.93, 0.91, 0.9, 0.97]
 const stageOffsetX = [0, 0.02, 0.025, 0.02, 0.01]
 const stageOffsetY = [0, -0.01, 0.025, -0.015, 0]
+
+const particleVertexShader = `
+  attribute vec3 color;
+  attribute float aPhase;
+  attribute float aSpeed;
+  attribute float aLayer;
+
+  uniform float uTime;
+  uniform float uPointSize;
+  uniform float uViewportScale;
+  uniform float uGlow;
+
+  varying vec3 vColor;
+  varying float vAlpha;
+
+  void main() {
+    vec4 viewPosition = modelViewMatrix * vec4(position, 1.0);
+    float depth = clamp((position.z + 0.34) / 0.68, 0.0, 1.0);
+    float layerDepth = clamp(aLayer * 0.5, 0.0, 1.0);
+    float pulse = 0.94 + sin(uTime * (0.58 + aSpeed * 0.22) + aPhase) * 0.06;
+    float perspective = uPointSize * uViewportScale / max(0.1, -viewPosition.z);
+    float sizeVariation = 0.9 + depth * 0.24 + layerDepth * 0.12;
+
+    gl_PointSize = clamp(perspective * sizeVariation * pulse, 0.9, 3.2);
+    gl_Position = projectionMatrix * viewPosition;
+
+    vColor = color * (0.84 + depth * 0.24 + pulse * 0.08);
+    vAlpha = (0.72 + depth * 0.24) * (1.0 - layerDepth * 0.12) * uGlow;
+  }
+`
+
+const particleFragmentShader = `
+  varying vec3 vColor;
+  varying float vAlpha;
+
+  void main() {
+    float radius = length(gl_PointCoord - vec2(0.5)) * 2.0;
+    float core = smoothstep(0.82, 0.08, radius);
+    float halo = smoothstep(1.0, 0.34, radius);
+    float alpha = (core * 0.78 + halo * 0.22) * vAlpha;
+
+    if (alpha < 0.015) discard;
+    gl_FragColor = vec4(vColor, alpha);
+  }
+`
 
 type BatSample = {
   positions: Float32Array
@@ -207,8 +252,8 @@ function getParticleProfile() {
       count: constrained ? 3600 : 5000,
       pointSize: 0.0145,
       maximumPixelRatio: 1.5,
-      orbitalRatio: constrained ? 0.09 : 0.12,
-      freeRatio: constrained ? 0.02 : 0.03,
+      orbitalRatio: constrained ? 0.11 : 0.14,
+      freeRatio: constrained ? 0.025 : 0.04,
     }
   }
 
@@ -217,8 +262,8 @@ function getParticleProfile() {
       count: constrained ? 6000 : 8500,
       pointSize: 0.012,
       maximumPixelRatio: 1.75,
-      orbitalRatio: constrained ? 0.11 : 0.13,
-      freeRatio: constrained ? 0.025 : 0.035,
+      orbitalRatio: constrained ? 0.13 : 0.16,
+      freeRatio: constrained ? 0.03 : 0.045,
     }
   }
 
@@ -226,8 +271,8 @@ function getParticleProfile() {
     count: constrained ? 9500 : 14000,
     pointSize: 0.0105,
     maximumPixelRatio: 2,
-    orbitalRatio: constrained ? 0.12 : 0.15,
-    freeRatio: constrained ? 0.03 : 0.04,
+    orbitalRatio: constrained ? 0.14 : 0.18,
+    freeRatio: constrained ? 0.035 : 0.05,
   }
 }
 
@@ -410,7 +455,7 @@ function FiberStudy() {
     let renderer: WebGLRenderer | null = null
     let camera: PerspectiveCamera | null = null
     let geometry: BufferGeometry | null = null
-    let material: PointsMaterial | null = null
+    let material: ShaderMaterial | null = null
     let points: Points | null = null
     let resizeObserver: ResizeObserver | null = null
     let resizeHandler: (() => void) | null = null
@@ -471,14 +516,20 @@ function FiberStudy() {
         geometry = new BufferGeometry()
         geometry.setAttribute('position', new BufferAttribute(positions, 3))
         geometry.setAttribute('color', new BufferAttribute(prepared.colors, 3))
+        geometry.setAttribute('aPhase', new BufferAttribute(motion.phase, 1))
+        geometry.setAttribute('aSpeed', new BufferAttribute(motion.speed, 1))
+        geometry.setAttribute('aLayer', new BufferAttribute(motion.layer, 1))
 
-        material = new PointsMaterial({
-          color: 0xffffff,
-          size: profile.pointSize,
-          sizeAttenuation: true,
-          vertexColors: true,
+        material = new ShaderMaterial({
+          vertexShader: particleVertexShader,
+          fragmentShader: particleFragmentShader,
+          uniforms: {
+            uTime: { value: 0 },
+            uPointSize: { value: profile.pointSize },
+            uViewportScale: { value: 1 },
+            uGlow: { value: 1 },
+          },
           transparent: true,
-          opacity: 0.91,
           blending: AdditiveBlending,
           depthWrite: false,
         })
@@ -499,10 +550,13 @@ function FiberStudy() {
         setParticleCount(profile.count)
 
         const resize = () => {
-          if (!renderer || !camera || !points) return
+          if (!renderer || !camera || !points || !material) return
           const bounds = canvas.getBoundingClientRect()
           renderer.setPixelRatio(Math.min(window.devicePixelRatio, profile.maximumPixelRatio))
           renderer.setSize(bounds.width, bounds.height, false)
+          material.uniforms.uViewportScale.value = (
+            bounds.height * Math.min(window.devicePixelRatio, profile.maximumPixelRatio)
+          ) * 0.5
           camera.aspect = bounds.width / Math.max(bounds.height, 1)
           camera.updateProjectionMatrix()
 
@@ -571,7 +625,7 @@ function FiberStudy() {
           const responsiveOffsetY = stageOffsetY[fromIndex]
             + (stageOffsetY[toIndex] - stageOffsetY[fromIndex]) * mix
           const transitionDirection = scrollDirection >= 0 ? 1 : -1
-          const cloudScale = 1 + transitionEnergy * 0.085
+          const cloudScale = 1 + transitionEnergy * 0.12
           const ambientX = Math.sin(simulationTime * 0.53)
           const ambientY = Math.cos(simulationTime * 0.47)
           const from = targets[fromIndex]
@@ -653,14 +707,20 @@ function FiberStudy() {
               * layerActivity
             const orbitAmplitude = (
               motion.orbitRadius[particleIndex] * wordmarkLayerScale
-              + transitionEnergy * (isContour ? 0.016 : isOrbital ? 0.042 : 0.078)
+              + transitionEnergy * (isContour ? 0.018 : isOrbital ? 0.052 : 0.094)
             ) * layerActivity
             const freeArcAmplitude = layer === particleLayer.free
-              ? (0.012 + motion.strength[particleIndex] * 0.028)
+              ? (0.02 + motion.strength[particleIndex] * 0.042)
                 * (0.42 + transitionEnergy * 0.58)
                 * layerActivity
                 * wordmarkLayerScale
               : 0
+            const fieldOrbitAmplitude = (
+              isContour ? 0.00045 : isOrbital ? 0.012 : 0.032
+            ) * layerActivity * wordmarkLayerScale * (0.76 + orbitCosine * 0.24)
+            const shellBreath = (
+              isContour ? 0.0006 : isOrbital ? 0.009 : 0.022
+            ) * layerActivity * wordmarkLayerScale * Math.sin(simulationTime * 0.36 + phase * 0.41)
             const curlPhase = phase * 0.73 + baseY * 1.18 - baseX * 0.84
             const curlX = Math.sin(curlPhase + simulationTime * 0.17)
             const curlY = Math.cos(curlPhase * 1.07 - simulationTime * 0.15)
@@ -672,15 +732,23 @@ function FiberStudy() {
             ) * wordmarkLayerScale * (0.7 + motion.strength[particleIndex] * 0.3)
             const desiredX = rotatedX
               + orbitCosine * orbitAmplitude
-              + tangentX * (vortexAmplitude + freeArcAmplitude * Math.sin(phase * 0.61))
-              + radialX * releaseAmplitude
+              + tangentX * (
+                vortexAmplitude
+                + fieldOrbitAmplitude * motion.direction[particleIndex]
+                + freeArcAmplitude * Math.sin(phase * 0.61)
+              )
+              + radialX * (releaseAmplitude + shellBreath)
               + radialX * ambientX * breathAmplitude
               + curlX * curlAmplitude
               + motion.driftX[particleIndex] * ambientY * curlAmplitude * 0.35
             const desiredY = rotatedY
               + orbitSine * orbitAmplitude
-              + tangentY * (vortexAmplitude + freeArcAmplitude * Math.sin(phase * 0.61))
-              + radialY * releaseAmplitude
+              + tangentY * (
+                vortexAmplitude
+                + fieldOrbitAmplitude * motion.direction[particleIndex]
+                + freeArcAmplitude * Math.sin(phase * 0.61)
+              )
+              + radialY * (releaseAmplitude + shellBreath)
               + radialY * ambientX * breathAmplitude
               + curlY * curlAmplitude
               + motion.driftY[particleIndex] * ambientY * curlAmplitude * 0.35
@@ -730,11 +798,12 @@ function FiberStudy() {
           points.rotation.x += ((-pointerY * 0.035 * restMotionFactor) - points.rotation.x) * 0.025
           points.rotation.z = Math.sin(simulationTime * 0.22) * 0.0045 * restMotionFactor
             + transitionEnergy * 0.012 * transitionDirection
-          material.opacity = (
-            0.89
-            + Math.sin(simulationTime * 0.7) * 0.022 * restMotionFactor
+          material.uniforms.uTime.value = simulationTime
+          material.uniforms.uGlow.value = (
+            0.92
+            + Math.sin(simulationTime * 0.7) * 0.025 * restMotionFactor
             - transitionEnergy * 0.035
-          ) * (0.92 + adaptiveQuality.glow * 0.08)
+          ) * (0.86 + adaptiveQuality.glow * 0.14)
 
           renderer.render(scene, camera)
 

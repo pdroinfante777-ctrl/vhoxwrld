@@ -9,13 +9,13 @@ import {
 
 describe('VHOX living particle motion', () => {
   it('keeps the readable contour as the dominant layer', () => {
-    const motion = createParticleMotionField(10_000, { orbital: 0.15, free: 0.04 })
+    const motion = createParticleMotionField(10_000, { orbital: 0.18, free: 0.05 })
     const distribution = getLayerDistribution(motion.layer)
 
     expect(distribution).toEqual({
-      contour: 8100,
-      orbital: 1500,
-      free: 400,
+      contour: 7700,
+      orbital: 1800,
+      free: 500,
     })
     expect(distribution.contour / motion.layer.length).toBeGreaterThanOrEqual(0.75)
   })

@@ -112,13 +112,13 @@ export function createParticleMotionField(
     orbitRadius[index] = layerValue === particleLayer.contour
       ? 0.0015 + random() * 0.0025
       : layerValue === particleLayer.orbital
-        ? 0.016 + random() * 0.026
-        : 0.048 + random() * 0.072
+        ? 0.025 + random() * 0.04
+        : 0.07 + random() * 0.09
     depth[index] = layerValue === particleLayer.contour
       ? 0.008 + random() * 0.012
       : layerValue === particleLayer.orbital
-        ? 0.045 + random() * 0.07
-        : 0.09 + random() * 0.12
+        ? 0.06 + random() * 0.08
+        : 0.13 + random() * 0.15
     delay[index] = (random() - 0.5) * (layerValue === particleLayer.contour ? 0.09 : 0.16)
   }
 
