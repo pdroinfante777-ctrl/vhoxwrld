@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 240" fill="none">
+  <title>VHOX particle wordmark geometry</title>
+  <g id="wordmarkV">
+    <path id="wordmarkVStroke" d="M20 40 L100 200 L180 40" />
+  </g>
+  <g id="wordmarkH">
+    <path id="wordmarkHLeft" d="M230 40 V200" />
+    <path id="wordmarkHRight" d="M350 40 V200" />
+    <path id="wordmarkHBar" d="M230 120 H350" />
+  </g>
+  <g id="wordmarkO">
+    <path id="wordmarkOStroke" d="M440 40 H540 Q570 40 570 70 V170 Q570 200 540 200 H440 Q410 200 410 170 V70 Q410 40 440 40 Z" />
+  </g>
+  <g id="wordmarkX">
+    <path id="wordmarkXDown" d="M620 40 L800 200" />
+    <path id="wordmarkXUp" d="M800 40 L620 200" />
+  </g>
+</svg>
