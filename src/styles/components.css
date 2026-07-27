@@ -1488,3 +1488,108 @@
     font-size: clamp(1.55rem, 6.2vh, 2.8rem);
   }
 }
+
+/* Responsive editorial hierarchy */
+.section-heading {
+  grid-template-columns: minmax(8rem, 0.48fr) minmax(0, 1.52fr) minmax(15rem, 0.72fr);
+  gap: clamp(1.5rem, 3vw, 3.75rem);
+  margin-bottom: clamp(3.5rem, 6vw, 6.5rem);
+}
+
+.section-heading h2 {
+  max-width: 13ch;
+  font-size: clamp(2.8rem, 5.1vw, 5.75rem);
+  line-height: 0.88;
+  letter-spacing: -0.05em;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.section-heading > p {
+  display: -webkit-box;
+  overflow: hidden;
+  max-width: 26rem;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.mobile-menu nav a {
+  font-size: clamp(2.2rem, 5.4vh, 4.75rem);
+  line-height: 0.92;
+  text-wrap: balance;
+}
+
+.site-footer__contact h2 {
+  max-width: 100%;
+  font-size: clamp(2.8rem, 4vw, 4rem);
+  line-height: 0.88;
+}
+
+.site-footer__monument {
+  max-width: 100%;
+  margin-block: clamp(3rem, 6vw, 6rem);
+  font-size: clamp(4rem, 13vw, 14rem);
+  line-height: 0.74;
+  letter-spacing: -0.065em;
+  white-space: nowrap;
+}
+
+@media (max-width: 64rem) {
+  .section-heading {
+    grid-template-columns: minmax(8rem, 0.42fr) minmax(0, 1.58fr);
+  }
+
+  .section-heading > p {
+    grid-column: 2;
+  }
+
+  .site-footer__monument {
+    font-size: clamp(4rem, 13.5vw, 9rem);
+  }
+}
+
+@media (max-width: 48rem) {
+  .section-heading {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    margin-bottom: 3.5rem;
+  }
+
+  .section-heading h2,
+  .section-heading > p {
+    grid-column: 1;
+  }
+
+  .section-heading h2 {
+    max-width: 100%;
+    font-size: clamp(2.3rem, 9.5vw, 3.65rem);
+    line-height: 0.9;
+  }
+
+  .mobile-menu nav a {
+    font-size: clamp(1.95rem, 8.5vw, 3.25rem);
+  }
+
+  .site-footer__columns {
+    gap: 2.5rem;
+  }
+
+  .site-footer__contact h2 {
+    font-size: clamp(2.35rem, 10vw, 3.6rem);
+  }
+
+  .site-footer__monument {
+    font-size: clamp(3.25rem, 12.5vw, 6rem);
+    letter-spacing: -0.055em;
+  }
+}
+
+@media (max-width: 26rem) {
+  .section-heading h2 {
+    font-size: clamp(1.9rem, 8.7vw, 2.7rem);
+  }
+
+  .site-footer__monument {
+    font-size: clamp(2.8rem, 12vw, 4.5rem);
+  }
+}
