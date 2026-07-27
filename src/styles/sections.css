@@ -2492,12 +2492,13 @@
   }
 
   .hero-scene__bat {
-    inset: 14% -22% 4%;
+    inset: 20% -10% 6%;
   }
 
   .hero-scene__bat img {
-    width: 130vw;
+    width: 112vw;
     max-width: none;
+    opacity: 0.36;
   }
 
   .hero-scene__rose {
@@ -2665,5 +2666,263 @@
   .drop-chapter__visual img,
   .journal-card__visual img {
     transition: none;
+  }
+}
+
+/* Responsive editorial type refinement */
+.hero--cinematic .hero__content--centered {
+  width: min(100%, 96rem);
+  margin-inline: auto;
+  padding-inline: clamp(0.25rem, 1vw, 1rem);
+}
+
+.hero--cinematic .hero__eyebrow {
+  margin-bottom: clamp(2.25rem, 4vh, 3.5rem);
+}
+
+.hero--cinematic .hero__title {
+  width: 100%;
+  max-width: 11ch;
+  font-size: var(--type-hero);
+  line-height: 0.76;
+  letter-spacing: -0.055em;
+}
+
+.hero--cinematic .hero__line-inner {
+  white-space: nowrap;
+}
+
+.hero--cinematic .hero__support {
+  display: none;
+}
+
+.manifesto__meta {
+  margin-bottom: clamp(4rem, 8vw, 7rem);
+}
+
+.manifesto__statement {
+  max-width: 15ch;
+  font-size: var(--type-display-xl);
+  line-height: 0.84;
+  letter-spacing: -0.055em;
+}
+
+.manifesto__footer {
+  align-items: start;
+}
+
+.drop-chapter__copy {
+  grid-template-columns: minmax(8rem, 0.7fr) minmax(12rem, 1fr);
+  gap: 0.75rem clamp(1.25rem, 2.5vw, 2.5rem);
+}
+
+.drop-chapter__copy > span {
+  grid-column: 1 / -1;
+}
+
+.drop-chapter__copy h3 {
+  grid-row: auto;
+  grid-column: 1;
+  max-width: 100%;
+  font-size: var(--type-display-lg);
+  line-height: 0.8;
+}
+
+.drop-chapter__copy p,
+.drop-chapter__copy a {
+  grid-column: 2;
+}
+
+.drop-chapter--rose .drop-chapter__copy {
+  grid-template-columns: 1fr;
+}
+
+.drop-chapter--rose .drop-chapter__copy h3,
+.drop-chapter--rose .drop-chapter__copy p,
+.drop-chapter--rose .drop-chapter__copy a {
+  grid-column: 1;
+}
+
+.drop-chapter__copy p,
+.detail-study__copy p,
+.journal-card__meta p {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.detail-study__copy h3 {
+  max-width: 100%;
+  font-size: var(--type-display-md);
+  line-height: 0.88;
+  overflow-wrap: anywhere;
+}
+
+.vhox-world__content h2 {
+  max-width: 10ch;
+  font-size: clamp(3.8rem, 8vw, 8.75rem);
+  line-height: 0.8;
+  letter-spacing: -0.06em;
+}
+
+.journal-card__meta {
+  min-height: 15rem;
+}
+
+.journal-card__meta h3 {
+  max-width: 11ch;
+  font-size: clamp(2.25rem, 3.25vw, 3.65rem);
+  line-height: 0.88;
+  letter-spacing: -0.045em;
+  overflow-wrap: anywhere;
+}
+
+.inner-circle__body {
+  grid-template-columns: minmax(0, 1.15fr) minmax(20rem, 0.85fr);
+}
+
+.inner-circle h2 {
+  max-width: 12ch;
+  font-size: clamp(3.2rem, 6.5vw, 7.25rem);
+  line-height: 0.82;
+  letter-spacing: -0.055em;
+}
+
+@media (max-width: 64rem) {
+  .drop-chapter--bat {
+    grid-column: 1 / 9;
+  }
+
+  .drop-chapter--rose {
+    grid-column: 7 / 13;
+  }
+
+  .drop-chapter--void {
+    grid-column: 2 / 12;
+  }
+
+  .drop-chapter__copy {
+    grid-template-columns: minmax(7rem, 0.6fr) minmax(11rem, 1fr);
+  }
+
+  .inner-circle__body {
+    gap: clamp(3rem, 6vw, 5rem);
+  }
+}
+
+@media (max-width: 48rem) {
+  .hero--cinematic .hero__eyebrow {
+    margin-bottom: 2.25rem;
+  }
+
+  .hero--cinematic .hero__title {
+    max-width: 9.5ch;
+    font-size: clamp(2.75rem, 12vw, 4.75rem);
+    line-height: 0.78;
+  }
+
+  .hero__chapter {
+    margin-bottom: 0.9rem;
+  }
+
+  .hero__scene-title {
+    margin-top: 1rem;
+  }
+
+  .manifesto__meta,
+  .manifesto__footer {
+    grid-template-columns: 1fr;
+  }
+
+  .manifesto__statement {
+    max-width: 12ch;
+    font-size: clamp(2.75rem, 10.25vw, 4.65rem);
+    line-height: 0.86;
+  }
+
+  .drop-chapter__copy {
+    grid-template-columns: 1fr;
+  }
+
+  .drop-chapter__copy h3,
+  .drop-chapter__copy p,
+  .drop-chapter__copy a {
+    grid-column: 1;
+  }
+
+  .drop-chapter__copy h3 {
+    font-size: clamp(3rem, 13vw, 4.75rem);
+    overflow-wrap: anywhere;
+  }
+
+  .detail-study__copy {
+    grid-template-columns: 4.25rem minmax(0, 1fr);
+  }
+
+  .detail-study__copy h3 {
+    font-size: clamp(2.1rem, 9vw, 3.4rem);
+  }
+
+  .vhox-world__content h2 {
+    max-width: 9ch;
+    font-size: clamp(3.6rem, 16vw, 6.5rem);
+    line-height: 0.82;
+  }
+
+  .journal-card__meta h3 {
+    font-size: clamp(2.35rem, 10vw, 3.6rem);
+  }
+
+  .inner-circle__body {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    padding-top: clamp(4rem, 14vw, 6rem);
+  }
+
+  .inner-circle h2 {
+    max-width: 11ch;
+    font-size: clamp(3rem, 13vw, 5rem);
+    line-height: 0.84;
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 26rem) {
+  .hero--cinematic .hero__title {
+    max-width: 100%;
+    font-size: clamp(2.15rem, 10.8vw, 3.2rem);
+  }
+
+  .hero--cinematic .hero__eyebrow {
+    margin-bottom: 1.75rem;
+  }
+
+  .manifesto__statement {
+    font-size: clamp(2.45rem, 10vw, 3.15rem);
+  }
+
+  .detail-study__copy {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-study__copy h3,
+  .detail-study__copy p {
+    grid-column: 1;
+  }
+}
+
+@media (max-height: 36rem) and (orientation: landscape) and (max-width: 64rem) {
+  .hero--cinematic .hero__title {
+    max-width: 10ch;
+    font-size: clamp(2.65rem, 7vw, 4.15rem);
+  }
+
+  .hero__chapter {
+    display: none;
+  }
+
+  .hero__scene-title {
+    margin-top: 0.45rem;
   }
 }
