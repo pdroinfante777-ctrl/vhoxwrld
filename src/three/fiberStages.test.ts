@@ -31,10 +31,11 @@ describe('VHOX particle narrative', () => {
 
   it('keeps the cap structured with a tall crown and a restrained premium visor', () => {
     expect(premiumCap.paths.length).toBeGreaterThanOrEqual(8)
-    expect(premiumCap.paths[0].d).toContain('M94 308 C91 236')
-    expect(premiumCap.paths[0].d).toContain('C472 73 532 126 556 214')
+    expect(premiumCap.paths[0].d).toContain('M108 287 C102 226')
+    expect(premiumCap.paths[0].d).toContain('C457 60 511 107 535 184')
+    expect(premiumCap.paths[1].d).toContain('M108 287 C215 302')
     expect(premiumCap.paths[1].weight).toBeLessThan(premiumCap.paths[0].weight ?? 0)
-    expect(premiumCap.paths.some(({ d }) => d.includes('C360 45 370 35 384 35'))).toBe(true)
+    expect(premiumCap.paths.some(({ d }) => d.includes('M357 53 C357 39'))).toBe(true)
   })
 
   it('builds VHOX from four clean, separately bounded vector letters', () => {

@@ -18,6 +18,7 @@ import {
   getLayerDistribution,
   particleLayer,
   resolveAdaptiveParticleQuality,
+  resolveParticleCoreInfluence,
   resolveParticleMotionPhase,
   type ParticleMotionField,
 } from './particleMotion'
@@ -36,7 +37,7 @@ const batReferenceSource = '/brand/vhox-bat-particle-source.png'
 const batWorldWidth = 6.35
 const particleFieldHeight = 4.95
 
-const stageScale = [1, 0.93, 0.91, 0.9, 0.97]
+const stageScale = [1, 0.93, 1.04, 0.9, 0.97]
 const stageOffsetX = [0, 0.02, 0.025, 0.02, 0.01]
 const stageOffsetY = [0, -0.01, 0.025, -0.015, 0]
 
@@ -330,8 +331,9 @@ function resolveMorphState(rawProgress: number, targetCount: number): MorphState
   if (fromIndex === toIndex) return { progress: fromIndex, energy: 0 }
 
   const localProgress = scaledProgress - fromIndex
-  const transitionProgress = Math.min(1, Math.max(0, (localProgress - 0.2) / 0.6))
-  const easedProgress = transitionProgress * transitionProgress * (3 - 2 * transitionProgress)
+  const transitionProgress = Math.min(1, Math.max(0, (localProgress - 0.1) / 0.8))
+  const easedProgress = transitionProgress * transitionProgress * transitionProgress
+    * (transitionProgress * (transitionProgress * 6 - 15) + 10)
 
   return {
     progress: fromIndex + easedProgress,
@@ -583,7 +585,7 @@ function FiberStudy() {
           trigger: section,
           start: 'top top',
           end: 'bottom bottom',
-          scrub: 0.75,
+          scrub: 1.05,
           onUpdate: (self) => {
             const morph = resolveMorphState(self.progress, targets.length)
             scrollProgress = morph.progress
@@ -625,7 +627,7 @@ function FiberStudy() {
           const responsiveOffsetY = stageOffsetY[fromIndex]
             + (stageOffsetY[toIndex] - stageOffsetY[fromIndex]) * mix
           const transitionDirection = scrollDirection >= 0 ? 1 : -1
-          const cloudScale = 1 + transitionEnergy * 0.12
+          const cloudScale = 1 + transitionEnergy * 0.035
           const ambientX = Math.sin(simulationTime * 0.53)
           const ambientY = Math.cos(simulationTime * 0.47)
           const from = targets[fromIndex]
@@ -633,6 +635,7 @@ function FiberStudy() {
           const attribute = geometry.getAttribute('position')
           const array = attribute.array as Float32Array
           const motionPhase = resolveParticleMotionPhase(mix, transitionEnergy, scrollDirection)
+          const transitionCoreInfluence = resolveParticleCoreInfluence(mix, transitionEnergy)
 
           if (motionPhase !== previousMotionPhase) {
             previousMotionPhase = motionPhase
@@ -657,9 +660,13 @@ function FiberStudy() {
             const orbitSine = Math.sin(phase)
             const rawParticleMix = Math.min(1, Math.max(
               0,
-              mix + transitionEnergy * (motion.delay[particleIndex] + orbitSine * 0.022),
+              mix + transitionEnergy * (motion.delay[particleIndex] * 0.62 + orbitSine * 0.012),
             ))
             const particleMix = rawParticleMix * rawParticleMix * (3 - 2 * rawParticleMix)
+            const coreInfluence = Math.min(
+              1,
+              transitionCoreInfluence * (0.92 + motion.strength[particleIndex] * 0.08),
+            )
             const deltaX = to[offset] - from[offset]
             const deltaY = to[offset + 1] - from[offset + 1]
             const pathDistance = Math.max(0.001, Math.hypot(deltaX, deltaY))
@@ -671,11 +678,29 @@ function FiberStudy() {
               * curveLayerScale
               * motion.direction[particleIndex]
               * transitionDirection
+              * (1 - coreInfluence * 0.86)
             const curveNormalX = -deltaY / pathDistance
             const curveNormalY = deltaX / pathDistance
-            const baseX = from[offset] + deltaX * particleMix + curveNormalX * curveAmplitude
-            const baseY = from[offset + 1] + deltaY * particleMix + curveNormalY * curveAmplitude
-            const baseZ = from[offset + 2] + (to[offset + 2] - from[offset + 2]) * particleMix
+            const morphX = from[offset] + deltaX * particleMix + curveNormalX * curveAmplitude
+            const morphY = from[offset + 1] + deltaY * particleMix + curveNormalY * curveAmplitude
+            const morphZ = from[offset + 2] + (to[offset + 2] - from[offset + 2]) * particleMix
+            const corePhase = motion.phase[particleIndex]
+              + simulationTime * 0.24 * motion.direction[particleIndex]
+              + transitionDirection * particleMix * Math.PI * 0.55
+            const coreRadius = 0.24
+              + motion.strength[particleIndex] * 0.11
+              + orbitSine * 0.009
+            const coreSeed = (motion.driftX[particleIndex] + 1) * 0.5
+            const coreRadial = Math.sqrt(coreSeed) * coreRadius
+            const coreX = Math.cos(corePhase) * coreRadial
+            const coreY = Math.sin(corePhase) * coreRadial * 0.92
+            const coreZ = motion.driftY[particleIndex]
+              * Math.sqrt(1 - coreSeed)
+              * coreRadius
+              * 0.58
+            const baseX = morphX * (1 - coreInfluence) + coreX * coreInfluence
+            const baseY = morphY * (1 - coreInfluence) + coreY * coreInfluence
+            const baseZ = morphZ * (1 - coreInfluence) + coreZ * coreInfluence
             const twist = transitionEnergy
               * transitionDirection
               * (0.025 + motion.strength[particleIndex] * 0.04)
@@ -696,10 +721,11 @@ function FiberStudy() {
               : 1
             const transitionLayerScale = isContour ? 0.52 : isOrbital ? 0.9 : 1.25
             const vortexAmplitude = transitionEnergy
-              * (0.022 + motion.strength[particleIndex] * 0.055)
+              * (0.017 + motion.strength[particleIndex] * 0.038)
               * (0.4 + Math.abs(orbitSine) * 0.6)
               * transitionLayerScale
               * layerActivity
+              * (1 - coreInfluence * 0.5)
             const releaseAmplitude = transitionEnergy
               * (0.012 + motion.strength[particleIndex] * 0.035)
               * orbitCosine
@@ -741,6 +767,7 @@ function FiberStudy() {
               + radialX * ambientX * breathAmplitude
               + curlX * curlAmplitude
               + motion.driftX[particleIndex] * ambientY * curlAmplitude * 0.35
+              - coreY * coreInfluence * 0.085 * motion.direction[particleIndex]
             const desiredY = rotatedY
               + orbitSine * orbitAmplitude
               + tangentY * (
@@ -752,6 +779,7 @@ function FiberStudy() {
               + radialY * ambientX * breathAmplitude
               + curlY * curlAmplitude
               + motion.driftY[particleIndex] * ambientY * curlAmplitude * 0.35
+              + coreX * coreInfluence * 0.085 * motion.direction[particleIndex]
             const desiredZ = baseZ
               + orbitSine
                 * motion.depth[particleIndex]
@@ -763,11 +791,11 @@ function FiberStudy() {
                 * (isContour ? 0.025 : isOrbital ? 0.07 : 0.12)
                 * adaptiveQuality.depth
                 * layerActivity
-            const spring = 48
-              + (isContour ? 14 : isOrbital ? 6 : 0)
+            const spring = 42
+              + (isContour ? 12 : isOrbital ? 5 : 0)
               + wordmarkStability * (isContour ? 32 : 18)
-              - transitionEnergy * 5
-            const damping = 13.5 + wordmarkStability * 3.5
+              - transitionEnergy * 4
+            const damping = 11.8 + wordmarkStability * 3.8
             const velocityDecay = Math.exp(-damping * deltaSeconds)
 
             velocities[offset] = (
@@ -802,7 +830,7 @@ function FiberStudy() {
           material.uniforms.uGlow.value = (
             0.92
             + Math.sin(simulationTime * 0.7) * 0.025 * restMotionFactor
-            - transitionEnergy * 0.035
+            + transitionEnergy * 0.12
           ) * (0.86 + adaptiveQuality.glow * 0.14)
 
           renderer.render(scene, camera)

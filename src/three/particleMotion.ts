@@ -194,3 +194,14 @@ export function resolveParticleMotionPhase(
   if (directionalMix < 0.9) return 'forming'
   return 'settling'
 }
+
+export function resolveParticleCoreInfluence(
+  transitionMix: number,
+  transitionEnergy: number,
+) {
+  const mix = Math.min(1, Math.max(0, transitionMix))
+  const energy = Math.min(1, Math.max(0, transitionEnergy))
+  const coreEnvelope = Math.sin(mix * Math.PI)
+
+  return Math.pow(Math.max(0, coreEnvelope), 1.18) * energy
+}

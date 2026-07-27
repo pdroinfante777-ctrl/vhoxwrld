@@ -4,6 +4,7 @@ import {
   getLayerDistribution,
   particleLayer,
   resolveAdaptiveParticleQuality,
+  resolveParticleCoreInfluence,
   resolveParticleMotionPhase,
 } from './particleMotion'
 
@@ -56,5 +57,13 @@ describe('VHOX living particle motion', () => {
     expect(resolveParticleMotionPhase(0.78, 0.55, 1)).toBe('forming')
     expect(resolveParticleMotionPhase(0.95, 0.2, 1)).toBe('settling')
     expect(resolveParticleMotionPhase(0.95, 0.4, -1)).toBe('dispersing')
+  })
+
+  it('compresses particles only around the center of an active transition', () => {
+    expect(resolveParticleCoreInfluence(0, 1)).toBeCloseTo(0)
+    expect(resolveParticleCoreInfluence(1, 1)).toBeCloseTo(0)
+    expect(resolveParticleCoreInfluence(0.5, 0)).toBeCloseTo(0)
+    expect(resolveParticleCoreInfluence(0.5, 1)).toBeCloseTo(1)
+    expect(resolveParticleCoreInfluence(0.28, 0.9)).toBeGreaterThan(0.5)
   })
 })

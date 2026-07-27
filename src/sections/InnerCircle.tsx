@@ -16,7 +16,7 @@ export function InnerCircle() {
     <section id="inner-circle" className="inner-circle section" aria-labelledby="inner-circle-title">
       <div className="inner-circle__meta" data-reveal>
         <span>{t('inner.label')}</span>
-        <span>DROP 001 / PRIVATE SIGNAL</span>
+        <span>VHOX / PRIVATE SIGNAL</span>
       </div>
       <div className="inner-circle__body">
         <h2 id="inner-circle-title" data-reveal>{t('inner.title')}</h2>

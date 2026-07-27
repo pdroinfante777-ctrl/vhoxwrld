@@ -93,7 +93,7 @@ export function Hero({ reducedMotion }: HeroProps) {
         </div>
 
         <div key={scene.id} className="hero__chapter">
-          <span>{scene.index} / DROP 001</span>
+          <span>{scene.index} / VHOX</span>
           <p>{t(scene.detailKey)}</p>
         </div>
 

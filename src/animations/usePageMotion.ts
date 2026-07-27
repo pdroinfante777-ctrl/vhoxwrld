@@ -79,17 +79,21 @@ export function usePageMotion(rootRef: RefObject<HTMLElement | null>, reducedMot
         },
       })
 
-      gsap.to('.closing__orbit', {
-        rotate: 32,
-        scale: 1.08,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '.closing',
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 1,
-        },
-      })
+      const closing = root.querySelector<HTMLElement>('.closing')
+      const closingOrbit = closing?.querySelector<HTMLElement>('.closing__orbit')
+      if (closing && closingOrbit) {
+        gsap.to(closingOrbit, {
+          rotate: 32,
+          scale: 1.08,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: closing,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1,
+          },
+        })
+      }
     }, root)
 
     const refreshTimer = window.setTimeout(() => ScrollTrigger.refresh(), 250)

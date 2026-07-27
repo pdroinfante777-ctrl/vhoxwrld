@@ -70,7 +70,7 @@ export function Footer() {
 
       <div className="site-footer__bottom">
         <span>{t('footer.copyright', { year })}</span>
-        <span>VHOX WRLD / DROP 001</span>
+        <span>VHOX WRLD / {t('brand.exclusiveMovement')}</span>
         <a href="#top">{t('footer.back')}</a>
       </div>
     </footer>

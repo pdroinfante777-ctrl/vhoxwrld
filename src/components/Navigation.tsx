@@ -33,11 +33,18 @@ export function Navigation({ reducedMotion }: NavigationProps) {
   useEffect(() => {
     const handleScroll = () => {
       const currentScroll = window.scrollY
+      const delta = currentScroll - lastScroll.current
       setScrolled(currentScroll > 24)
-      setHidden(!open && currentScroll > 180 && currentScroll > lastScroll.current + 5)
+      setHidden((currentHidden) => {
+        if (open || currentScroll <= 96) return false
+        if (delta > 4) return true
+        if (delta < -4) return false
+        return currentHidden
+      })
       lastScroll.current = currentScroll
     }
 
+    handleScroll()
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [open])
@@ -111,7 +118,8 @@ export function Navigation({ reducedMotion }: NavigationProps) {
       </button>
 
       <a className="brand header-wordmark" href="/#top" aria-label={t('nav.homeLabel')} onClick={() => setOpen(false)}>
-        <BrandMark />
+        <BrandMark className="header-wordmark__primary" decorative />
+        <BrandMark className="header-wordmark__symbol" variant="bat" decorative />
       </a>
 
       <div className="header-actions">
@@ -138,7 +146,7 @@ export function Navigation({ reducedMotion }: NavigationProps) {
       >
         <div className="mobile-menu__topline">
           <BrandMark className="mobile-menu__brand" />
-          <span>DROP 001 / BEYOND FORM</span>
+          <span>VHOX WRLD / BEYOND FORM</span>
         </div>
         <div className="mobile-menu__body">
           <nav aria-label={t('nav.mobile')}>

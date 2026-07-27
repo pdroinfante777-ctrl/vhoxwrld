@@ -23,7 +23,7 @@ export function MaterialDetails() {
               <span className="detail-study__measure">{study.index}</span>
             </div>
             <div className="detail-study__copy">
-              <span>{study.index} / DROP 001</span>
+              <span>VHOX / {study.index}</span>
               <h3>{t(study.labelKey)}</h3>
               <p>{t(study.copyKey)}</p>
             </div>

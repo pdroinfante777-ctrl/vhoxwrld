@@ -19,6 +19,7 @@ import { ProductPage } from './pages/ProductPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { getProductBySlug } from './data/products'
 import { useLocale } from './i18n/useLocale'
+import { VhoxCursor } from './components/VhoxCursor'
 
 const loadFiberStudy = () => import('./three/FiberStudy')
 const FiberStudy = lazy(loadFiberStudy)
@@ -76,6 +77,7 @@ function App() {
   return (
     <div ref={rootRef} className={`site-shell site-shell--${route.type}`}>
       <Loader reducedMotion={reducedMotion} />
+      <VhoxCursor reducedMotion={reducedMotion} />
       <Navigation reducedMotion={reducedMotion} />
       <main id="main-content">
         {route.type === 'home' && <HomePage reducedMotion={reducedMotion} />}
