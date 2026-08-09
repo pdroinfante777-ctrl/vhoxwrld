@@ -1,13 +1,8 @@
-import { useEffect } from 'react'
 import { BrandMark } from '../components/BrandMark'
 import { useLocale } from '../i18n/useLocale'
 
 export function NotFoundPage() {
-  const { locale, t } = useLocale()
-
-  useEffect(() => {
-    document.title = '404 — VHOX'
-  }, [locale])
+  const { t } = useLocale()
 
   return (
     <section className="not-found-page" aria-labelledby="not-found-title">

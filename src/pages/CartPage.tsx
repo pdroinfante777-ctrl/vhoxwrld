@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useCart } from '../cart/useCart'
 import { useCurrency } from '../commerce/useCurrency'
 import { ArrowIcon } from '../components/ArrowIcon'
-import { formatProductPrice, getProductById, productPath } from '../data/products'
+import { formatProductPrice, getProductById, isProductPurchasable, productPath } from '../data/products'
 import { shopIsExternal, shopUrl } from '../config/shop'
 import { useLocale } from '../i18n/useLocale'
 
@@ -12,15 +12,14 @@ export function CartPage() {
   const { currency, formatFromUsd } = useCurrency()
   const lines = items.flatMap((line) => {
     const product = getProductById(line.productId)
-    return product ? [{ line, product }] : []
+    return product && isProductPurchasable(product) ? [{ line, product }] : []
   })
-  const allPricesConfirmed = lines.length > 0 && lines.every(({ product }) => product.price !== null)
+  const allPricesConfirmed = lines.length > 0 && lines.every(({ product }) => isProductPurchasable(product))
   const subtotal = lines.reduce((total, { line, product }) => total + (product.price ?? 0) * line.quantity, 0)
 
   useEffect(() => {
-    document.title = `${t('cart.title')} — VHOX`
     window.scrollTo(0, 0)
-  }, [locale, t])
+  }, [])
 
   return (
     <section className="cart-page" aria-labelledby="cart-title">

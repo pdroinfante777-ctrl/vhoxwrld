@@ -40,24 +40,24 @@ export type Product = {
   visual: 'slab' | 'aperture' | 'axis'
 }
 
-// These entries define the editorial chapters of DROP 001. Commercial fields
-// remain empty until VHOX supplies approved product data and photography.
+// BAT, ROSE and VOID are editorial concept studies. They are not treated as
+// confirmed products until every commercial field below has approved data.
 export const products: Product[] = [
   {
     id: 'bat',
     slug: 'bat',
     name: 'BAT',
     subtitle: null,
-    code: 'VHX-D001-01',
-    category: 'DROP 001 / MEDIA PENDING',
+    code: 'VHX-CST-01',
+    category: 'VHOX / CONCEPT STUDY',
     price: null,
     compareAtPrice: null,
     currency: 'USD',
     description: {
-      en: 'The first chapter of DROP 001. Final product media and verified release details are pending approval.',
-      es: 'El primer capítulo de DROP 001. Los medios finales del producto y los detalles verificados del lanzamiento están pendientes de aprobación.',
-      pt: 'O primeiro capítulo do DROP 001. A mídia final do produto e os detalhes verificados do lançamento aguardam aprovação.',
-      fr: 'Le premier chapitre de DROP 001. Les médias finaux du produit et les détails vérifiés de la sortie sont en attente de validation.',
+      en: 'A VHOX form study exploring a sharp nocturnal identity. Physical materials, approved product media and release data remain pending.',
+      es: 'Un estudio de forma VHOX que explora una identidad nocturna y precisa. Los materiales físicos, medios aprobados y datos de lanzamiento siguen pendientes.',
+      pt: 'Um estudo de forma VHOX que explora uma identidade noturna e precisa. Materiais físicos, mídia aprovada e dados de lançamento seguem pendentes.',
+      fr: 'Une étude de forme VHOX explorant une identité nocturne et précise. Les matières physiques, médias approuvés et données de sortie restent en attente.',
     },
     media: [],
     thumbnails: [],
@@ -78,16 +78,16 @@ export const products: Product[] = [
     slug: 'rose',
     name: 'ROSE',
     subtitle: null,
-    code: 'VHX-D001-02',
-    category: 'DROP 001 / MEDIA PENDING',
+    code: 'VHX-CST-02',
+    category: 'VHOX / CONCEPT STUDY',
     price: null,
     compareAtPrice: null,
     currency: 'USD',
     description: {
-      en: 'The second chapter of DROP 001. Approved campaign imagery and confirmed commercial data will be added here.',
-      es: 'El segundo capítulo de DROP 001. Aquí se añadirá la imagen de campaña aprobada y la información comercial confirmada.',
-      pt: 'O segundo capítulo do DROP 001. A imagem de campanha aprovada e os dados comerciais confirmados serão adicionados aqui.',
-      fr: 'Le deuxième chapitre de DROP 001. Les visuels de campagne approuvés et les données commerciales confirmées seront ajoutés ici.',
+      en: 'A VHOX contrast study balancing organic tension and controlled structure. No commercial specification or release is confirmed.',
+      es: 'Un estudio de contraste VHOX que equilibra tensión orgánica y estructura controlada. Ninguna especificación comercial o lanzamiento está confirmado.',
+      pt: 'Um estudo de contraste VHOX entre tensão orgânica e estrutura controlada. Nenhuma especificação comercial ou lançamento está confirmado.',
+      fr: 'Une étude de contraste VHOX entre tension organique et structure contrôlée. Aucune spécification commerciale ni sortie n’est confirmée.',
     },
     media: [],
     thumbnails: [],
@@ -108,16 +108,16 @@ export const products: Product[] = [
     slug: 'void',
     name: 'VOID',
     subtitle: null,
-    code: 'VHX-D001-03',
-    category: 'DROP 001 / MEDIA PENDING',
+    code: 'VHX-CST-03',
+    category: 'VHOX / CONCEPT STUDY',
     price: null,
     compareAtPrice: null,
     currency: 'USD',
     description: {
-      en: 'The closing chapter of DROP 001. This space is ready for verified product, material and availability data.',
-      es: 'El capítulo final de DROP 001. Este espacio está preparado para datos verificados de producto, materiales y disponibilidad.',
-      pt: 'O capítulo final do DROP 001. Este espaço está preparado para dados verificados de produto, materiais e disponibilidade.',
-      fr: 'Le chapitre final de DROP 001. Cet espace est prêt pour les données vérifiées du produit, des matières et de la disponibilité.',
+      en: 'A VHOX study of near-black depth and hidden tonal response. Physical validation, product construction and availability are pending.',
+      es: 'Un estudio VHOX de profundidad casi negra y respuesta tonal oculta. La validación física, construcción y disponibilidad están pendientes.',
+      pt: 'Um estudo VHOX de profundidade quase preta e resposta tonal oculta. Validação física, construção e disponibilidade estão pendentes.',
+      fr: 'Une étude VHOX de profondeur presque noire et de réponse tonale cachée. Validation physique, construction et disponibilité sont en attente.',
     },
     media: [],
     thumbnails: [],
@@ -147,6 +147,19 @@ export function getRelatedProducts(product: Product) {
   return product.related
     .map(getProductById)
     .filter((item): item is Product => Boolean(item))
+}
+
+export function isProductPurchasable(product: Product) {
+  const hasApprovedMedia = product.media.some((media) => Boolean(media.src.trim()))
+  const hasVariants = product.sizes.length > 0 && product.colors.length > 0
+  const hasConfirmedConstruction = Boolean(product.materials?.trim())
+  const hasConfirmedPrice = typeof product.price === 'number' && Number.isFinite(product.price) && product.price > 0
+
+  return product.availability === 'available'
+    && hasConfirmedPrice
+    && hasApprovedMedia
+    && hasVariants
+    && hasConfirmedConstruction
 }
 
 export function formatProductPrice(

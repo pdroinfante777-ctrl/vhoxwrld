@@ -603,6 +603,29 @@
 .product-dialog__content .button { width: 100%; }
 .product-dialog__content small { margin-top: 1rem; }
 
+.concept-badge {
+  display: inline-flex;
+  width: max-content;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 0.9rem;
+  color: var(--color-accent) !important;
+  font-family: var(--font-mono);
+  font-size: 0.52rem !important;
+  font-weight: 600;
+  letter-spacing: 0.15em !important;
+  text-transform: uppercase;
+}
+
+.concept-badge::before {
+  width: 0.38rem;
+  height: 0.38rem;
+  border-radius: 50%;
+  background: var(--color-accent);
+  content: "";
+  box-shadow: 0 0 0.8rem rgba(124,255,0,0.55);
+}
+
 .product-dialog__selectors {
   display: grid;
   gap: 1rem;
@@ -928,6 +951,19 @@
 .product-purchase__add { width: 100%; cursor: pointer; }
 .product-page__commerce-note { margin-top: 0.9rem; line-height: 1.55; }
 
+.product-concept-access {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.product-concept-access .button { width: 100%; }
+.product-concept-access > span {
+  color: var(--color-silver);
+  font-family: var(--font-mono);
+  font-size: 0.52rem;
+  letter-spacing: 0.13em;
+}
+
 .product-specs { margin-top: 3rem; border-top: 1px solid var(--line); }
 .product-specs details { border-bottom: 1px solid var(--line); }
 .product-specs summary {
@@ -1237,25 +1273,11 @@
     #050505;
 }
 
-.mobile-menu__topline {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-bottom: 1.2rem;
-  border-bottom: 1px solid var(--line);
-}
-
-.mobile-menu__topline > span,
 .mobile-menu__footer {
   color: var(--color-silver);
   font-family: var(--font-mono);
   font-size: 0.48rem;
   letter-spacing: 0.14em;
-}
-
-.mobile-menu__brand {
-  width: clamp(5.5rem, 8vw, 7rem);
-  margin: 0;
 }
 
 .mobile-menu__body {
@@ -1372,11 +1394,99 @@
   text-transform: uppercase;
 }
 
+.site-footer__social p {
+  margin: 0;
+  color: var(--color-silver);
+  font-family: var(--font-mono);
+  font-size: 0.52rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
 .site-footer__monument {
   margin-block: clamp(4rem, 8vw, 8rem);
   font-size: clamp(5.5rem, 19.5vw, 24rem);
   line-height: 0.68;
   text-align: center;
+}
+
+.site-footer__campaign {
+  display: grid;
+  min-height: clamp(34rem, 62vw, 58rem);
+  grid-template-columns: minmax(18rem, 0.82fr) minmax(0, 1.18fr);
+  margin-block: clamp(3rem, 6vw, 6rem);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(circle at 78% 20%, rgba(124, 255, 0, 0.055), transparent 27%),
+    #050505;
+}
+
+.site-footer__campaign-media {
+  position: relative;
+  min-height: 100%;
+  overflow: hidden;
+  border-right: 1px solid var(--line);
+  background: #c8c8c8;
+}
+
+.site-footer__campaign-media::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+}
+
+.site-footer__campaign-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 48%;
+  filter: contrast(1.04) grayscale(1);
+  transition: transform 1.2s var(--ease-out), filter 600ms ease;
+}
+
+.site-footer__campaign figcaption {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: clamp(2rem, 5vw, 5.5rem);
+}
+
+.site-footer__campaign figcaption > span,
+.site-footer__campaign figcaption > p {
+  color: var(--color-silver);
+  font-family: var(--font-mono);
+  font-size: clamp(0.5rem, 0.62vw, 0.64rem);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.site-footer__campaign figcaption > span {
+  margin-bottom: auto;
+}
+
+.site-footer__campaign figcaption h2 {
+  max-width: 7ch;
+  margin-block: clamp(3rem, 8vw, 8rem) 1.5rem;
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 8vw, 9rem);
+  font-weight: 800;
+  line-height: 0.78;
+  letter-spacing: -0.065em;
+}
+
+.site-footer__campaign figcaption > p {
+  color: var(--color-accent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .site-footer__campaign:hover .site-footer__campaign-media img {
+    transform: scale(1.018);
+    filter: contrast(1.08) grayscale(1);
+  }
 }
 
 .site-footer__bottom {
@@ -1394,6 +1504,10 @@
 @media (max-width: 64rem) {
   .site-footer__columns {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .site-footer__campaign {
+    grid-template-columns: minmax(16rem, 0.95fr) minmax(0, 1.05fr);
   }
 }
 
@@ -1433,12 +1547,6 @@
     font-size: clamp(2rem, 10vw, 4.25rem);
   }
 
-  .mobile-menu__topline > span {
-    max-width: 10rem;
-    line-height: 1.5;
-    text-align: right;
-  }
-
   .site-footer__masthead {
     grid-template-columns: 1fr;
   }
@@ -1466,6 +1574,30 @@
     grid-template-columns: 1fr;
     gap: 0.8rem;
   }
+
+  .site-footer__campaign {
+    min-height: 0;
+    grid-template-columns: 1fr;
+  }
+
+  .site-footer__campaign-media {
+    min-height: auto;
+    aspect-ratio: 4 / 5;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .site-footer__campaign figcaption {
+    min-height: 13rem;
+    padding: 1.5rem;
+  }
+
+  .site-footer__campaign figcaption h2 {
+    max-width: none;
+    margin-block: 3.25rem 1rem;
+    font-size: clamp(2.4rem, 11vw, 3.5rem);
+    line-height: 0.82;
+  }
 }
 
 @media (max-height: 36rem) and (orientation: landscape) and (max-width: 64rem) {
@@ -1474,7 +1606,6 @@
     padding-bottom: 0.6rem;
   }
 
-  .mobile-menu__topline,
   .mobile-menu__footer {
     display: none;
   }
@@ -1562,20 +1693,24 @@
 
   .section-heading h2 {
     max-width: 100%;
-    font-size: clamp(2.3rem, 9.5vw, 3.65rem);
+    font-size: clamp(2.05rem, 8vw, 3.15rem);
     line-height: 0.9;
   }
 
   .mobile-menu nav a {
-    font-size: clamp(1.95rem, 8.5vw, 3.25rem);
+    font-size: clamp(1.75rem, 7.4vw, 2.75rem);
   }
 
   .site-footer__columns {
     gap: 2.5rem;
   }
 
+  .site-footer__masthead .brand-mark {
+    width: clamp(5.25rem, 20vw, 6.25rem);
+  }
+
   .site-footer__contact h2 {
-    font-size: clamp(2.35rem, 10vw, 3.6rem);
+    font-size: clamp(2rem, 8.2vw, 2.8rem);
   }
 
   .site-footer__monument {
@@ -1586,7 +1721,7 @@
 
 @media (max-width: 26rem) {
   .section-heading h2 {
-    font-size: clamp(1.9rem, 8.7vw, 2.7rem);
+    font-size: clamp(1.8rem, 7.8vw, 2.45rem);
   }
 
   .site-footer__monument {

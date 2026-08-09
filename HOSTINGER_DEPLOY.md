@@ -1,150 +1,81 @@
 # VHOX — Hostinger Web Apps deployment
 
-This repository is a flat Vite project: `package.json`, `package-lock.json`, `index.html` and `vite.config.ts` are all in the repository root. It produces a static `dist/` directory and does not need a persistent Node server or entry file.
+This is a flat Vite project. `package.json`, `package-lock.json`, `index.html` and `vite.config.ts` are in the repository root.
 
-## Required production settings
+## Required settings
 
 | Setting | Value |
 | --- | --- |
 | Repository | `pdroinfante777-ctrl/vhoxwrld` |
 | Production branch | `main` |
 | Framework | Vite / React |
-| Node.js version | `20.x` |
-| Install command | `npm ci` |
-| Build command | `npm run build` |
-| Output directory | `dist` |
-| Server entry file | None (static frontend) |
+| Node.js | `20.x` |
+| Install | `npm ci` |
+| Build | `npm run build` |
+| Output | `dist` |
+| Server entry | None; static frontend |
 
-## 1. Connect the repository
+## Preview-first deployment
 
-1. Sign in to Hostinger hPanel.
-2. Open **Websites → Add Website → Deploy Web App**.
-3. Choose **Import Git Repository**.
-4. Authorize the Hostinger GitHub App for `pdroinfante777-ctrl/vhoxwrld`, or paste the repository URL if it is public.
-5. Deploy this app to a Hostinger temporary/preview domain first. **Do not disconnect or replace the current Website Builder site at `vhoxwrld.com` during this step.**
+1. Open **Websites → Add Website → Deploy Web App** in Hostinger hPanel.
+2. Import `pdroinfante777-ctrl/vhoxwrld` through the GitHub integration.
+3. Select branch `main`, Node.js 20, install command `npm ci`, build command `npm run build` and output `dist`.
+4. Deploy to a Hostinger temporary domain first.
+5. Do not disconnect, delete or replace the current Website Builder site at `vhoxwrld.com` during preview validation.
 
-Hostinger's current Web Apps instructions are available in its [official Node.js Web App guide](https://www.hostinger.com/support/how-to-deploy-a-nodejs-website-in-hostinger/).
+If Hostinger detects the framework as **Other**, retain the same commands and `dist`; do not add a server entry file.
 
-## 2. Select the production branch
+## Public environment variables
 
-Select `main`. The feature pull request must be reviewed and merged into `main` before the production Web App is expected to contain this version.
-
-## 3. Select Node.js 20
-
-Choose Node.js `20.x`. The repository also declares `"node": "20.x"` in `package.json` and includes `.nvmrc` with `20`.
-
-## 4. Configure the install command
-
-Use:
+Add only the approved destinations that exist:
 
 ```text
-npm ci
+VITE_SHOP_URL=https://approved-storefront.example
+VITE_WAITLIST_URL=https://approved-waitlist.example
+VITE_INSTAGRAM_URL=https://instagram.com/approved-profile
+VITE_TIKTOK_URL=https://tiktok.com/@approved-profile
+VITE_YOUTUBE_URL=https://youtube.com/@approved-channel
 ```
 
-`npm ci` installs the exact versions recorded in `package-lock.json`. Do not replace it with `npm install` in production.
+All `VITE_*` values are public in the browser bundle. Never add private API tokens, Stripe secrets, passwords or credentials. Empty social/waitlist values intentionally render pending states. Redeploy after changing any variable.
 
-## 5. Configure the build command
+## Preview checklist
 
-Use:
+- Homepage, `/product/bat`, `/product/rose`, `/product/void`, `/cart` and an unknown URL render correctly.
+- Menu opens with a single logo, closes by link/overlay/Escape and traps keyboard focus.
+- Header hides while scrolling down and returns while scrolling up.
+- Material studies respond to keyboard/pointer controls and contain the digital-study disclaimer.
+- Current concept studies show private-access CTAs and never quantity, variant or add-to-bag controls.
+- An obsolete saved concept bag is cleared.
+- Inner Circle never displays a fake success state.
+- Social links appear only when their approved HTTPS values exist.
+- Loader appears once per session.
+- Reduced-motion mode disables nonessential motion.
+- Mobile and desktop widths have no horizontal overflow.
+- Console has no critical errors.
+- `dist/404.html`, `dist/policies.html` and `dist/terms.html` exist.
 
-```text
-npm run build
-```
+The committed `.htaccess` passes real assets through, rewrites only the known SPA routes and uses `404.html` for unknown Apache routes. Confirm the actual HTTP status in Hostinger preview because local Vite preview does not emulate Apache rules.
 
-This runs the TypeScript project build first and then Vite. A TypeScript failure stops the deployment.
+## Logs and failure recovery
 
-## 6. Configure the output directory
+Open the failed deployment and read the first error in the full log. Confirm Node 20 and the exact commands above.
 
-Set:
+- Lock mismatch: regenerate `package-lock.json` with Node 20, commit and redeploy.
+- Framework detection failure: use Vite or **Other** with output `dist` and no entry file.
+- TypeScript/build failure: reproduce with `npm ci && npm run build` locally.
+- Missing destination: add the approved environment value and redeploy.
+- “No se ha podido preparar el servicio”: wait for the prior preparation job to end, then retry the GitHub deployment. Contact Hostinger support with the deployment ID if the platform state remains stuck.
 
-```text
-dist
-```
+## Domain cutover and rollback
 
-If Hostinger labels the detected framework as **Other**, select Vite manually when offered, or retain **Other** and enter `dist` as the output directory. Do not add an entry file; this is a static frontend.
+Cutover is outside this repository change. Before moving `vhoxwrld.com`, preserve the published Builder site, save a backup and record current domain/DNS settings.
 
-## 7. Configure `VITE_SHOP_URL`
+If rollback is needed after cutover:
 
-In the Web App dashboard, open **Environment Variables** and add:
+1. Move the Web App back to its temporary domain or disconnect `vhoxwrld.com` from it.
+2. Reconnect the preserved Builder site.
+3. Publish and verify apex plus `www` hostnames.
+4. Allow DNS propagation and test from a private window.
 
-```text
-VITE_SHOP_URL=https://the-approved-storefront-url.example
-```
-
-Optionally add the approved public social profile:
-
-```text
-VITE_INSTAGRAM_URL=https://instagram.com/the-approved-vhox-profile
-VITE_TIKTOK_URL=https://tiktok.com/@the-approved-vhox-profile
-VITE_YOUTUBE_URL=https://youtube.com/@the-approved-vhox-channel
-```
-
-Use the final HTTPS storefront destination approved by VHOX. Vite injects this value at build time, so trigger a new deployment after changing it. Never place Storefront API private tokens, Stripe secret keys, passwords or other secrets in a `VITE_*` variable; values with that prefix are public in the browser bundle.
-
-## 8. Verify before connecting `vhoxwrld.com`
-
-Open the Hostinger temporary/preview URL and confirm:
-
-- the homepage loads with no blank screen;
-- navigation anchors reach every section;
-- the mobile menu opens, closes and remains keyboard accessible;
-- collection buttons resolve to the configured `VITE_SHOP_URL`;
-- `/404.html`, `/policies.html` and `/terms.html` load;
-- the loader appears once per browser session;
-- reduced-motion mode disables smooth scroll and nonessential movement;
-- the deferred fiber study morphs smoothly and falls back without WebGL;
-- there are no console errors at desktop and mobile widths;
-- refresh and direct navigation do not return a server error.
-
-Hostinger documents where to find the temporary URL in its [official preview-domain guide](https://support.hostinger.com/en/articles/2489693-how-to-access-your-website-content-without-a-domain-in-hostinger).
-
-Only after this checklist passes and VHOX explicitly approves the preview should `vhoxwrld.com` be moved from Website Builder to the Web App. Domain cutover is intentionally outside the scope of this repository change.
-
-## 9. Review logs when a deployment fails
-
-1. Open **Websites → [temporary VHOX Web App] → Dashboard**.
-2. Check **Last deployment** and open its full log, or open **Deployments** and select the failed run.
-3. Find the first error, not only the final `exit code 1` line.
-4. Confirm the log shows Node 20, `npm ci`, `npm run build` and `dist`.
-5. Typical fixes:
-   - `npm ci` lock mismatch: regenerate `package-lock.json` locally with Node 20, commit it and redeploy.
-   - framework not detected: choose Vite or **Other** with output `dist` and no entry file.
-   - missing environment value: add `VITE_SHOP_URL`, save it and redeploy.
-   - TypeScript error: reproduce with `npm ci && npm run build` locally and fix the first reported file.
-6. If a ZIP deployment reports “No se ha podido preparar el servicio”, prefer the GitHub integration after confirming the root files and settings above. Retry only after the previous deployment has left the preparing state; otherwise contact Hostinger support with the deployment ID and full log.
-
-The Hostinger Web App dashboard exposes last-deployment details and a direct full-log link according to the [official Web App guide](https://www.hostinger.com/support/how-to-deploy-a-nodejs-website-in-hostinger/).
-
-## 10. Temporary rollback to the previous site
-
-Prepare rollback **before** domain cutover:
-
-1. Keep the current Website Builder site intact and published while validating the Web App preview.
-2. Duplicate the Builder site to a generated preview domain if hPanel permits it, and download an account/site backup before any domain reassignment.
-3. Record the current domain and DNS configuration.
-
-If the Web App has already received `vhoxwrld.com` and rollback is needed:
-
-1. Reassign the Web App to its temporary domain, or disconnect `vhoxwrld.com` from that app.
-2. Reconnect `vhoxwrld.com` to the preserved Website Builder site or its verified duplicate.
-3. Publish the Builder site and verify both apex and `www` hostnames.
-4. Allow for DNS/domain propagation and retest from a private browser window.
-
-Hostinger's Builder documentation explains using a temporary domain and reconnecting a preferred domain in its [domain connection guide](https://support.hostinger.com/en/articles/8347449-how-to-connect-a-domain-to-hostinger-website-builder).
-
-> Safety stop: some hPanel flows may require removing a website to release a domain. Removing a website can delete deployments and associated data. If that prompt appears, do not continue until a fresh backup exists and Hostinger support or the account owner confirms the exact rollback path. This deployment guide does not authorize deletion of the current public site.
-
-## Local release verification
-
-Run from the repository root with Node 20:
-
-```bash
-npm ci
-npm run typecheck
-npm run lint
-npm test
-npm run build
-npm run preview
-```
-
-The release is deployable only when these checks pass and `dist/index.html` exists.
+If hPanel asks to remove a website to release the domain, stop. Do not delete anything until a current backup exists and the account owner has confirmed the exact recovery path.
