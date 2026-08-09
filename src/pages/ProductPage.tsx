@@ -3,7 +3,7 @@ import { useCart } from '../cart/useCart'
 import { useCurrency } from '../commerce/useCurrency'
 import { ProductGallery } from '../components/ProductGallery'
 import { RelatedProducts } from '../components/RelatedProducts'
-import { formatProductPrice, productDescription, type Product } from '../data/products'
+import { formatProductPrice, isProductPurchasable, productDescription, type Product } from '../data/products'
 import { useLocale } from '../i18n/useLocale'
 
 export function ProductPage({ product }: { product: Product }) {
@@ -15,13 +15,14 @@ export function ProductPage({ product }: { product: Product }) {
   const [quantity, setQuantity] = useState(1)
   const [announcement, setAnnouncement] = useState('')
   const description = productDescription(product, locale)
+  const purchasable = isProductPurchasable(product)
 
   useEffect(() => {
-    document.title = `${product.name} — VHOX`
     window.scrollTo(0, 0)
-  }, [product, locale])
+  }, [product])
 
   const addToCart = () => {
+    if (!purchasable) return
     addItem(product, { quantity, size, color })
     setAnnouncement(t('product.added', { name: product.name }))
   }
@@ -35,6 +36,7 @@ export function ProductPage({ product }: { product: Product }) {
 
         <div className="product-page__info">
           <div className="product-page__breadcrumb"><a href="/#collection">{t('product.shop')}</a><span>/</span><span>{product.code}</span></div>
+          {!purchasable && <span className="concept-badge">{t('product.conceptStudy')}</span>}
           <span className="product-page__category">{product.category}</span>
           <h1 id="product-title">{product.name}</h1>
           {product.subtitle && <p className="product-page__subtitle">{product.subtitle}</p>}
@@ -46,7 +48,7 @@ export function ProductPage({ product }: { product: Product }) {
           </div>
           <p className="product-page__description">{description}</p>
 
-          {product.colors.length > 0 && (
+          {purchasable && product.colors.length > 0 && (
             <fieldset className="product-options">
               <legend>{t('product.color')} <span>{color}</span></legend>
               <div>
@@ -55,7 +57,7 @@ export function ProductPage({ product }: { product: Product }) {
             </fieldset>
           )}
 
-          {product.sizes.length > 0 && (
+          {purchasable && product.sizes.length > 0 && (
             <fieldset className="product-options">
               <legend>{t('product.size')} <span>{size}</span></legend>
               <div>
@@ -64,14 +66,21 @@ export function ProductPage({ product }: { product: Product }) {
             </fieldset>
           )}
 
-          <div className="product-purchase">
-            <div className="quantity-control" aria-label={t('product.quantity')}>
-              <button type="button" aria-label={t('product.decrease')} onClick={() => setQuantity((current) => Math.max(1, current - 1))}>−</button>
-              <output aria-live="polite">{quantity}</output>
-              <button type="button" aria-label={t('product.increase')} onClick={() => setQuantity((current) => Math.min(10, current + 1))}>+</button>
+          {purchasable ? (
+            <div className="product-purchase">
+              <div className="quantity-control" aria-label={t('product.quantity')}>
+                <button type="button" aria-label={t('product.decrease')} onClick={() => setQuantity((current) => Math.max(1, current - 1))}>−</button>
+                <output aria-live="polite">{quantity}</output>
+                <button type="button" aria-label={t('product.increase')} onClick={() => setQuantity((current) => Math.min(10, current + 1))}>+</button>
+              </div>
+              <button className="button button--primary product-purchase__add" type="button" onClick={addToCart}>{t('product.add')}</button>
             </div>
-            <button className="button button--primary product-purchase__add" type="button" onClick={addToCart}>{t('product.add')}</button>
-          </div>
+          ) : (
+            <div className="product-concept-access">
+              <a className="button button--primary" href="/#inner-circle">{t('product.requestPrivateAccess')}</a>
+              <span>{t('product.physicalValidationPending')}</span>
+            </div>
+          )}
           <p className="product-page__commerce-note">{t('product.commerceNote')}</p>
           {product.price !== null && (
             <p className="product-page__commerce-note">{t('product.displayCurrencyNote', { currency })}</p>

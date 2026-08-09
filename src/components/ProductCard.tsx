@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useCart } from '../cart/useCart'
-import { formatProductPrice, productDescription, productPath, type Product } from '../data/products'
+import { formatProductPrice, isProductPurchasable, productDescription, productPath, type Product } from '../data/products'
 import { ArrowIcon } from './ArrowIcon'
 import { useLocale } from '../i18n/useLocale'
 import { useCurrency } from '../commerce/useCurrency'
@@ -18,6 +18,7 @@ export function ProductCard({ product, index, compact = false }: ProductCardProp
   const { addItem } = useCart()
   const primary = product.media[0]
   const alternate = product.media[1]
+  const purchasable = isProductPurchasable(product)
 
   useEffect(() => {
     const card = cardRef.current
@@ -93,7 +94,7 @@ export function ProductCard({ product, index, compact = false }: ProductCardProp
           <span>{product.category}</span>
           <h3><a href={productPath(product)}>{product.name}</a></h3>
         </div>
-        <span className="status-dot">{t(`product.${product.availability === 'coming-soon' ? 'comingSoon' : product.availability}`)}</span>
+        <span className="status-dot">{purchasable ? t('product.available') : t('product.conceptStudy')}</span>
       </div>
       <div className="product-card__commerce">
         <span>{formatProductPrice(product, currency, locale, t('product.pricePending'))}</span>
@@ -102,9 +103,17 @@ export function ProductCard({ product, index, compact = false }: ProductCardProp
       {!compact && <p>{productDescription(product, locale)}</p>}
       <div className="product-card__actions">
         <a className="product-card__link" href={productPath(product)}>{t('product.view')} <ArrowIcon /></a>
-        <button type="button" onClick={() => addItem(product)} aria-label={`${t('product.add')} ${product.name}`}>
-          {t('product.add')}
-        </button>
+        {purchasable ? (
+          <button
+            type="button"
+            onClick={() => addItem(product, { size: product.sizes[0], color: product.colors[0] })}
+            aria-label={`${t('product.add')} ${product.name}`}
+          >
+            {t('product.add')}
+          </button>
+        ) : (
+          <a href="/#inner-circle">{t('product.requestPrivateAccess')}</a>
+        )}
       </div>
     </article>
   )

@@ -1,4 +1,4 @@
-import { instagramUrl, tiktokUrl, youtubeUrl } from '../config/social'
+import { socialProfiles } from '../config/social'
 import type { TranslationKey } from '../i18n/translations'
 import { useLocale } from '../i18n/useLocale'
 import { BrandMark } from './BrandMark'
@@ -61,12 +61,28 @@ export function Footer() {
 
       <div className="site-footer__social">
         <span>{t('footer.social')}</span>
-        <a href={instagramUrl} target="_blank" rel="noreferrer">Instagram</a>
-        <a href={tiktokUrl} target="_blank" rel="noreferrer">TikTok</a>
-        <a href={youtubeUrl} target="_blank" rel="noreferrer">YouTube</a>
+        {socialProfiles.length > 0 ? socialProfiles.map((profile) => (
+          <a key={profile.label} href={profile.url} target="_blank" rel="noreferrer">{profile.label}</a>
+        )) : <p>{t('social.pending')}</p>}
       </div>
 
-      <div className="site-footer__monument" aria-hidden="true">BEYOND FORM.</div>
+      <figure className="site-footer__campaign" aria-labelledby="footer-campaign-title" data-reveal>
+        <div className="site-footer__campaign-media">
+          <img
+            src="/campaign/vhox-coming-soon-architecture.jpg"
+            width="736"
+            height="920"
+            alt="VHOX architectural campaign — coming soon"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+        <figcaption>
+          <span>VHOX / VISUAL NOTE 001</span>
+          <h2 id="footer-campaign-title">BEYOND FORM.</h2>
+          <p>{t('footer.movement')}</p>
+        </figcaption>
+      </figure>
 
       <div className="site-footer__bottom">
         <span>{t('footer.copyright', { year })}</span>

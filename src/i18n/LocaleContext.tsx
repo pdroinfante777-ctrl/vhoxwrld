@@ -16,16 +16,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   const [locale, setLocale] = useState<Locale>(readInitialLocale)
 
   useEffect(() => {
-    const title = translate(locale, 'meta.title')
-    const description = translate(locale, 'meta.description')
     document.documentElement.lang = locale
-    document.title = title
-    document.querySelector<HTMLMetaElement>('meta[name="description"]')
-      ?.setAttribute('content', description)
-    document.querySelector<HTMLMetaElement>('meta[property="og:title"]')
-      ?.setAttribute('content', title)
-    document.querySelector<HTMLMetaElement>('meta[property="og:description"]')
-      ?.setAttribute('content', description)
 
     try {
       localStorage.setItem(storageKey, locale)

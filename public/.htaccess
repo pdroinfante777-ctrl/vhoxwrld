@@ -1,8 +1,16 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
+
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
-  RewriteRule ^ index.html [L]
+
+  # Only known client-side routes are rewritten to the Vite entry point.
+  # Unknown paths fall through to Apache's real 404 response below.
+  RewriteRule ^$ index.html [L]
+  RewriteRule ^cart/?$ index.html [L]
+  RewriteRule ^product/(bat|rose|void)/?$ index.html [L]
 </IfModule>
+
+ErrorDocument 404 /404.html

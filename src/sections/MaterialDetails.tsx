@@ -1,4 +1,5 @@
 import { SectionHeading } from '../components/SectionHeading'
+import { MaterialSystem } from '../components/MaterialSystem'
 import { detailStudies } from '../data/editorial'
 import { useLocale } from '../i18n/useLocale'
 
@@ -14,6 +15,8 @@ export function MaterialDetails() {
         title={t('details.title')}
         description={t('details.description')}
       />
+
+      <MaterialSystem />
 
       <div className="material-details__grid">
         {detailStudies.map((study) => (

@@ -144,10 +144,6 @@ export function Navigation({ reducedMotion }: NavigationProps) {
           if (event.target === event.currentTarget) setOpen(false)
         }}
       >
-        <div className="mobile-menu__topline">
-          <BrandMark className="mobile-menu__brand" />
-          <span>VHOX WRLD / BEYOND FORM</span>
-        </div>
         <div className="mobile-menu__body">
           <nav aria-label={t('nav.mobile')}>
             {navigationItems.map((item, index) => (

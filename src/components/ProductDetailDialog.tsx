@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { formatProductPrice, productDescription, type Product } from '../data/products'
+import { formatProductPrice, isProductPurchasable, productDescription, type Product } from '../data/products'
 import { shopIsExternal, shopUrl } from '../config/shop'
 import { ArrowIcon } from './ArrowIcon'
 import { useLocale } from '../i18n/useLocale'
@@ -55,6 +55,7 @@ export function ProductDetailDialog({ product, onClose }: ProductDetailDialogPro
 
   const media = product.media[mediaIndex]
   const destination = product.purchaseUrl ?? shopUrl
+  const purchasable = isProductPurchasable(product)
 
   return (
     <div className="product-dialog" role="presentation" onMouseDown={(event) => {
@@ -87,6 +88,7 @@ export function ProductDetailDialog({ product, onClose }: ProductDetailDialogPro
         </div>
 
         <div className="product-dialog__content">
+          {!purchasable && <strong className="concept-badge">{t('product.conceptStudy')}</strong>}
           <span>{product.code} / {product.category}</span>
           <h2 id="product-dialog-title">{product.name}</h2>
           <p>{productDescription(product, locale)}</p>
@@ -98,7 +100,7 @@ export function ProductDetailDialog({ product, onClose }: ProductDetailDialogPro
             <div><dt>{t('product.care')}</dt><dd>{product.care ?? t('product.dataPending')}</dd></div>
             <div><dt>{t('product.shipping')}</dt><dd>{product.shipping ?? t('product.dataPending')}</dd></div>
           </dl>
-          {(product.colors.length > 0 || product.sizes.length > 0) && (
+          {purchasable && (product.colors.length > 0 || product.sizes.length > 0) && (
             <div className="product-dialog__selectors">
               {product.colors.length > 0 && (
                 <fieldset>
@@ -118,10 +120,15 @@ export function ProductDetailDialog({ product, onClose }: ProductDetailDialogPro
               )}
             </div>
           )}
-          <a className="button button--primary" href={destination} target={shopIsExternal ? '_blank' : undefined} rel={shopIsExternal ? 'noreferrer' : undefined}>
-            {t('closing.cta')} <ArrowIcon />
+          <a
+            className="button button--primary"
+            href={purchasable ? destination : '/#inner-circle'}
+            target={purchasable && shopIsExternal ? '_blank' : undefined}
+            rel={purchasable && shopIsExternal ? 'noreferrer' : undefined}
+          >
+            {purchasable ? t('closing.cta') : t('product.requestPrivateAccess')} <ArrowIcon />
           </a>
-          <small>{t('product.commerceNote')}</small>
+          <small>{purchasable ? t('product.commerceNote') : t('product.physicalValidationPending')}</small>
         </div>
       </section>
     </div>

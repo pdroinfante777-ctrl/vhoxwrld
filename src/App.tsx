@@ -17,9 +17,10 @@ import { InnerCircle } from './sections/InnerCircle'
 import { CartPage } from './pages/CartPage'
 import { ProductPage } from './pages/ProductPage'
 import { NotFoundPage } from './pages/NotFoundPage'
-import { getProductBySlug } from './data/products'
+import { getProductBySlug, isProductPurchasable, productDescription } from './data/products'
 import { useLocale } from './i18n/useLocale'
 import { VhoxCursor } from './components/VhoxCursor'
+import { applyPageMetadata } from './seo/metadata'
 
 const loadFiberStudy = () => import('./three/FiberStudy')
 const FiberStudy = lazy(loadFiberStudy)
@@ -45,34 +46,36 @@ function App() {
   const reducedMotion = useReducedMotion()
   const route = getRoute()
   const isHome = route.type === 'home'
+  const routeSlug = route.type === 'product' ? route.slug : ''
+  const routedProduct = route.type === 'product' ? getProductBySlug(route.slug) : undefined
 
   useLenis(reducedMotion)
   usePageMotion(rootRef, reducedMotion || !isHome)
 
   useEffect(() => {
-    if (isHome) document.title = t('meta.title')
-  }, [isHome, locale, t])
-
-  useEffect(() => {
-    if (!isHome || reducedMotion) return
-
-    const warmParticleStudy = () => {
-      void loadFiberStudy().then(({ fiberStudyPreloader }) => fiberStudyPreloader.preload())
+    if (route.type === 'home') {
+      applyPageMetadata({ title: t('meta.title'), description: t('meta.description'), path: '/', robots: 'index, follow' })
+      return
     }
 
-    const idleWindow = window as Window & typeof globalThis & {
-      requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number
-      cancelIdleCallback?: (handle: number) => void
+    if (route.type === 'cart') {
+      applyPageMetadata({ title: `${t('cart.title')} — VHOX`, description: t('meta.cartDescription'), path: '/cart', robots: 'noindex, follow' })
+      return
     }
 
-    if (typeof idleWindow.requestIdleCallback === 'function') {
-      const handle = idleWindow.requestIdleCallback(warmParticleStudy, { timeout: 1200 })
-      return () => idleWindow.cancelIdleCallback?.(handle)
+    if (route.type === 'product' && routedProduct) {
+      const concept = !isProductPurchasable(routedProduct)
+      applyPageMetadata({
+        title: `${routedProduct.name} — VHOX${concept ? ` / ${t('product.conceptStudy')}` : ''}`,
+        description: productDescription(routedProduct, locale),
+        path: `/product/${routedProduct.slug}`,
+        robots: concept ? 'noindex, follow' : 'index, follow',
+      })
+      return
     }
 
-    const handle = globalThis.setTimeout(warmParticleStudy, 250)
-    return () => globalThis.clearTimeout(handle)
-  }, [isHome, reducedMotion])
+    applyPageMetadata({ title: '404 — VHOX', description: t('meta.notFoundDescription'), path: window.location.pathname, robots: 'noindex, follow' })
+  }, [locale, route.type, routeSlug, routedProduct, t])
 
   return (
     <div ref={rootRef} className={`site-shell site-shell--${route.type}`}>
@@ -82,10 +85,7 @@ function App() {
       <main id="main-content">
         {route.type === 'home' && <HomePage reducedMotion={reducedMotion} />}
         {route.type === 'cart' && <CartPage />}
-        {route.type === 'product' && (() => {
-          const product = getProductBySlug(route.slug)
-          return product ? <ProductPage product={product} /> : <NotFoundPage />
-        })()}
+        {route.type === 'product' && (routedProduct ? <ProductPage product={routedProduct} /> : <NotFoundPage />)}
         {route.type === 'not-found' && <NotFoundPage />}
       </main>
       <Footer />
@@ -99,7 +99,7 @@ function HomePage({ reducedMotion }: { reducedMotion: boolean }) {
       <Hero reducedMotion={reducedMotion} />
       <Manifesto />
       <DropChapters />
-      <DeferredMount className="deferred-fiber-study" minHeight="460vh" rootMargin="2400px 0px">
+      <DeferredMount className="deferred-fiber-study" minHeight="460vh" rootMargin="900px 0px">
         <Suspense fallback={<SectionFallback label="Loading fiber study" />}>
           <FiberStudy />
         </Suspense>
