@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from '../animations/gsap'
 import { ArrowIcon } from '../components/ArrowIcon'
+import { BrandMark } from '../components/BrandMark'
 import { heroScenes } from '../data/editorial'
 import { useLocale } from '../i18n/useLocale'
 
@@ -85,11 +86,13 @@ export function Hero({ reducedMotion }: HeroProps) {
         ))}
       </div>
       <div className="hero__overlay" aria-hidden="true" />
+      <div className="hero__house-signal" aria-hidden="true">
+        <BrandMark variant="bat" decorative />
+      </div>
 
       <div className="hero__content hero__content--centered">
         <div className="hero__eyebrow">
           <span>{t('hero.eyebrowOne')}</span>
-          <span>{t('brand.exclusiveMovement')}</span>
         </div>
 
         <div key={scene.id} className="hero__chapter">
@@ -97,15 +100,14 @@ export function Hero({ reducedMotion }: HeroProps) {
           <p>{t(scene.detailKey)}</p>
         </div>
 
-        <h1 id="hero-title" className="hero__title" aria-label={t('brand.exclusiveMovement')}>
+        <h1 id="hero-title" className="hero__title" aria-label={t('hero.title')}>
           <span className="hero__line"><span className="hero__line-inner">{t('hero.lineOne')}</span></span>
           <span className="hero__line hero__line--accent"><span className="hero__line-inner">{t('hero.lineTwo')}</span></span>
         </h1>
 
-        <p key={`${scene.id}-title`} className="hero__scene-title">{t(scene.titleKey)}</p>
         <p className="hero__support">{t('hero.support')}</p>
         <div className="hero__actions">
-          <a className="button button--primary" href="#drop-001">{t('hero.collection')} <ArrowIcon /></a>
+          <a className="button button--primary" href="#drop-001" data-cursor="EXPLORE">{t('hero.collection')} <ArrowIcon /></a>
           <a className="text-link" href="#manifesto">{t('hero.manifesto')}</a>
         </div>
       </div>

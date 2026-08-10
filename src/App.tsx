@@ -7,6 +7,7 @@ import { useLenis } from './hooks/useLenis'
 import { useReducedMotion } from './hooks/useReducedMotion'
 import { usePageMotion } from './animations/usePageMotion'
 import { Hero } from './sections/Hero'
+import { HouseCodes } from './sections/HouseCodes'
 import { Manifesto } from './sections/Manifesto'
 import { DropChapters } from './sections/DropChapters'
 import { MaterialDetails } from './sections/MaterialDetails'
@@ -97,6 +98,7 @@ function HomePage({ reducedMotion }: { reducedMotion: boolean }) {
   return (
     <>
       <Hero reducedMotion={reducedMotion} />
+      <HouseCodes />
       <Manifesto />
       <DropChapters />
       <DeferredMount className="deferred-fiber-study" minHeight="460vh" rootMargin="900px 0px">

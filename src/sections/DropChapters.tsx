@@ -29,7 +29,7 @@ export function DropChapters() {
               <span>{chapter.index} / {chapter.edition}</span>
               <h3>{chapter.title}</h3>
               <p>{t(chapter.copyKey)}</p>
-              <a href={chapter.path}>{t('drop.explore')} <ArrowIcon /></a>
+              <a href={chapter.path} data-cursor="VIEW">{t('drop.explore')} <ArrowIcon /></a>
             </div>
           </article>
         ))}
