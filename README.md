@@ -7,7 +7,8 @@ Experiential React/Vite frontend for [vhoxwrld.com](https://vhoxwrld.com). VHOX 
 - React 19 + TypeScript + Vite 6
 - GSAP/ScrollTrigger and Lenis for restrained editorial motion
 - Three.js for one code-split, proximity-loaded fiber study
-- CSS variables and dedicated base, component and section layers
+- Manrope Variable plus Cormorant Garamond Variable (normal and italic), limited to three Latin WOFF2 files
+- CSS variables and dedicated base, component, section and luxury-house layers
 - Node.js 20, `npm ci`, `npm run build`, output `dist`
 
 The WebGL chapter is not a purchasable product. It adapts particle density to the viewport and device, respects reduced motion and has a static fallback. Its chunk is requested only when the visitor approaches the chapter; there is no idle preload.
@@ -63,7 +64,9 @@ Only valid HTTPS URLs are accepted. Without a waitlist URL the Inner Circle show
 ## Experience and content model
 
 - Session-only V H O X loader with reduced-motion handling.
-- Responsive navigation whose menu contains one brand mark only.
+- Cinematic house cover and a light editorial House Codes chapter.
+- Responsive navigation whose menu contains one brand mark only and retains the official wordmark while scrolling.
+- Fine-pointer circular editorial cursor with touch and reduced-motion fallbacks.
 - Scroll-linked BAT / ROSE / VOID campaign and particle fiber study.
 - Interactive five-tone near-black digital material system with light, angle and distance controls.
 - Existing embroidery, textile, seam and silhouette construction studies preserved below it.

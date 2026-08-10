@@ -4,6 +4,7 @@ import { formatProductPrice, isProductPurchasable, productDescription, productPa
 import { ArrowIcon } from './ArrowIcon'
 import { useLocale } from '../i18n/useLocale'
 import { useCurrency } from '../commerce/useCurrency'
+import { useReducedMotion } from '../hooks/useReducedMotion'
 
 type ProductCardProps = {
   product: Product
@@ -19,10 +20,11 @@ export function ProductCard({ product, index, compact = false }: ProductCardProp
   const primary = product.media[0]
   const alternate = product.media[1]
   const purchasable = isProductPurchasable(product)
+  const reducedMotion = useReducedMotion()
 
   useEffect(() => {
     const card = cardRef.current
-    if (!card || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
+    if (!card || reducedMotion || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
 
     const handleMove = (event: PointerEvent) => {
       const bounds = card.getBoundingClientRect()
@@ -42,13 +44,14 @@ export function ProductCard({ product, index, compact = false }: ProductCardProp
       card.removeEventListener('pointermove', handleMove)
       card.removeEventListener('pointerleave', reset)
     }
-  }, [])
+  }, [reducedMotion])
 
   return (
     <article ref={cardRef} className={`product-card ${compact ? 'product-card--compact' : ''}`} data-reveal>
       <a
         className={`product-card__visual product-card__visual--${product.visual}`}
         href={productPath(product)}
+        data-cursor="VIEW"
         aria-label={`${t('product.view')} ${product.name}`}
       >
         <span className="product-card__number">{String(index + 1).padStart(2, '0')}</span>
@@ -102,7 +105,7 @@ export function ProductCard({ product, index, compact = false }: ProductCardProp
       </div>
       {!compact && <p>{productDescription(product, locale)}</p>}
       <div className="product-card__actions">
-        <a className="product-card__link" href={productPath(product)}>{t('product.view')} <ArrowIcon /></a>
+        <a className="product-card__link" href={productPath(product)} data-cursor="VIEW">{t('product.view')} <ArrowIcon /></a>
         {purchasable ? (
           <button
             type="button"
@@ -112,7 +115,7 @@ export function ProductCard({ product, index, compact = false }: ProductCardProp
             {t('product.add')}
           </button>
         ) : (
-          <a href="/#inner-circle">{t('product.requestPrivateAccess')}</a>
+          <a href="/#inner-circle" data-cursor="ENTER">{t('product.requestPrivateAccess')}</a>
         )}
       </div>
     </article>

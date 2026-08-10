@@ -6,11 +6,12 @@ type VhoxCursorProps = {
 
 export function VhoxCursor({ reducedMotion }: VhoxCursorProps) {
   const cursorRef = useRef<HTMLDivElement>(null)
+  const labelRef = useRef<HTMLSpanElement>(null)
 
   useEffect(() => {
     const cursor = cursorRef.current
     const precisePointer = window.matchMedia('(hover: hover) and (pointer: fine)')
-    if (!cursor || !precisePointer.matches) return
+    if (!cursor || !precisePointer.matches || reducedMotion) return
 
     const root = document.documentElement
     let frame = 0
@@ -20,13 +21,8 @@ export function VhoxCursor({ reducedMotion }: VhoxCursorProps) {
     let currentY = targetY
 
     const updateCursor = () => {
-      if (reducedMotion) {
-        currentX = targetX
-        currentY = targetY
-      } else {
-        currentX += (targetX - currentX) * 0.28
-        currentY += (targetY - currentY) * 0.28
-      }
+      currentX += (targetX - currentX) * 0.22
+      currentY += (targetY - currentY) * 0.22
       cursor.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) translate(-50%, -50%)`
       frame = window.requestAnimationFrame(updateCursor)
     }
@@ -36,20 +32,27 @@ export function VhoxCursor({ reducedMotion }: VhoxCursorProps) {
       targetY = event.clientY
       cursor.classList.add('vhox-cursor--visible')
       const target = event.target instanceof Element ? event.target : null
+      const textField = target?.closest('input:not([type="range"]):not([type="button"]), textarea, [contenteditable="true"]')
+      const editorialTarget = target?.closest<HTMLElement>('[data-cursor]')
       cursor.classList.toggle(
         'vhox-cursor--interactive',
         Boolean(target?.closest('a, button, input, select, textarea, [role="button"]')),
       )
+      cursor.classList.toggle('vhox-cursor--field', Boolean(textField))
+      cursor.classList.toggle('vhox-cursor--expanded', Boolean(editorialTarget))
+      if (labelRef.current) labelRef.current.textContent = editorialTarget?.dataset.cursor ?? ''
     }
     const onPointerDown = () => cursor.classList.add('vhox-cursor--pressed')
     const onPointerUp = () => cursor.classList.remove('vhox-cursor--pressed')
     const onPointerLeave = () => cursor.classList.remove('vhox-cursor--visible')
+    const onPointerEnter = () => cursor.classList.add('vhox-cursor--visible')
 
     root.classList.add('vhox-cursor-active')
     window.addEventListener('pointermove', onPointerMove, { passive: true })
     window.addEventListener('pointerdown', onPointerDown, { passive: true })
     window.addEventListener('pointerup', onPointerUp, { passive: true })
     document.documentElement.addEventListener('mouseleave', onPointerLeave)
+    document.documentElement.addEventListener('mouseenter', onPointerEnter)
     frame = window.requestAnimationFrame(updateCursor)
 
     return () => {
@@ -59,16 +62,14 @@ export function VhoxCursor({ reducedMotion }: VhoxCursorProps) {
       window.removeEventListener('pointerdown', onPointerDown)
       window.removeEventListener('pointerup', onPointerUp)
       document.documentElement.removeEventListener('mouseleave', onPointerLeave)
+      document.documentElement.removeEventListener('mouseenter', onPointerEnter)
     }
   }, [reducedMotion])
 
   return (
     <div ref={cursorRef} className="vhox-cursor" aria-hidden="true">
-      <svg viewBox="0 0 40 40" role="presentation">
-        <path className="vhox-cursor__upper" d="M20 20 3.5 4.5 M20 20 36.5 4.5" />
-        <path className="vhox-cursor__lower" d="M20 20 12.5 30 M20 20 27.5 30" />
-        <circle cx="20" cy="20" r="1.35" />
-      </svg>
+      <span className="vhox-cursor__dot" />
+      <span ref={labelRef} className="vhox-cursor__label" />
     </div>
   )
 }

@@ -3,16 +3,20 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="robots" content="noindex" />
+    <meta name="robots" content="noindex, follow" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="preload" href="/fonts/manrope-latin-variable.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/cormorant-garamond-latin-variable.woff2" as="font" type="font/woff2" crossorigin />
     <title>Policies — VHOX</title>
     <style>
-      :root { color-scheme: dark; font-family: Arial, sans-serif; } * { box-sizing: border-box; }
-      body { margin: 0; min-height: 100svh; padding: clamp(1.5rem,5vw,5rem); background:#050505; color:#f1f1ea; }
+      @font-face { font-family: Manrope; src: url('/fonts/manrope-latin-variable.woff2') format('woff2'); font-weight: 200 800; font-display: swap; }
+      @font-face { font-family: "Cormorant Garamond"; src: url('/fonts/cormorant-garamond-latin-variable.woff2') format('woff2'); font-weight: 300 700; font-display: swap; }
+      :root { color-scheme: dark; font-family: Manrope, sans-serif; } * { box-sizing: border-box; }
+      body { margin: 0; min-height: 100svh; padding: clamp(1.5rem,5vw,5rem); background:#070706; color:#f1eee7; }
       header, main { width:min(56rem,100%); margin:auto; } header { display:flex; justify-content:space-between; border-bottom:1px solid #333; padding-bottom:1.25rem; font-size:.7rem; letter-spacing:.15em; }
-      a { color:inherit; } main { padding-top:14vh; } h1 { margin:0 0 3rem; font-size:clamp(3.5rem,10vw,8rem); letter-spacing:-.07em; line-height:.8; }
+      a { color:inherit; } main { padding-top:14vh; } h1 { margin:0 0 3rem; font-family:"Cormorant Garamond",serif; font-size:clamp(3.5rem,10vw,8rem); font-weight:450; letter-spacing:-.055em; line-height:.8; }
       p { max-width:42rem; color:#aaa; line-height:1.7; } strong { color:#7cff00; font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; }
     </style>
   </head>

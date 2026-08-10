@@ -1,11 +1,36 @@
+@font-face {
+  font-family: "Manrope";
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("/fonts/manrope-latin-variable.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Cormorant Garamond";
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url("/fonts/cormorant-garamond-latin-variable.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Cormorant Garamond";
+  font-style: italic;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url("/fonts/cormorant-garamond-latin-variable-italic.woff2") format("woff2");
+}
+
 :root {
   color-scheme: dark;
-  --color-black: #050505;
-  --color-ink: #0b0b0b;
-  --color-carbon: #171717;
-  --color-steel: #292929;
-  --color-silver: #8a8a86;
-  --color-white: #f2f0eb;
+  --color-black: #070706;
+  --color-ink: #0c0c0b;
+  --color-carbon: #151513;
+  --color-steel: #2b2b29;
+  --color-silver: #8d8b85;
+  --color-white: #f1eee7;
+  --color-paper: #e9e5dc;
   --vhox-accent: #7cff00;
   --color-accent: var(--vhox-accent);
   --line: rgba(241, 241, 234, 0.16);
@@ -13,9 +38,10 @@
   --page-x: clamp(1.25rem, 3.4vw, 4.5rem);
   --header-height: 5.25rem;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --font-display: "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
-  --font-body: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --font-display: "Manrope", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Manrope", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Manrope", "Helvetica Neue", Arial, sans-serif;
+  --font-editorial: "Cormorant Garamond", Georgia, serif;
   --type-hero: clamp(4rem, 9.2vw, 10.75rem);
   --type-display-xl: clamp(3.6rem, 7.4vw, 8.25rem);
   --type-display-lg: clamp(2.8rem, 5.1vw, 5.75rem);
@@ -43,6 +69,7 @@ body {
   background: var(--color-black);
   color: var(--color-white);
   font-family: var(--font-body);
+  font-weight: 430;
   -webkit-font-smoothing: antialiased;
 }
 

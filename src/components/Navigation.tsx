@@ -119,7 +119,6 @@ export function Navigation({ reducedMotion }: NavigationProps) {
 
       <a className="brand header-wordmark" href="/#top" aria-label={t('nav.homeLabel')} onClick={() => setOpen(false)}>
         <BrandMark className="header-wordmark__primary" decorative />
-        <BrandMark className="header-wordmark__symbol" variant="bat" decorative />
       </a>
 
       <div className="header-actions">
