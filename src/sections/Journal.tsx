@@ -19,7 +19,7 @@ export function Journal() {
       <div className="journal__grid">
         {journalEntries.map((entry) => (
           <article key={entry.id} className={`journal-card journal-card--${entry.id}`} data-reveal>
-            <a href={entry.href}>
+            <a href={entry.id === 'origin' ? '/manifesto/' : entry.id === 'drop' ? '/collections/' : entry.href}>
               <div className="journal-card__visual" aria-hidden="true">
                 <span />
                 {entry.id === 'origin' && <img src="/brand/vhox-bat-particle-source.png" alt="" loading="lazy" decoding="async" />}

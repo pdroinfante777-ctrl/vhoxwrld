@@ -12,7 +12,7 @@ describe('VHOX Beyond Form editorial system', () => {
 
   it('connects every chapter to a real product route', () => {
     for (const chapter of dropChapters) {
-      expect(products.some((product) => `/product/${product.slug}` === chapter.path)).toBe(true)
+      expect(products.some((product) => `/collections/${product.slug}/` === chapter.path)).toBe(true)
     }
   })
 

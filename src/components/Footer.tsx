@@ -7,17 +7,17 @@ import { MarketControls } from './MarketControls'
 const year = new Date().getFullYear()
 
 const shopLinks = [
-  { labelKey: 'footer.drop001' as TranslationKey, href: '/#drop-001' },
-  { label: 'BAT', href: '/product/bat' },
-  { label: 'ROSE', href: '/product/rose' },
-  { label: 'VOID', href: '/product/void' },
+  { labelKey: 'footer.drop001' as TranslationKey, href: '/collections/' },
+  { label: 'BAT', href: '/collections/bat/' },
+  { label: 'ROSE', href: '/collections/rose/' },
+  { label: 'VOID', href: '/collections/void/' },
 ] as const
 
 const exploreLinks = [
-  { labelKey: 'footer.beyondForm' as TranslationKey, href: '/#manifesto' },
+  { labelKey: 'footer.beyondForm' as TranslationKey, href: '/manifesto/' },
   { labelKey: 'footer.details' as TranslationKey, href: '/#details' },
   { labelKey: 'footer.world' as TranslationKey, href: '/#vhox-world' },
-  { labelKey: 'footer.journal' as TranslationKey, href: '/#journal' },
+  { labelKey: 'footer.journal' as TranslationKey, href: '/journal/' },
 ] as const
 
 export function Footer() {
@@ -72,7 +72,7 @@ export function Footer() {
             src="/campaign/vhox-coming-soon-architecture.jpg"
             width="736"
             height="920"
-            alt="VHOX architectural campaign — coming soon"
+            alt={t('footer.campaignAlt')}
             loading="lazy"
             decoding="async"
           />

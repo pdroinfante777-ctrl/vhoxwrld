@@ -48,7 +48,7 @@ export const dropChapters: DropChapter[] = [
     title: 'BAT',
     edition: 'VHX-D001-01',
     copyKey: 'drop.batCopy',
-    path: '/product/bat',
+    path: '/collections/bat/',
   },
   {
     id: 'rose',
@@ -56,7 +56,7 @@ export const dropChapters: DropChapter[] = [
     title: 'ROSE',
     edition: 'VHX-D001-02',
     copyKey: 'drop.roseCopy',
-    path: '/product/rose',
+    path: '/collections/rose/',
   },
   {
     id: 'void',
@@ -64,7 +64,7 @@ export const dropChapters: DropChapter[] = [
     title: 'VOID',
     edition: 'VHX-D001-03',
     copyKey: 'drop.voidCopy',
-    path: '/product/void',
+    path: '/collections/void/',
   },
 ]
 

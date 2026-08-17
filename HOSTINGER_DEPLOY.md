@@ -35,13 +35,17 @@ VITE_WAITLIST_URL=https://approved-waitlist.example
 VITE_INSTAGRAM_URL=https://instagram.com/approved-profile
 VITE_TIKTOK_URL=https://tiktok.com/@approved-profile
 VITE_YOUTUBE_URL=https://youtube.com/@approved-channel
+VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+VITE_GA_ANALYTICS_CONSENT=denied
+VITE_GOOGLE_SITE_VERIFICATION=verification-token-only
 ```
 
 All `VITE_*` values are public in the browser bundle. Never add private API tokens, Stripe secrets, passwords or credentials. Empty social/waitlist values intentionally render pending states. Redeploy after changing any variable.
 
 ## Preview checklist
 
-- Homepage, `/product/bat`, `/product/rose`, `/product/void`, `/cart` and an unknown URL render correctly.
+- Homepage, `/collections/`, `/collections/bat/`, `/collections/rose/`, `/collections/void/`, `/journal/`, `/manifesto/`, `/cart/` and an unknown URL render correctly.
+- `/product/bat`, `/product/rose` and `/product/void` return a single permanent redirect to their `/collections/.../` canonical.
 - Menu opens with a single logo, closes by link/overlay/Escape and traps keyboard focus.
 - Header hides while scrolling down and returns while scrolling up.
 - Material studies respond to keyboard/pointer controls and contain the digital-study disclaimer.
@@ -54,6 +58,10 @@ All `VITE_*` values are public in the browser bundle. Never add private API toke
 - Mobile and desktop widths have no horizontal overflow.
 - Console has no critical errors.
 - `dist/404.html`, `dist/policies.html` and `dist/terms.html` exist.
+- `dist/robots.txt`, `dist/sitemap.xml` and `dist/llms.txt` respond as public text/XML resources.
+- Each prerendered public route has its own title, description, canonical and `index, follow` directive.
+
+GA4 remains off when its ID is empty or consent is not explicitly `granted`. Search Console verification is only prepared by the build; verification and sitemap submission must still be completed in Google's authenticated interface.
 
 The committed `.htaccess` passes real assets through, rewrites only the known SPA routes and uses `404.html` for unknown Apache routes. Confirm the actual HTTP status in Hostinger preview because local Vite preview does not emulate Apache rules.
 

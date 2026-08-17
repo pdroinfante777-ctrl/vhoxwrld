@@ -7,10 +7,10 @@ import { MarketControls } from './MarketControls'
 
 const navigationItems = [
   { labelKey: 'nav.home', href: '/#top' },
-  { labelKey: 'nav.shop', href: '/#drop-001' },
+  { labelKey: 'nav.shop', href: '/collections/' },
   { labelKey: 'nav.details', href: '/#details' },
   { labelKey: 'nav.world', href: '/#vhox-world' },
-  { labelKey: 'nav.journal', href: '/#journal' },
+  { labelKey: 'nav.journal', href: '/journal/' },
   { labelKey: 'nav.access', href: '/#inner-circle' },
   { labelKey: 'nav.contact', href: '/#contact' },
 ] as const
@@ -79,10 +79,12 @@ export function Navigation({ reducedMotion }: NavigationProps) {
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow
+    document.documentElement.classList.toggle('vhox-menu-open', open)
     if (open) document.body.style.overflow = 'hidden'
 
     return () => {
       document.body.style.overflow = previousOverflow
+      document.documentElement.classList.remove('vhox-menu-open')
     }
   }, [open])
 
@@ -122,7 +124,7 @@ export function Navigation({ reducedMotion }: NavigationProps) {
       </a>
 
       <div className="header-actions">
-        <a className="header-drop-link" href="/#drop-001">{t('nav.drop001')}</a>
+        <a className="header-drop-link" href="/collections/">{t('nav.drop001')}</a>
         <a className="header-access-link" href="/#inner-circle">{t('nav.access')}</a>
         <a
           className={`bag-link ${bagAnimating ? 'bag-link--pulse' : ''}`}

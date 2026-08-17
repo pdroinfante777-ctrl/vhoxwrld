@@ -6,11 +6,17 @@
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
 
+  # Permanent canonical migration from the former product paths.
+  RewriteRule ^product/(bat|rose|void)/?$ /collections/$1/ [R=301,L,NC]
+
   # Only known client-side routes are rewritten to the Vite entry point.
   # Unknown paths fall through to Apache's real 404 response below.
   RewriteRule ^$ index.html [L]
   RewriteRule ^cart/?$ index.html [L]
-  RewriteRule ^product/(bat|rose|void)/?$ index.html [L]
+  RewriteRule ^collections/?$ index.html [L]
+  RewriteRule ^journal/?$ index.html [L]
+  RewriteRule ^manifesto/?$ index.html [L]
+  RewriteRule ^collections/(bat|rose|void)/?$ index.html [L]
 </IfModule>
 
 ErrorDocument 404 /404.html

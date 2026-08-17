@@ -1,6 +1,7 @@
 import { ArrowIcon } from '../components/ArrowIcon'
 import { waitlistIsConfigured, waitlistUrl } from '../config/waitlist'
 import { useLocale } from '../i18n/useLocale'
+import { trackEvent } from '../analytics/ga4'
 
 export function InnerCircle() {
   const { t } = useLocale()
@@ -16,7 +17,7 @@ export function InnerCircle() {
         <div className="inner-circle__access" data-reveal>
           <p>{t('inner.description')}</p>
           {waitlistIsConfigured && waitlistUrl ? (
-            <a className="button button--primary inner-circle__external" href={waitlistUrl} target="_blank" rel="noreferrer">
+            <a className="button button--primary inner-circle__external" href={waitlistUrl} target="_blank" rel="noreferrer" onClick={() => trackEvent('generate_lead', { method: 'approved_waitlist', content_type: 'inner_circle' })}>
               {t('inner.registerExternal')} <ArrowIcon />
             </a>
           ) : (
