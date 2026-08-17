@@ -5,6 +5,7 @@ import { ArrowIcon } from './ArrowIcon'
 import { useLocale } from '../i18n/useLocale'
 import { useCurrency } from '../commerce/useCurrency'
 import { useReducedMotion } from '../hooks/useReducedMotion'
+import { trackEvent } from '../analytics/ga4'
 
 type ProductCardProps = {
   product: Product
@@ -53,6 +54,7 @@ export function ProductCard({ product, index, compact = false }: ProductCardProp
         href={productPath(product)}
         data-cursor="VIEW"
         aria-label={`${t('product.view')} ${product.name}`}
+        onClick={() => trackEvent('select_item', { item_list_id: 'vhox-concept-studies', item_list_name: 'VHOX concept studies', items: [{ item_id: product.id, item_name: product.name, item_category: product.category }] })}
       >
         <span className="product-card__number">{String(index + 1).padStart(2, '0')}</span>
         {primary ? (
@@ -109,7 +111,10 @@ export function ProductCard({ product, index, compact = false }: ProductCardProp
         {purchasable ? (
           <button
             type="button"
-            onClick={() => addItem(product, { size: product.sizes[0], color: product.colors[0] })}
+            onClick={() => {
+              addItem(product, { size: product.sizes[0], color: product.colors[0] })
+              trackEvent('add_to_cart', { currency: product.currency, value: product.price, items: [{ item_id: product.id, item_name: product.name, price: product.price, quantity: 1 }] })
+            }}
             aria-label={`${t('product.add')} ${product.name}`}
           >
             {t('product.add')}

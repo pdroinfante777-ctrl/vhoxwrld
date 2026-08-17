@@ -5,6 +5,7 @@ import { ArrowIcon } from '../components/ArrowIcon'
 import { formatProductPrice, getProductById, isProductPurchasable, productPath } from '../data/products'
 import { shopIsExternal, shopUrl } from '../config/shop'
 import { useLocale } from '../i18n/useLocale'
+import { trackEntityView, trackEvent } from '../analytics/ga4'
 
 export function CartPage() {
   const { items, totalQuantity, updateQuantity, removeItem, clearCart } = useCart()
@@ -19,7 +20,12 @@ export function CartPage() {
 
   useEffect(() => {
     window.scrollTo(0, 0)
-  }, [])
+    trackEntityView('cart', 'view_cart', {
+      currency,
+      value: subtotal,
+      items: lines.map(({ line, product }) => ({ item_id: product.id, item_name: product.name, price: product.price, quantity: line.quantity })),
+    })
+  }, [currency, lines, subtotal])
 
   return (
     <section className="cart-page" aria-labelledby="cart-title">
@@ -33,7 +39,7 @@ export function CartPage() {
         <div className="cart-empty">
           <span>{t('cart.emptyLabel')}</span>
           <h2>{t('cart.empty')}</h2>
-          <a className="button button--primary" href="/#collection">{t('cart.view')} <ArrowIcon /></a>
+          <a className="button button--primary" href="/collections/">{t('cart.view')} <ArrowIcon /></a>
         </div>
       ) : (
         <div className="cart-layout">
@@ -59,7 +65,10 @@ export function CartPage() {
                       <output>{line.quantity}</output>
                       <button type="button" aria-label={`${t('product.increase')} ${product.name}`} onClick={() => updateQuantity(line.key, line.quantity + 1)}>+</button>
                     </div>
-                    <button type="button" className="cart-line__remove" onClick={() => removeItem(line.key)}>{t('cart.remove')}</button>
+                    <button type="button" className="cart-line__remove" onClick={() => {
+                      removeItem(line.key)
+                      trackEvent('remove_from_cart', { currency: product.currency, value: (product.price ?? 0) * line.quantity, items: [{ item_id: product.id, item_name: product.name, price: product.price, quantity: line.quantity }] })
+                    }}>{t('cart.remove')}</button>
                   </div>
                 </article>
               )
@@ -72,7 +81,7 @@ export function CartPage() {
             {allPricesConfirmed && <p>{t('product.displayCurrencyNote', { currency })}</p>}
             <p>{t('cart.disclaimer')}</p>
             {shopIsExternal && allPricesConfirmed ? (
-              <a className="button button--primary" href={shopUrl} target="_blank" rel="noreferrer">{t('cart.continue')} <ArrowIcon /></a>
+              <a className="button button--primary" href={shopUrl} target="_blank" rel="noreferrer" onClick={() => trackEvent('begin_checkout', { currency, value: subtotal, items: lines.map(({ line, product }) => ({ item_id: product.id, item_name: product.name, price: product.price, quantity: line.quantity })) })}>{t('cart.continue')} <ArrowIcon /></a>
             ) : (
               <button className="button button--primary" type="button" disabled>{t('cart.unavailable')}</button>
             )}

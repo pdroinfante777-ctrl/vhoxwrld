@@ -57,6 +57,9 @@ VITE_WAITLIST_URL=https://approved-waitlist.example
 VITE_INSTAGRAM_URL=https://instagram.com/approved-profile
 VITE_TIKTOK_URL=https://tiktok.com/@approved-profile
 VITE_YOUTUBE_URL=https://youtube.com/@approved-channel
+VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+VITE_GA_ANALYTICS_CONSENT=denied
+VITE_GOOGLE_SITE_VERIFICATION=verification-token-only
 ```
 
 Only valid HTTPS URLs are accepted. Without a waitlist URL the Inner Circle shows `REGISTRATION PENDING`; it never simulates a successful submission. Without approved social URLs the footer and community chapter show `APPROVED CHANNELS PENDING`.
@@ -70,8 +73,10 @@ Only valid HTTPS URLs are accepted. Without a waitlist URL the Inner Circle show
 - Scroll-linked BAT / ROSE / VOID campaign and particle fiber study.
 - Interactive five-tone near-black digital material system with light, angle and distance controls.
 - Existing embroidery, textile, seam and silhouette construction studies preserved below it.
-- Concept-safe collection cards and product routes.
-- Centralized route metadata, canonical URL, Open Graph URL and robots policy.
+- Concept-safe collection cards and indexable collection-study routes without unverified `Product` schema.
+- Unique route metadata, absolute canonical URLs, Open Graph/Twitter cards, breadcrumbs and JSON-LD.
+- Build-time SEO generation for `sitemap.xml`, `robots.txt`, `llms.txt` and prerendered route heads.
+- Consent-gated GA4 integration and build-time Google Search Console verification support.
 - EN/ES/PT/FR typed translations.
 
 Primary content sources:
@@ -88,8 +93,12 @@ The material simulator is explicitly a digital color/light study. It does not cl
 Supported routes:
 
 - `/` — indexable campaign homepage.
-- `/product/:slug` — concept/product detail; current concepts are `noindex, follow`.
-- `/cart` — local bag and future handoff layer; `noindex, follow`.
+- `/collections/` — indexable BAT / ROSE / VOID overview with visible FAQ.
+- `/collections/bat/`, `/collections/rose/`, `/collections/void/` — indexable editorial studies; unverified commerce fields remain visibly pending.
+- `/journal/` — indexable editorial hub.
+- `/manifesto/` — indexable long-form house manifesto with In Brief and table of contents.
+- `/cart/` — local bag and future handoff layer; `noindex, follow`.
+- `/product/:slug` — permanent 301 migration to the corresponding `/collections/:slug/` route.
 - unknown routes — branded 404 experience; `noindex, follow`.
 
-See [ASSET_GUIDE.md](./ASSET_GUIDE.md), [AUDIT_VHOX.md](./AUDIT_VHOX.md) and [HOSTINGER_DEPLOY.md](./HOSTINGER_DEPLOY.md).
+See [SEO_AUDIT.md](./SEO_AUDIT.md), [ASSET_GUIDE.md](./ASSET_GUIDE.md), [AUDIT_VHOX.md](./AUDIT_VHOX.md) and [HOSTINGER_DEPLOY.md](./HOSTINGER_DEPLOY.md).

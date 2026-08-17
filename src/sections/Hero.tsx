@@ -107,8 +107,8 @@ export function Hero({ reducedMotion }: HeroProps) {
 
         <p className="hero__support">{t('hero.support')}</p>
         <div className="hero__actions">
-          <a className="button button--primary" href="#drop-001" data-cursor="EXPLORE">{t('hero.collection')} <ArrowIcon /></a>
-          <a className="text-link" href="#manifesto">{t('hero.manifesto')}</a>
+          <a className="button button--primary" href="/collections/" data-cursor="EXPLORE">{t('hero.collection')} <ArrowIcon /></a>
+          <a className="text-link" href="/manifesto/">{t('hero.manifesto')}</a>
         </div>
       </div>
 

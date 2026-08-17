@@ -177,5 +177,5 @@ export function productDescription(product: Product, locale: Locale) {
 }
 
 export function productPath(product: Product) {
-  return `/product/${product.slug}`
+  return `/collections/${product.slug}/`
 }
