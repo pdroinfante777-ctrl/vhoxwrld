@@ -48,7 +48,7 @@ body::before { display: none; }
   top: 50%;
   left: var(--page-x);
   display: block;
-  width: min(63rem, calc(100vw - (var(--page-x) * 2)));
+  width: min(84rem, calc(100vw - (var(--page-x) * 2)));
   padding: 0;
   transform: translateY(-46%);
 }
