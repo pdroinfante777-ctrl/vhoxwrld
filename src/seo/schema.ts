@@ -1,11 +1,13 @@
-import { canonicalUrl, defaultSocialImage } from './metadata'
+import { canonicalUrl } from './metadata'
+
+const officialLogo = `${canonicalUrl('/')}brand/vhox-logo-source.png`
 
 export function organizationSchema() {
   return {
     '@context': 'https://schema.org',
     '@graph': [
-      { '@type': 'Organization', '@id': `${canonicalUrl('/')}#organization`, name: 'VHOX', url: canonicalUrl('/'), logo: { '@type': 'ImageObject', url: defaultSocialImage, width: 1254, height: 1254 }, email: 'contact@vhoxwrld.com', brand: { '@id': `${canonicalUrl('/')}#brand` } },
-      { '@type': 'Brand', '@id': `${canonicalUrl('/')}#brand`, name: 'VHOX', logo: defaultSocialImage, slogan: 'Beyond Form' },
+      { '@type': 'Organization', '@id': `${canonicalUrl('/')}#organization`, name: 'VHOX', url: canonicalUrl('/'), logo: { '@type': 'ImageObject', url: officialLogo, width: 1254, height: 1254 }, email: 'contact@vhoxwrld.com', brand: { '@id': `${canonicalUrl('/')}#brand` } },
+      { '@type': 'Brand', '@id': `${canonicalUrl('/')}#brand`, name: 'VHOX', logo: officialLogo, slogan: 'From a distance, black. Up close, VHOX.' },
       { '@type': 'WebSite', '@id': `${canonicalUrl('/')}#website`, name: 'VHOX WRLD', url: canonicalUrl('/'), publisher: { '@id': `${canonicalUrl('/')}#organization` }, inLanguage: ['en', 'es', 'pt', 'fr'] },
     ],
   }

@@ -1,10 +1,8 @@
-import { useEffect, useRef } from 'react'
 import { useCart } from '../cart/useCart'
 import { formatProductPrice, isProductPurchasable, productDescription, productPath, type Product } from '../data/products'
 import { ArrowIcon } from './ArrowIcon'
 import { useLocale } from '../i18n/useLocale'
 import { useCurrency } from '../commerce/useCurrency'
-import { useReducedMotion } from '../hooks/useReducedMotion'
 import { trackEvent } from '../analytics/ga4'
 
 type ProductCardProps = {
@@ -16,39 +14,12 @@ type ProductCardProps = {
 export function ProductCard({ product, index, compact = false }: ProductCardProps) {
   const { locale, t } = useLocale()
   const { currency } = useCurrency()
-  const cardRef = useRef<HTMLElement>(null)
   const { addItem } = useCart()
   const primary = product.media[0]
   const alternate = product.media[1]
   const purchasable = isProductPurchasable(product)
-  const reducedMotion = useReducedMotion()
-
-  useEffect(() => {
-    const card = cardRef.current
-    if (!card || reducedMotion || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
-
-    const handleMove = (event: PointerEvent) => {
-      const bounds = card.getBoundingClientRect()
-      const x = (event.clientX - bounds.left) / bounds.width - 0.5
-      const y = (event.clientY - bounds.top) / bounds.height - 0.5
-      card.style.setProperty('--tilt-x', `${(-y * 2.5).toFixed(2)}deg`)
-      card.style.setProperty('--tilt-y', `${(x * 3.5).toFixed(2)}deg`)
-    }
-    const reset = () => {
-      card.style.setProperty('--tilt-x', '0deg')
-      card.style.setProperty('--tilt-y', '0deg')
-    }
-
-    card.addEventListener('pointermove', handleMove)
-    card.addEventListener('pointerleave', reset)
-    return () => {
-      card.removeEventListener('pointermove', handleMove)
-      card.removeEventListener('pointerleave', reset)
-    }
-  }, [reducedMotion])
-
   return (
-    <article ref={cardRef} className={`product-card ${compact ? 'product-card--compact' : ''}`} data-reveal>
+    <article className={`product-card ${compact ? 'product-card--compact' : ''}`} data-reveal>
       <a
         className={`product-card__visual product-card__visual--${product.visual}`}
         href={productPath(product)}

@@ -28,7 +28,7 @@ export function ManifestoPage() {
       <StructuredData id="vhox-manifesto-schema" data={schemas} />
       <header className="seo-page__hero">
         <Breadcrumbs items={[{ label: copy.breadcrumbHome, href: '/' }, { label: 'Manifesto' }]} />
-        <span className="seo-page__kicker">VHOX / BEYOND FORM</span>
+        <span className="seo-page__kicker">VHOX / CHROMATIC BLACK</span>
         <h1>{copy.manifesto.h1}</h1>
         <div className="seo-page__intro">
           <p>{copy.manifestoIntro}</p>

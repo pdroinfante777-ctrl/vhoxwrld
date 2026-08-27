@@ -7,7 +7,7 @@ Audit scope: React/Vite repository, production route model, semantic content, cr
 - React 19 + TypeScript + Vite 6, rendered as a client-side SPA.
 - Lightweight pathname router in `src/App.tsx`; no React Router, SSR or server application.
 - CSS split into base, components, sections, luxury and SEO editorial layers.
-- GSAP, Lenis and one deferred Three.js chapter remain intact.
+- GSAP and Lenis remain available for restrained editorial movement; the public homepage no longer mounts the former Three.js particle chapter.
 - Build now prerenders a unique `<head>` for every known route while React renders the interactive body.
 - No `.openai/hosting.json` exists, so the Hostinger `dist` deployment contract remains authoritative.
 - `/page/` does not exist in source, build output or routing; no noindex change was necessary.
@@ -47,12 +47,12 @@ Audit scope: React/Vite repository, production route model, semantic content, cr
 
 | URL | Title | Description |
 | --- | --- | --- |
-| `/` | VHOX — Exclusive Movement \| Premium Streetwear | Enter VHOX WRLD: an independent streetwear house exploring near-black material, exact form and movement through BAT, ROSE and VOID. |
+| `/` | VHOX — Chromatic Black \| Premium Streetwear | VHOX develops premium near-black streetwear through weight, proportion and restraint. From a distance, black. Up close, VHOX. |
 | `/collections/` | BAT, ROSE & VOID — VHOX Collection Studies | Explore BAT, ROSE and VOID, three VHOX concept studies shaped by nocturnal identity, controlled tension and near-black depth. |
 | `/collections/bat/` | BAT — Nocturnal Form Study \| VHOX | Explore BAT, the original VHOX signal; physical product specifications remain pending approval. |
 | `/collections/rose/` | ROSE — Controlled Tension Study \| VHOX | Explore ROSE, a VHOX contrast study; commercial release details remain pending. |
 | `/collections/void/` | VOID — Near-Black Depth Study \| VHOX | Explore VOID, a VHOX near-black depth study; physical validation remains pending. |
-| `/journal/` | VHOX Journal — Design, Identity & Beyond Form | Read VHOX field notes on symbols, construction, material language and the identity behind Beyond Form. |
+| `/journal/` | VHOX Journal — Material, Identity & Chromatic Black | Read VHOX field notes on near-black color, garment construction, proportion and the identity behind Chromatic Black. |
 | `/manifesto/` | VHOX Manifesto — An Independent Streetwear Language | Discover the VHOX manifesto: a disciplined language of near-black material, exact form and identity without compromise. |
 
 `/cart/`, `/policies.html`, `/terms.html` and 404 responses are `noindex, follow`. BAT, ROSE and VOID are indexable editorial studies, but they receive no `Product` schema until price, currency, availability, media, material and variants are commercially verified.

@@ -13,7 +13,7 @@ export type PageMetadata = {
 }
 
 export const siteOrigin = 'https://vhoxwrld.com'
-export const defaultSocialImage = `${siteOrigin}/brand/vhox-logo-source.png`
+export const defaultSocialImage = `${siteOrigin}/chromatic-black/vhox-og-chromatic.png`
 
 export function normalizePath(path: string) {
   const clean = path.replace(/^\/+|\/+$/g, '')

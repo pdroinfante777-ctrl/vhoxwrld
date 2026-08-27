@@ -7,9 +7,9 @@ import { MarketControls } from './MarketControls'
 
 const navigationItems = [
   { labelKey: 'nav.home', href: '/#top' },
-  { labelKey: 'nav.shop', href: '/collections/' },
-  { labelKey: 'nav.details', href: '/#details' },
-  { labelKey: 'nav.world', href: '/#vhox-world' },
+  { labelKey: 'nav.shop', href: '/#collection' },
+  { labelKey: 'nav.details', href: '/#chromatic-black' },
+  { labelKey: 'nav.world', href: '/#campaign' },
   { labelKey: 'nav.journal', href: '/journal/' },
   { labelKey: 'nav.access', href: '/#inner-circle' },
   { labelKey: 'nav.contact', href: '/#contact' },

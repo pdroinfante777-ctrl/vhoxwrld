@@ -28,9 +28,9 @@ type SeoCopy = {
 
 export const seoCopy: Record<Locale, SeoCopy> = {
   en: {
-    home: { title: 'VHOX — Exclusive Movement | Premium Streetwear', description: 'Enter VHOX WRLD: an independent streetwear house exploring near-black material, exact form and movement through BAT, ROSE and VOID.', h1: 'DARKNESS REVEALED.' },
+    home: { title: 'VHOX — Chromatic Black | Premium Streetwear', description: 'VHOX develops premium near-black streetwear through weight, proportion and restraint. From a distance, black. Up close, VHOX.', h1: 'FROM A DISTANCE, BLACK. UP CLOSE, VHOX.' },
     collections: { title: 'BAT, ROSE & VOID — VHOX Collection Studies', description: 'Explore BAT, ROSE and VOID, three VHOX concept studies shaped by nocturnal identity, controlled tension and near-black depth.', h1: 'THREE FORMS. ONE SIGNAL.' },
-    journal: { title: 'VHOX Journal — Design, Identity & Beyond Form', description: 'Read VHOX field notes on symbols, construction, material language and the independent identity behind Beyond Form.', h1: 'THE WORLD BEHIND THE FORM.' },
+    journal: { title: 'VHOX Journal — Material, Identity & Chromatic Black', description: 'Read VHOX field notes on near-black color, garment construction, proportion and the independent identity behind Chromatic Black.', h1: 'BEYOND THE SURFACE.' },
     manifesto: { title: 'VHOX Manifesto — An Independent Streetwear Language', description: 'Discover the VHOX manifesto: a disciplined language of near-black material, exact form and identity without compromise.', h1: 'DARKNESS IS A SURFACE.' },
     breadcrumbHome: 'Home', share: 'Share', shared: 'Link copied', copyLink: 'Copy link', inBrief: 'In brief', contents: 'Contents',
     collectionIntro: 'BAT, ROSE and VOID are three editorial studies within one VHOX language. They remain outside commerce until physical samples, media, specifications, price and release are approved.',
@@ -45,9 +45,9 @@ export const seoCopy: Record<Locale, SeoCopy> = {
     manifestoIntro: 'VHOX builds an independent language through restraint: material that changes through movement, form resolved with intention and identity protected from trend cycles.', manifestoCta: 'EXPLORE THE COLLECTION STUDIES',
   },
   es: {
-    home: { title: 'VHOX — Movimiento Exclusivo | Streetwear Premium', description: 'Entra a VHOX WRLD: una casa independiente de streetwear que explora material casi negro, forma exacta y movimiento mediante BAT, ROSE y VOID.', h1: 'OSCURIDAD REVELADA.' },
+    home: { title: 'VHOX — Chromatic Black | Streetwear Premium', description: 'VHOX desarrolla streetwear premium casi negro mediante peso, proporción y contención. From a distance, black. Up close, VHOX.', h1: 'FROM A DISTANCE, BLACK. UP CLOSE, VHOX.' },
     collections: { title: 'BAT, ROSE y VOID — Estudios de Colección VHOX', description: 'Explora BAT, ROSE y VOID, tres estudios VHOX construidos desde identidad nocturna, tensión controlada y profundidad casi negra.', h1: 'TRES FORMAS. UNA SEÑAL.' },
-    journal: { title: 'VHOX Journal — Diseño, Identidad y Beyond Form', description: 'Lee notas de campo VHOX sobre símbolos, construcción, lenguaje material y la identidad independiente detrás de Beyond Form.', h1: 'EL MUNDO DETRÁS DE LA FORMA.' },
+    journal: { title: 'VHOX Journal — Material, Identidad y Chromatic Black', description: 'Lee notas de campo VHOX sobre color casi negro, construcción, proporción e identidad independiente detrás de Chromatic Black.', h1: 'MÁS ALLÁ DE LA SUPERFICIE.' },
     manifesto: { title: 'Manifiesto VHOX — Un Lenguaje Streetwear Independiente', description: 'Descubre el manifiesto VHOX: una disciplina de material casi negro, forma exacta e identidad sin compromisos.', h1: 'LA OSCURIDAD ES UNA SUPERFICIE.' },
     breadcrumbHome: 'Inicio', share: 'Compartir', shared: 'Enlace copiado', copyLink: 'Copiar enlace', inBrief: 'En breve', contents: 'Contenido',
     collectionIntro: 'BAT, ROSE y VOID son tres estudios editoriales dentro de un solo lenguaje VHOX. Permanecen fuera de venta hasta aprobar muestras físicas, medios, especificaciones, precio y lanzamiento.',
@@ -62,9 +62,9 @@ export const seoCopy: Record<Locale, SeoCopy> = {
     manifestoIntro: 'VHOX construye un lenguaje independiente mediante contención: material que cambia con el movimiento, forma resuelta con intención e identidad protegida de los ciclos de tendencia.', manifestoCta: 'EXPLORAR LOS ESTUDIOS DE COLECCIÓN',
   },
   pt: {
-    home: { title: 'VHOX — Movimento Exclusivo | Streetwear Premium', description: 'Entre na VHOX WRLD: uma casa independente de streetwear que explora material quase preto, forma exata e movimento através de BAT, ROSE e VOID.', h1: 'ESCURIDÃO REVELADA.' },
+    home: { title: 'VHOX — Chromatic Black | Streetwear Premium', description: 'A VHOX desenvolve streetwear premium quase preto por meio de peso, proporção e contenção. From a distance, black. Up close, VHOX.', h1: 'FROM A DISTANCE, BLACK. UP CLOSE, VHOX.' },
     collections: { title: 'BAT, ROSE e VOID — Estudos de Coleção VHOX', description: 'Explore BAT, ROSE e VOID, três estudos VHOX moldados por identidade noturna, tensão controlada e profundidade quase preta.', h1: 'TRÊS FORMAS. UM SINAL.' },
-    journal: { title: 'VHOX Journal — Design, Identidade e Beyond Form', description: 'Leia notas VHOX sobre símbolos, construção, linguagem material e a identidade independente por trás de Beyond Form.', h1: 'O MUNDO ALÉM DA FORMA.' },
+    journal: { title: 'VHOX Journal — Material, Identidade e Chromatic Black', description: 'Leia notas VHOX sobre cor quase preta, construção, proporção e a identidade independente por trás de Chromatic Black.', h1: 'ALÉM DA SUPERFÍCIE.' },
     manifesto: { title: 'Manifesto VHOX — Uma Linguagem Streetwear Independente', description: 'Conheça o manifesto VHOX: disciplina de material quase preto, forma exata e identidade sem concessões.', h1: 'A ESCURIDÃO É UMA SUPERFÍCIE.' },
     breadcrumbHome: 'Início', share: 'Compartilhar', shared: 'Link copiado', copyLink: 'Copiar link', inBrief: 'Em resumo', contents: 'Conteúdo',
     collectionIntro: 'BAT, ROSE e VOID são três estudos editoriais dentro de uma linguagem VHOX. Permanecem fora do comércio até a aprovação de amostras, mídia, especificações, preço e lançamento.',
@@ -79,9 +79,9 @@ export const seoCopy: Record<Locale, SeoCopy> = {
     manifestoIntro: 'A VHOX constrói uma linguagem independente por meio da contenção: material que muda com o movimento, forma resolvida com intenção e identidade protegida dos ciclos de tendência.', manifestoCta: 'EXPLORAR OS ESTUDOS DE COLEÇÃO',
   },
   fr: {
-    home: { title: 'VHOX — Mouvement Exclusif | Streetwear Premium', description: 'Entrez dans VHOX WRLD, une maison streetwear indépendante explorant matière presque noire, forme exacte et mouvement avec BAT, ROSE et VOID.', h1: 'OBSCURITÉ RÉVÉLÉE.' },
+    home: { title: 'VHOX — Chromatic Black | Streetwear Premium', description: 'VHOX développe un streetwear premium presque noir par le poids, la proportion et la retenue. From a distance, black. Up close, VHOX.', h1: 'FROM A DISTANCE, BLACK. UP CLOSE, VHOX.' },
     collections: { title: 'BAT, ROSE et VOID — Études de Collection VHOX', description: 'Explorez BAT, ROSE et VOID, trois études VHOX façonnées par une identité nocturne, une tension contrôlée et une profondeur presque noire.', h1: 'TROIS FORMES. UN SIGNAL.' },
-    journal: { title: 'VHOX Journal — Design, Identité et Beyond Form', description: 'Lisez les notes VHOX sur les symboles, la construction, le langage matériel et l’identité indépendante de Beyond Form.', h1: 'LE MONDE DERRIÈRE LA FORME.' },
+    journal: { title: 'VHOX Journal — Matière, Identité et Chromatic Black', description: 'Lisez les notes VHOX sur la couleur presque noire, la construction, la proportion et l’identité de Chromatic Black.', h1: 'AU-DELÀ DE LA SURFACE.' },
     manifesto: { title: 'Manifeste VHOX — Un Langage Streetwear Indépendant', description: 'Découvrez le manifeste VHOX : matière presque noire, forme exacte et identité sans compromis.', h1: 'L’OBSCURITÉ EST UNE SURFACE.' },
     breadcrumbHome: 'Accueil', share: 'Partager', shared: 'Lien copié', copyLink: 'Copier le lien', inBrief: 'En bref', contents: 'Sommaire',
     collectionIntro: 'BAT, ROSE et VOID sont trois études éditoriales réunies dans un langage VHOX. Elles restent hors commerce jusqu’à validation des échantillons, médias, spécifications, prix et lancement.',
