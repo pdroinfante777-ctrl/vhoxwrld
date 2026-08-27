@@ -1,19 +1,18 @@
-import { lazy, Suspense, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { Loader } from './components/Loader'
 import { Navigation } from './components/Navigation'
-import { DeferredMount } from './components/DeferredMount'
 import { Footer } from './components/Footer'
 import { useLenis } from './hooks/useLenis'
 import { useReducedMotion } from './hooks/useReducedMotion'
 import { usePageMotion } from './animations/usePageMotion'
 import { Hero } from './sections/Hero'
-import { HouseCodes } from './sections/HouseCodes'
-import { Manifesto } from './sections/Manifesto'
-import { DropChapters } from './sections/DropChapters'
-import { MaterialDetails } from './sections/MaterialDetails'
-import { Collection } from './sections/Collection'
-import { VhoxWorld } from './sections/VhoxWorld'
-import { Journal } from './sections/Journal'
+import {
+  ChromaticCampaign,
+  ChromaticCollection,
+  ChromaticDetail,
+  ChromaticStory,
+  ChromaticStudies,
+} from './sections/ChromaticBlack'
 import { InnerCircle } from './sections/InnerCircle'
 import { CartPage } from './pages/CartPage'
 import { ProductPage } from './pages/ProductPage'
@@ -23,13 +22,9 @@ import { JournalPage } from './pages/JournalPage'
 import { ManifestoPage } from './pages/ManifestoPage'
 import { getProductBySlug, productDescription } from './data/products'
 import { useLocale } from './i18n/useLocale'
-import { VhoxCursor } from './components/VhoxCursor'
 import { applyPageMetadata } from './seo/metadata'
 import { seoCopy } from './seo/content'
 import { useAnalyticsPage } from './analytics/ga4'
-
-const loadFiberStudy = () => import('./three/FiberStudy')
-const FiberStudy = lazy(loadFiberStudy)
 
 type Route =
   | { type: 'home' }
@@ -119,7 +114,6 @@ function App() {
   return (
     <div ref={rootRef} className={`site-shell site-shell--${route.type}`}>
       <Loader reducedMotion={reducedMotion} />
-      <VhoxCursor reducedMotion={reducedMotion} />
       <Navigation reducedMotion={reducedMotion} />
       <main id="main-content">
         {route.type === 'home' && <HomePage reducedMotion={reducedMotion} />}
@@ -139,28 +133,13 @@ function HomePage({ reducedMotion }: { reducedMotion: boolean }) {
   return (
     <>
       <Hero reducedMotion={reducedMotion} />
-      <HouseCodes />
-      <Manifesto />
-      <DropChapters />
-      <DeferredMount className="deferred-fiber-study" minHeight="460vh" rootMargin="900px 0px">
-        <Suspense fallback={<SectionFallback label="Loading fiber study" />}>
-          <FiberStudy />
-        </Suspense>
-      </DeferredMount>
-      <MaterialDetails />
-      <Collection />
-      <VhoxWorld />
-      <Journal />
+      <ChromaticStory />
+      <ChromaticStudies />
+      <ChromaticDetail />
+      <ChromaticCollection />
+      <ChromaticCampaign />
       <InnerCircle />
     </>
-  )
-}
-
-function SectionFallback({ label }: { label: string }) {
-  return (
-    <div className="section-fallback" role="status" aria-live="polite">
-      <span>{label}</span>
-    </div>
   )
 }
 

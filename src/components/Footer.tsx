@@ -6,28 +6,30 @@ import { MarketControls } from './MarketControls'
 
 const year = new Date().getFullYear()
 
-const shopLinks = [
-  { labelKey: 'footer.drop001' as TranslationKey, href: '/collections/' },
+const collectionLinks = [
   { label: 'BAT', href: '/collections/bat/' },
   { label: 'ROSE', href: '/collections/rose/' },
   { label: 'VOID', href: '/collections/void/' },
 ] as const
 
 const exploreLinks = [
+  { labelKey: 'nav.details' as TranslationKey, href: '/#chromatic-black' },
+  { labelKey: 'nav.world' as TranslationKey, href: '/#campaign' },
+  { labelKey: 'nav.journal' as TranslationKey, href: '/journal/' },
   { labelKey: 'footer.beyondForm' as TranslationKey, href: '/manifesto/' },
-  { labelKey: 'footer.details' as TranslationKey, href: '/#details' },
-  { labelKey: 'footer.world' as TranslationKey, href: '/#vhox-world' },
-  { labelKey: 'footer.journal' as TranslationKey, href: '/journal/' },
 ] as const
 
 export function Footer() {
   const { t } = useLocale()
 
   return (
-    <footer id="contact" className="site-footer">
+    <footer id="contact" className="site-footer site-footer--chromatic">
       <div className="site-footer__masthead" data-reveal>
         <a href="/#top" aria-label={t('nav.homeLabel')}><BrandMark /></a>
-        <p>JUST BE YOURSELF.</p>
+        <div>
+          <p>FROM A DISTANCE, BLACK.</p>
+          <p>UP CLOSE, VHOX.</p>
+        </div>
         <span>{t('footer.movement')}</span>
       </div>
 
@@ -40,9 +42,8 @@ export function Footer() {
 
         <nav aria-label={t('footer.shop')}>
           <span>{t('footer.shop')}</span>
-          {shopLinks.map((item) => (
-            <a key={item.href} href={item.href}>{'labelKey' in item ? t(item.labelKey) : item.label}</a>
-          ))}
+          <a href="/collections/">{t('nav.drop001')}</a>
+          {collectionLinks.map((item) => <a key={item.href} href={item.href}>{item.label}</a>)}
         </nav>
 
         <nav aria-label={t('footer.explore')}>
@@ -66,27 +67,9 @@ export function Footer() {
         )) : <p>{t('social.pending')}</p>}
       </div>
 
-      <figure className="site-footer__campaign" aria-labelledby="footer-campaign-title" data-reveal>
-        <div className="site-footer__campaign-media">
-          <img
-            src="/campaign/vhox-coming-soon-architecture.jpg"
-            width="736"
-            height="920"
-            alt={t('footer.campaignAlt')}
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
-        <figcaption>
-          <span>VHOX / VISUAL NOTE 001</span>
-          <h2 id="footer-campaign-title">BEYOND FORM.</h2>
-          <p>{t('footer.movement')}</p>
-        </figcaption>
-      </figure>
-
       <div className="site-footer__bottom">
         <span>{t('footer.copyright', { year })}</span>
-        <span>VHOX WRLD / {t('brand.exclusiveMovement')}</span>
+        <span>VHOX WRLD / CHROMATIC BLACK</span>
         <a href="#top">{t('footer.back')}</a>
       </div>
     </footer>

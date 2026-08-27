@@ -55,29 +55,36 @@ export function usePageMotion(rootRef: RefObject<HTMLElement | null>, reducedMot
         })
       })
 
-      gsap.from('.manifesto__line-inner', {
-        yPercent: 108,
-        rotate: 1.5,
-        duration: 1.1,
-        stagger: 0.08,
-        ease: 'power4.out',
-        scrollTrigger: {
-          trigger: '.manifesto__statement',
-          start: 'top 78%',
-          once: true,
-        },
-      })
+      const manifesto = root.querySelector<HTMLElement>('.manifesto')
+      const manifestoStatement = manifesto?.querySelector<HTMLElement>('.manifesto__statement')
+      const manifestoLines = manifesto?.querySelectorAll<HTMLElement>('.manifesto__line-inner')
+      const manifestoRule = manifesto?.querySelector<HTMLElement>('.manifesto__rule-fill')
 
-      gsap.to('.manifesto__rule-fill', {
-        scaleX: 1,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '.manifesto',
-          start: 'top 70%',
-          end: 'bottom 45%',
-          scrub: 0.6,
-        },
-      })
+      if (manifesto && manifestoStatement && manifestoLines?.length && manifestoRule) {
+        gsap.from(manifestoLines, {
+          yPercent: 108,
+          rotate: 1.5,
+          duration: 1.1,
+          stagger: 0.08,
+          ease: 'power4.out',
+          scrollTrigger: {
+            trigger: manifestoStatement,
+            start: 'top 78%',
+            once: true,
+          },
+        })
+
+        gsap.to(manifestoRule, {
+          scaleX: 1,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: manifesto,
+            start: 'top 70%',
+            end: 'bottom 45%',
+            scrub: 0.6,
+          },
+        })
+      }
 
       const closing = root.querySelector<HTMLElement>('.closing')
       const closingOrbit = closing?.querySelector<HTMLElement>('.closing__orbit')

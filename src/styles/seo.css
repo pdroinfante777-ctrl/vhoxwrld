@@ -14,9 +14,7 @@
   gap: clamp(2rem, 5vw, 6rem);
   padding: calc(var(--header-height) + 2rem) var(--seo-gutter) clamp(4rem, 8vw, 8rem);
   border-bottom: 1px solid var(--line);
-  background:
-    radial-gradient(circle at 82% 24%, rgba(124, 255, 0, 0.055), transparent 27%),
-    #070706;
+  background: #070706;
 }
 
 .breadcrumbs {

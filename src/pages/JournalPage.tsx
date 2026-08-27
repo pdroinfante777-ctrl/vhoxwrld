@@ -7,7 +7,7 @@ import { seoCopy } from '../seo/content'
 import { breadcrumbSchema } from '../seo/schema'
 import { StructuredData } from '../seo/StructuredData'
 
-const paths = ['/manifesto/', '/collections/', '/#vhox-world']
+const paths = ['/manifesto/', '/collections/', '/#campaign']
 
 export function JournalPage() {
   const { locale, t } = useLocale()
@@ -35,7 +35,7 @@ export function JournalPage() {
           {journalEntries.map((entry, index) => (
             <article className={`journal-card journal-card--${entry.id}`} key={entry.id}>
               <a href={paths[index]}>
-                <div className="journal-card__visual" aria-hidden="true"><span />{entry.id === 'origin' && <img src="/brand/vhox-bat-particle-source.png" alt="" loading="lazy" decoding="async" />}</div>
+                <div className="journal-card__visual" aria-hidden="true"><span />{entry.id === 'origin' && <img src="/chromatic-black/vhox-purple-detail.jpeg" alt="" loading="lazy" decoding="async" />}</div>
                 <div className="journal-card__meta"><span>{entry.index} / VHOX JOURNAL</span><h3>{t(entry.titleKey)}</h3><p>{t(entry.copyKey)}</p><b>{t('journal.read')} <ArrowIcon /></b></div>
               </a>
             </article>

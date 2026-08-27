@@ -3,9 +3,9 @@ export const siteOrigin = 'https://vhoxwrld.com'
 export const publicSeoRoutes = [
   {
     path: '/',
-    title: 'VHOX — Exclusive Movement | Premium Streetwear',
-    description: 'Enter VHOX WRLD: an independent streetwear house exploring near-black material, exact form and movement through BAT, ROSE and VOID.',
-    h1: 'DARKNESS REVEALED.',
+    title: 'VHOX — Chromatic Black | Premium Streetwear',
+    description: 'VHOX develops premium near-black streetwear through weight, proportion and restraint. From a distance, black. Up close, VHOX.',
+    h1: 'FROM A DISTANCE, BLACK. UP CLOSE, VHOX.',
   },
   {
     path: '/collections/',
@@ -15,9 +15,9 @@ export const publicSeoRoutes = [
   },
   {
     path: '/journal/',
-    title: 'VHOX Journal — Design, Identity & Beyond Form',
-    description: 'Read VHOX field notes on symbols, construction, material language and the independent identity behind Beyond Form.',
-    h1: 'THE WORLD BEHIND THE FORM.',
+    title: 'VHOX Journal — Material, Identity & Chromatic Black',
+    description: 'Read VHOX field notes on near-black color, garment construction, proportion and the independent identity behind Chromatic Black.',
+    h1: 'BEYOND THE SURFACE.',
   },
   {
     path: '/manifesto/',
