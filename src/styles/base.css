@@ -28,16 +28,27 @@
   --color-ink: #0c0c0b;
   --color-carbon: #151513;
   --color-steel: #2b2b29;
-  --color-silver: #8d8b85;
+  --color-silver: #9b9891;
   --color-white: #f1eee7;
   --color-paper: #e9e5dc;
-  --vhox-accent: #74578b;
+  --vhox-accent: #7cff00;
   --color-accent: var(--vhox-accent);
-  --line: rgba(241, 241, 234, 0.16);
-  --line-strong: rgba(241, 241, 234, 0.34);
+  --color-success: #7cff00;
+  --color-warning: #d7b86a;
+  --color-danger: #df786f;
+  --surface-base: var(--color-black);
+  --surface-raised: var(--color-ink);
+  --surface-inverse: var(--color-paper);
+  --line: rgba(241, 241, 234, 0.18);
+  --line-strong: rgba(241, 241, 234, 0.4);
   --page-x: clamp(1.25rem, 3.4vw, 4.5rem);
+  --content-max: 100rem;
   --header-height: 5.25rem;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 180ms;
+  --duration-base: 360ms;
+  --duration-slow: 760ms;
   --font-display: "Manrope", "Helvetica Neue", Arial, sans-serif;
   --font-body: "Manrope", "Helvetica Neue", Arial, sans-serif;
   --font-mono: "Manrope", "Helvetica Neue", Arial, sans-serif;
@@ -46,6 +57,22 @@
   --type-display-xl: clamp(3.6rem, 7.4vw, 8.25rem);
   --type-display-lg: clamp(2.8rem, 5.1vw, 5.75rem);
   --type-display-md: clamp(2.2rem, 3.5vw, 3.9rem);
+  --type-title-sm: clamp(1.5rem, 2.4vw, 2.5rem);
+  --type-body-lg: clamp(1.0625rem, 1.2vw, 1.25rem);
+  --type-body-md: clamp(0.9375rem, 0.9vw, 1.0625rem);
+  --type-body-sm: clamp(0.8125rem, 0.78vw, 0.9375rem);
+  --type-label-xs: clamp(0.625rem, 0.58vw, 0.6875rem);
+  --type-label-sm: clamp(0.6875rem, 0.65vw, 0.75rem);
+  --space-1: 0.5rem;
+  --space-2: 0.75rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --space-5: 2rem;
+  --space-6: 3rem;
+  --radius-control: 0;
+  --radius-media: 0;
+  --control-min-height: 2.75rem;
+  --measure-copy: 42rem;
   font-family: var(--font-body);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -161,7 +188,7 @@ ol {
   transform: translateY(-160%);
   background: var(--color-accent);
   color: var(--color-black);
-  font-size: 0.7rem;
+  font-size: var(--type-label-sm);
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -175,6 +202,12 @@ ol {
 .site-shell {
   min-height: 100vh;
   overflow: clip;
+}
+
+.site-shell > main,
+.site-header,
+.site-footer {
+  min-width: 0;
 }
 
 .section {
@@ -193,7 +226,7 @@ ol {
   display: grid;
   place-items: center;
   color: var(--color-silver);
-  font-size: 0.65rem;
+  font-size: var(--type-label-xs);
   letter-spacing: 0.18em;
   text-transform: uppercase;
 }
