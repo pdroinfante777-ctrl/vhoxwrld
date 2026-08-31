@@ -1,6 +1,6 @@
 const fallbackShopUrl = '#collection'
 
-function resolveShopUrl(value: string | undefined) {
+export function resolveShopUrl(value: string | undefined) {
   const candidate = value?.trim()
 
   if (!candidate) return fallbackShopUrl
@@ -8,7 +8,7 @@ function resolveShopUrl(value: string | undefined) {
 
   try {
     const parsed = new URL(candidate)
-    return parsed.protocol === 'https:' || parsed.protocol === 'http:'
+    return parsed.protocol === 'https:'
       ? parsed.toString()
       : fallbackShopUrl
   } catch {
@@ -17,4 +17,9 @@ function resolveShopUrl(value: string | undefined) {
 }
 
 export const shopUrl = resolveShopUrl(import.meta.env.VITE_SHOP_URL)
-export const shopIsExternal = shopUrl.startsWith('http')
+
+export function isExternalShopUrl(value: string) {
+  return value.startsWith('https://')
+}
+
+export const shopIsExternal = isExternalShopUrl(shopUrl)

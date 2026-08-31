@@ -21,7 +21,7 @@ export function Closing() {
         className="button button--closing"
         href={shopUrl}
         target={shopIsExternal ? '_blank' : undefined}
-        rel={shopIsExternal ? 'noreferrer' : undefined}
+        rel={shopIsExternal ? 'noopener noreferrer' : undefined}
         data-reveal
       >
         {t('closing.cta')} <ArrowIcon />

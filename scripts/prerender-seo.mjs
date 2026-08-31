@@ -1,10 +1,19 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { createHash } from 'node:crypto'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { canonicalUrl, noindexSeoRoutes, publicSeoRoutes } from '../seo.config.mjs'
 
 const distRoot = new URL('../dist/', import.meta.url)
 const template = await readFile(new URL('index.html', distRoot), 'utf8')
+
+function getInlineSchemaHash(html) {
+  const schema = html.match(/<script id="vhox-organization-schema" type="application\/ld\+json">([\s\S]*?)<\/script>/)?.[1]
+  if (!schema) throw new Error('VHOX organization schema was not found while generating the CSP hash.')
+  return createHash('sha256').update(schema, 'utf8').digest('base64')
+}
+
+const inlineSchemaHash = getInlineSchemaHash(template)
 
 function escapeHtml(value) {
   return value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
@@ -35,5 +44,9 @@ for (const route of [...publicSeoRoutes.filter(({ path }) => path !== '/'), ...n
 for (const filename of ['.htaccess', '404.html']) {
   const source = new URL(`../public/${filename}`, import.meta.url)
   const destination = join(fileURLToPath(distRoot), filename)
-  await writeFile(destination, await readFile(source), 'utf8')
+  const sourceContent = await readFile(source, 'utf8')
+  const outputContent = filename === '.htaccess'
+    ? sourceContent.replace('__VHOX_SCHEMA_HASH__', inlineSchemaHash)
+    : sourceContent
+  await writeFile(destination, outputContent, 'utf8')
 }

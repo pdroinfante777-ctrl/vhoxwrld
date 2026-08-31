@@ -63,7 +63,7 @@ export function Footer() {
       <div className="site-footer__social">
         <span>{t('footer.social')}</span>
         {socialProfiles.length > 0 ? socialProfiles.map((profile) => (
-          <a key={profile.label} href={profile.url} target="_blank" rel="noreferrer">{profile.label}</a>
+          <a key={profile.label} href={profile.url} target="_blank" rel="noopener noreferrer">{profile.label}</a>
         )) : <p>{t('social.pending')}</p>}
       </div>
 
