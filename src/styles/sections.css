@@ -2590,7 +2590,7 @@
   border-bottom: 1px solid var(--line);
   color: var(--color-silver);
   font-family: var(--font-mono);
-  font-size: 0.5rem;
+  font-size: var(--type-label-xs);
   letter-spacing: 0.14em;
 }
 
@@ -2613,7 +2613,7 @@
 .inner-circle__access > p {
   max-width: 30rem;
   color: var(--color-silver);
-  font-size: 0.76rem;
+  font-size: var(--type-body-sm);
   line-height: 1.7;
 }
 
@@ -2626,7 +2626,7 @@
   margin-bottom: 0.8rem;
   color: var(--color-silver);
   font-family: var(--font-mono);
-  font-size: 0.5rem;
+  font-size: var(--type-label-xs);
   letter-spacing: 0.13em;
   text-transform: uppercase;
 }
@@ -2645,7 +2645,7 @@
   background: transparent;
   color: var(--color-white);
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: var(--type-body-sm);
   letter-spacing: 0.08em;
 }
 
@@ -2662,7 +2662,7 @@
   background: transparent;
   cursor: pointer;
   font-family: var(--font-mono);
-  font-size: 0.5rem;
+  font-size: var(--type-label-xs);
   letter-spacing: 0.12em;
 }
 
@@ -2678,7 +2678,7 @@
 .inner-circle__note {
   margin-top: 1rem;
   color: rgba(242,240,235,0.45) !important;
-  font-size: 0.55rem !important;
+  font-size: var(--type-label-xs) !important;
 }
 
 @media (max-width: 64rem) {
@@ -3161,7 +3161,7 @@
   border-bottom: 1px solid var(--line);
   color: var(--color-accent) !important;
   font-family: var(--font-mono);
-  font-size: 0.62rem !important;
+  font-size: var(--type-label-sm) !important;
   letter-spacing: 0.16em;
 }
 

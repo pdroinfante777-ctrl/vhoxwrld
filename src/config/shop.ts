@@ -1,14 +1,15 @@
 const fallbackShopUrl = '#collection'
 
-function resolveShopUrl(value: string | undefined) {
+export function resolveShopUrl(value: string | undefined) {
   const candidate = value?.trim()
 
   if (!candidate) return fallbackShopUrl
-  if (candidate.startsWith('#') || candidate.startsWith('/')) return candidate
+  if (Array.from(candidate).some((char) => char === '\\' || char.charCodeAt(0) < 32 || char.charCodeAt(0) === 127)) return fallbackShopUrl
+  if (candidate.startsWith('#') || (candidate.startsWith('/') && !candidate.startsWith('//'))) return candidate
 
   try {
     const parsed = new URL(candidate)
-    return parsed.protocol === 'https:' || parsed.protocol === 'http:'
+    return parsed.protocol === 'https:'
       ? parsed.toString()
       : fallbackShopUrl
   } catch {
@@ -17,4 +18,9 @@ function resolveShopUrl(value: string | undefined) {
 }
 
 export const shopUrl = resolveShopUrl(import.meta.env.VITE_SHOP_URL)
-export const shopIsExternal = shopUrl.startsWith('http')
+
+export function isExternalShopUrl(value: string) {
+  return value.startsWith('https://')
+}
+
+export const shopIsExternal = isExternalShopUrl(shopUrl)

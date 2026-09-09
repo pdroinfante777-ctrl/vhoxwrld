@@ -3,11 +3,14 @@ import type { Locale } from '../i18n/translations'
 
 export type ProductAvailability = 'coming-soon' | 'available' | 'archived'
 export type ProductObjectFit = 'cover' | 'contain'
+export type ProductMediaUsage = 'campaign-study' | 'product'
 
 export type ProductMedia = {
   type: 'image' | 'video'
   src: string
   alt: string
+  usage: ProductMediaUsage
+  approvedForCommerce: boolean
   poster?: string
   thumbnail?: string
   objectFit?: ProductObjectFit
@@ -19,7 +22,7 @@ export type Product = {
   slug: string
   name: string
   subtitle: string | null
-  code: string
+  code: string | null
   category: string
   price: number | null
   compareAtPrice: number | null
@@ -29,48 +32,58 @@ export type Product = {
   thumbnails: string[]
   sizes: string[]
   colors: string[]
+  fabricWeight: string | null
+  sizeGuide: string | null
+  construction: string | null
   materials: string | null
   features: string[]
   fit: string | null
   care: string | null
   shipping: string | null
-  availability: ProductAvailability
+  returns: string | null
+  availability: ProductAvailability | null
+  launchApproved: boolean
   related: string[]
   purchaseUrl: string | null
   visual: 'slab' | 'aperture' | 'axis'
 }
 
-// BAT, ROSE and VOID are editorial concept studies. They are not treated as
-// confirmed products until every commercial field below has approved data.
+// DROP 001: SIGNAL is the approved collection direction. These entries are
+// planned pieces, not released products. Existing imagery is retained only as
+// campaign study material and cannot satisfy the commerce-readiness gate.
 export const products: Product[] = [
   {
-    id: 'bat',
-    slug: 'bat',
-    name: 'BAT',
+    id: 'signal-core-tee',
+    slug: 'signal-core-tee',
+    name: 'SIGNAL CORE TEE',
     subtitle: null,
-    code: 'VHX-CST-01',
-    category: 'VHOX / CONCEPT STUDY',
+    code: null,
+    category: 'VHOX / DROP 001 / SIGNAL',
     price: null,
     compareAtPrice: null,
     currency: 'USD',
     description: {
-      en: 'A VHOX form study exploring a sharp nocturnal identity. Physical materials, approved product media and release data remain pending.',
-      es: 'Un estudio de forma VHOX que explora una identidad nocturna y precisa. Los materiales físicos, medios aprobados y datos de lanzamiento siguen pendientes.',
-      pt: 'Um estudo de forma VHOX que explora uma identidade noturna e precisa. Materiais físicos, mídia aprovada e dados de lançamento seguem pendentes.',
-      fr: 'Une étude de forme VHOX explorant une identité nocturne et précise. Les matières physiques, médias approuvés et données de sortie restent en attente.',
+      en: 'A planned piece for DROP 001: SIGNAL. The current imagery is a campaign study only; the physical sample, specifications, release and official product media remain unconfirmed.',
+      es: 'Una pieza planeada para DROP 001: SIGNAL. Las imágenes actuales son únicamente un estudio de campaña; la muestra física, especificaciones, lanzamiento y medios oficiales siguen sin confirmarse.',
+      pt: 'Uma peça planejada para o DROP 001: SIGNAL. As imagens atuais são apenas um estudo de campanha; a amostra física, especificações, lançamento e mídia oficial seguem sem confirmação.',
+      fr: 'Une pièce prévue pour le DROP 001 : SIGNAL. Les images actuelles sont uniquement une étude de campagne ; l’échantillon physique, les spécifications, la sortie et les médias officiels restent à confirmer.',
     },
     media: [
       {
         type: 'image',
         src: '/chromatic-black/vhox-textured-black-tee.jpeg',
-        alt: 'VHOX heavyweight oversized textured black t-shirt on dark concrete',
-        objectFit: 'cover',
+        alt: 'Campaign study associated with SIGNAL CORE TEE; final product correspondence is unconfirmed',
+        usage: 'campaign-study',
+        approvedForCommerce: false,
+        objectFit: 'contain',
       },
       {
         type: 'image',
         src: '/chromatic-black/vhox-purple-detail.jpeg',
-        alt: 'Close view of VHOX dark fabric and tonal violet bat embroidery',
-        objectFit: 'cover',
+        alt: 'Detail campaign study associated with SIGNAL CORE TEE; final product correspondence is unconfirmed',
+        usage: 'campaign-study',
+        approvedForCommerce: false,
+        objectFit: 'contain',
       },
     ],
     thumbnails: [
@@ -80,43 +93,52 @@ export const products: Product[] = [
     sizes: [],
     colors: [],
     materials: null,
+    fabricWeight: null,
+    sizeGuide: null,
+    construction: null,
     features: [],
     fit: null,
     care: null,
     shipping: null,
-    availability: 'coming-soon',
-    related: ['rose', 'void'],
+    returns: null,
+    availability: null,
+    launchApproved: false,
+    related: ['night-bloom-tee', 'crystal-signal-tee'],
     purchaseUrl: null,
     visual: 'slab',
   },
   {
-    id: 'rose',
-    slug: 'rose',
-    name: 'ROSE',
+    id: 'night-bloom-tee',
+    slug: 'night-bloom-tee',
+    name: 'NIGHT BLOOM TEE',
     subtitle: null,
-    code: 'VHX-CST-02',
-    category: 'VHOX / CONCEPT STUDY',
+    code: null,
+    category: 'VHOX / DROP 001 / SIGNAL',
     price: null,
     compareAtPrice: null,
     currency: 'USD',
     description: {
-      en: 'A VHOX contrast study balancing organic tension and controlled structure. No commercial specification or release is confirmed.',
-      es: 'Un estudio de contraste VHOX que equilibra tensión orgánica y estructura controlada. Ninguna especificación comercial o lanzamiento está confirmado.',
-      pt: 'Um estudo de contraste VHOX entre tensão orgânica e estrutura controlada. Nenhuma especificação comercial ou lançamento está confirmado.',
-      fr: 'Une étude de contraste VHOX entre tension organique et structure contrôlée. Aucune spécification commerciale ni sortie n’est confirmée.',
+      en: 'A planned piece for DROP 001: SIGNAL. The current imagery is a campaign study only; the physical sample, specifications, release and official product media remain unconfirmed.',
+      es: 'Una pieza planeada para DROP 001: SIGNAL. Las imágenes actuales son únicamente un estudio de campaña; la muestra física, especificaciones, lanzamiento y medios oficiales siguen sin confirmarse.',
+      pt: 'Uma peça planejada para o DROP 001: SIGNAL. As imagens atuais são apenas um estudo de campanha; a amostra física, especificações, lançamento e mídia oficial seguem sem confirmação.',
+      fr: 'Une pièce prévue pour le DROP 001 : SIGNAL. Les images actuelles sont uniquement une étude de campagne ; l’échantillon physique, les spécifications, la sortie et les médias officiels restent à confirmer.',
     },
     media: [
       {
         type: 'image',
         src: '/chromatic-black/vhox-black-cherry-tee.jpeg',
-        alt: 'VHOX oversized t-shirt in a deep near-black Black Cherry tone',
-        objectFit: 'cover',
+        alt: 'Campaign study associated with NIGHT BLOOM TEE; final product correspondence is unconfirmed',
+        usage: 'campaign-study',
+        approvedForCommerce: false,
+        objectFit: 'contain',
       },
       {
         type: 'image',
         src: '/chromatic-black/vhox-burnt-earth-tee.jpeg',
-        alt: 'VHOX oversized t-shirt in a dark Burnt Earth tone',
-        objectFit: 'cover',
+        alt: 'Alternate campaign study associated with NIGHT BLOOM TEE; final product correspondence is unconfirmed',
+        usage: 'campaign-study',
+        approvedForCommerce: false,
+        objectFit: 'contain',
       },
     ],
     thumbnails: [
@@ -126,43 +148,52 @@ export const products: Product[] = [
     sizes: [],
     colors: [],
     materials: null,
+    fabricWeight: null,
+    sizeGuide: null,
+    construction: null,
     features: [],
     fit: null,
     care: null,
     shipping: null,
-    availability: 'coming-soon',
-    related: ['bat', 'void'],
+    returns: null,
+    availability: null,
+    launchApproved: false,
+    related: ['signal-core-tee', 'crystal-signal-tee'],
     purchaseUrl: null,
     visual: 'aperture',
   },
   {
-    id: 'void',
-    slug: 'void',
-    name: 'VOID',
+    id: 'crystal-signal-tee',
+    slug: 'crystal-signal-tee',
+    name: 'CRYSTAL SIGNAL TEE',
     subtitle: null,
-    code: 'VHX-CST-03',
-    category: 'VHOX / CONCEPT STUDY',
+    code: null,
+    category: 'VHOX / DROP 001 / SIGNAL',
     price: null,
     compareAtPrice: null,
     currency: 'USD',
     description: {
-      en: 'A VHOX study of near-black depth and hidden tonal response. Physical validation, product construction and availability are pending.',
-      es: 'Un estudio VHOX de profundidad casi negra y respuesta tonal oculta. La validación física, construcción y disponibilidad están pendientes.',
-      pt: 'Um estudo VHOX de profundidade quase preta e resposta tonal oculta. Validação física, construção e disponibilidade estão pendentes.',
-      fr: 'Une étude VHOX de profondeur presque noire et de réponse tonale cachée. Validation physique, construction et disponibilité sont en attente.',
+      en: 'A planned piece for DROP 001: SIGNAL. The current imagery is a campaign study only; the physical sample, specifications, release and official product media remain unconfirmed.',
+      es: 'Una pieza planeada para DROP 001: SIGNAL. Las imágenes actuales son únicamente un estudio de campaña; la muestra física, especificaciones, lanzamiento y medios oficiales siguen sin confirmarse.',
+      pt: 'Uma peça planejada para o DROP 001: SIGNAL. As imagens atuais são apenas um estudo de campanha; a amostra física, especificações, lançamento e mídia oficial seguem sem confirmação.',
+      fr: 'Une pièce prévue pour le DROP 001 : SIGNAL. Les images actuelles sont uniquement une étude de campagne ; l’échantillon physique, les spécifications, la sortie et les médias officiels restent à confirmer.',
     },
     media: [
       {
         type: 'image',
         src: '/chromatic-black/vhox-midnight-violet-tee.jpeg',
-        alt: 'VHOX oversized t-shirt in a near-black Midnight Violet tone',
-        objectFit: 'cover',
+        alt: 'Campaign study associated with CRYSTAL SIGNAL TEE; final product correspondence is unconfirmed',
+        usage: 'campaign-study',
+        approvedForCommerce: false,
+        objectFit: 'contain',
       },
       {
         type: 'image',
         src: '/chromatic-black/vhox-drop-001-family.jpeg',
-        alt: 'VHOX near-black garment family in a Midnight Violet campaign study',
-        objectFit: 'cover',
+        alt: 'Collection campaign study associated with CRYSTAL SIGNAL TEE; final product correspondence is unconfirmed',
+        usage: 'campaign-study',
+        approvedForCommerce: false,
+        objectFit: 'contain',
       },
     ],
     thumbnails: [
@@ -172,12 +203,17 @@ export const products: Product[] = [
     sizes: [],
     colors: [],
     materials: null,
+    fabricWeight: null,
+    sizeGuide: null,
+    construction: null,
     features: [],
     fit: null,
     care: null,
     shipping: null,
-    availability: 'coming-soon',
-    related: ['bat', 'rose'],
+    returns: null,
+    availability: null,
+    launchApproved: false,
+    related: ['signal-core-tee', 'night-bloom-tee'],
     purchaseUrl: null,
     visual: 'axis',
   },
@@ -198,16 +234,47 @@ export function getRelatedProducts(product: Product) {
 }
 
 export function isProductPurchasable(product: Product) {
-  const hasApprovedMedia = product.media.some((media) => Boolean(media.src.trim()))
+  const hasApprovedProductMedia = product.media.some((media) => (
+    media.usage === 'product'
+    && media.approvedForCommerce
+    && Boolean(media.src.trim())
+  ))
   const hasVariants = product.sizes.length > 0 && product.colors.length > 0
-  const hasConfirmedConstruction = Boolean(product.materials?.trim())
   const hasConfirmedPrice = typeof product.price === 'number' && Number.isFinite(product.price) && product.price > 0
+  const hasCompleteProductData = [
+    product.materials,
+    product.fabricWeight,
+    product.sizeGuide,
+    product.construction,
+    product.fit,
+    product.care,
+    product.shipping,
+    product.returns,
+  ].every((value) => Boolean(value?.trim()))
+  const hasConfirmedCode = Boolean(product.code?.trim())
+  const hasApprovedPurchaseUrl = isApprovedPurchaseUrl(product.purchaseUrl)
 
-  return product.availability === 'available'
+  return product.launchApproved
+    && product.availability === 'available'
     && hasConfirmedPrice
-    && hasApprovedMedia
+    && hasApprovedProductMedia
     && hasVariants
-    && hasConfirmedConstruction
+    && hasCompleteProductData
+    && hasConfirmedCode
+    && hasApprovedPurchaseUrl
+}
+
+function isApprovedPurchaseUrl(value: string | null) {
+  const candidate = value?.trim()
+  if (!candidate) return false
+  if (Array.from(candidate).some((char) => char === '\\' || char.charCodeAt(0) < 32 || char.charCodeAt(0) === 127)) return false
+  if (candidate.startsWith('/') && !candidate.startsWith('//')) return true
+
+  try {
+    return new URL(candidate).protocol === 'https:'
+  } catch {
+    return false
+  }
 }
 
 export function formatProductPrice(

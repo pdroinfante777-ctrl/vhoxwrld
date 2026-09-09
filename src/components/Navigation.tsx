@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useCart } from '../cart/useCart'
+import { isProductPurchasable, products } from '../data/products'
 import { useLocale } from '../i18n/useLocale'
 import { BagIcon } from './BagIcon'
 import { BrandMark } from './BrandMark'
@@ -7,7 +8,7 @@ import { MarketControls } from './MarketControls'
 
 const navigationItems = [
   { labelKey: 'nav.home', href: '/#top' },
-  { labelKey: 'nav.shop', href: '/#collection' },
+  { labelKey: 'nav.shop', href: '/collections/', collectionName: 'SIGNAL' },
   { labelKey: 'nav.details', href: '/#chromatic-black' },
   { labelKey: 'nav.world', href: '/#campaign' },
   { labelKey: 'nav.journal', href: '/journal/' },
@@ -26,6 +27,7 @@ export function Navigation({ reducedMotion }: NavigationProps) {
   const [hidden, setHidden] = useState(false)
   const [bagAnimating, setBagAnimating] = useState(false)
   const { totalQuantity, pulseToken } = useCart()
+  const showBag = totalQuantity > 0 || products.some(isProductPurchasable)
   const lastScroll = useRef(0)
   const toggleRef = useRef<HTMLButtonElement>(null)
   const mobileMenuRef = useRef<HTMLDivElement>(null)
@@ -50,8 +52,12 @@ export function Navigation({ reducedMotion }: NavigationProps) {
   }, [open])
 
   useEffect(() => {
+    if (open) mobileMenuRef.current?.querySelector<HTMLElement>('a[href]')?.focus()
+  }, [open])
+
+  useEffect(() => {
     const handleMenuKeys = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (event.key === 'Escape' && open) {
         setOpen(false)
         toggleRef.current?.focus()
       }
@@ -124,22 +130,28 @@ export function Navigation({ reducedMotion }: NavigationProps) {
       </a>
 
       <div className="header-actions">
-        <a className="header-drop-link" href="/collections/">{t('nav.drop001')}</a>
+        <a className="header-drop-link" href="/collections/">DROP 001 / SIGNAL</a>
         <a className="header-access-link" href="/#inner-circle">{t('nav.access')}</a>
-        <a
-          className={`bag-link ${bagAnimating ? 'bag-link--pulse' : ''}`}
-          href="/cart"
-          aria-label={totalQuantity === 1 ? t('bag.labelOne') : t('bag.label', { count: totalQuantity })}
-        >
-          <BagIcon />
-          {totalQuantity > 0 && <span className="bag-link__count" aria-hidden="true">{totalQuantity}</span>}
-        </a>
+        {showBag && (
+          <a
+            className={`bag-link ${bagAnimating ? 'bag-link--pulse' : ''}`}
+            href="/cart"
+            aria-label={totalQuantity === 1 ? t('bag.labelOne') : t('bag.label', { count: totalQuantity })}
+          >
+            <BagIcon />
+            {totalQuantity > 0 && <span className="bag-link__count" aria-hidden="true">{totalQuantity}</span>}
+          </a>
+        )}
       </div>
 
       <div
         ref={mobileMenuRef}
         id="mobile-menu"
         className="mobile-menu"
+        role="dialog"
+        aria-modal={open ? true : undefined}
+        aria-label={t('nav.mobile')}
+        inert={!open}
         aria-hidden={!open}
         onMouseDown={(event) => {
           if (event.target === event.currentTarget) setOpen(false)
@@ -155,7 +167,7 @@ export function Navigation({ reducedMotion }: NavigationProps) {
                 onClick={() => setOpen(false)}
               >
                 <span>{String(index + 1).padStart(2, '0')}</span>
-                {t(item.labelKey)}
+                {t(item.labelKey)}{'collectionName' in item ? ` / ${item.collectionName}` : ''}
               </a>
             ))}
           </nav>

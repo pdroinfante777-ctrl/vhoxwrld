@@ -25,11 +25,11 @@ const llms = `# VHOX
 
 ${publicSeoRoutes.map(({ path, title, description }) => `- [${title}](${canonicalUrl(path)}): ${description}`).join('\n')}
 
-## Collection studies
+## DROP 001: SIGNAL
 
-- BAT: an editorial form study; commercial specifications and release remain unconfirmed.
-- ROSE: an editorial contrast study; commercial specifications and release remain unconfirmed.
-- VOID: an editorial near-black depth study; commercial specifications and release remain unconfirmed.
+- SIGNAL CORE TEE: planned piece; official product imagery, specifications, price and release pending.
+- NIGHT BLOOM TEE: planned piece; official product imagery, specifications, price and release pending.
+- CRYSTAL SIGNAL TEE: planned piece; official product imagery, specifications, price and release pending.
 
 ## Policies
 

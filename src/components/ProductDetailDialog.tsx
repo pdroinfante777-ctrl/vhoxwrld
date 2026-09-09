@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { formatProductPrice, isProductPurchasable, productDescription, type Product } from '../data/products'
-import { shopIsExternal, shopUrl } from '../config/shop'
+import { isExternalShopUrl, resolveShopUrl, shopUrl } from '../config/shop'
 import { ArrowIcon } from './ArrowIcon'
 import { useLocale } from '../i18n/useLocale'
 import { useCurrency } from '../commerce/useCurrency'
@@ -54,7 +54,8 @@ export function ProductDetailDialog({ product, onClose }: ProductDetailDialogPro
   if (!product) return null
 
   const media = product.media[mediaIndex]
-  const destination = product.purchaseUrl ?? shopUrl
+  const destination = resolveShopUrl(product.purchaseUrl ?? shopUrl)
+  const destinationIsExternal = isExternalShopUrl(destination)
   const purchasable = isProductPurchasable(product)
 
   return (
@@ -123,8 +124,8 @@ export function ProductDetailDialog({ product, onClose }: ProductDetailDialogPro
           <a
             className="button button--primary"
             href={purchasable ? destination : '/#inner-circle'}
-            target={purchasable && shopIsExternal ? '_blank' : undefined}
-            rel={purchasable && shopIsExternal ? 'noreferrer' : undefined}
+            target={purchasable && destinationIsExternal ? '_blank' : undefined}
+            rel={purchasable && destinationIsExternal ? 'noopener noreferrer' : undefined}
           >
             {purchasable ? t('closing.cta') : t('product.requestPrivateAccess')} <ArrowIcon />
           </a>

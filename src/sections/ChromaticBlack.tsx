@@ -1,5 +1,6 @@
 import { ArrowIcon } from '../components/ArrowIcon'
 import { chromaticBlackCopy } from '../data/chromaticBlack'
+import { products } from '../data/products'
 import { useLocale } from '../i18n/useLocale'
 import type { CSSProperties } from 'react'
 
@@ -20,8 +21,8 @@ const studyMedia = [
 
 const collectionMedia = [
   { src: '/chromatic-black/vhox-textured-black-tee.jpeg', width: 1448, height: 1086 },
-  { src: '/chromatic-black/vhox-nylon-jacket.jpeg', width: 1254, height: 1254 },
-  { src: '/chromatic-black/vhox-cargo-pant.jpeg', width: 1254, height: 1254 },
+  { src: '/chromatic-black/vhox-black-cherry-tee.jpeg', width: 1122, height: 1402 },
+  { src: '/chromatic-black/vhox-midnight-violet-tee.jpeg', width: 1448, height: 1086 },
 ]
 
 export function ChromaticStory() {
@@ -141,7 +142,7 @@ export function ChromaticCollection() {
       <div className="chromatic-collection__grid">
         {copy.pieces.map((piece, index) => (
           <article key={piece.name} className="chromatic-piece" data-reveal>
-            <a href="/collections/" className="chromatic-piece__media" data-cursor="VIEW">
+            <a href={`/collections/${products[index].slug}/`} className="chromatic-piece__media" data-cursor="VIEW">
               <img
                 src={collectionMedia[index].src}
                 width={collectionMedia[index].width}
@@ -157,7 +158,7 @@ export function ChromaticCollection() {
                 <h3>{piece.name}</h3>
                 <p>{piece.detail}</p>
               </div>
-              <a href="/collections/">{piece.action} <ArrowIcon /></a>
+              <a href={`/collections/${products[index].slug}/`}>{piece.action} <ArrowIcon /></a>
             </div>
           </article>
         ))}

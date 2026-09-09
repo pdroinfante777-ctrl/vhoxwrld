@@ -81,7 +81,7 @@ export function CartPage() {
             {allPricesConfirmed && <p>{t('product.displayCurrencyNote', { currency })}</p>}
             <p>{t('cart.disclaimer')}</p>
             {shopIsExternal && allPricesConfirmed ? (
-              <a className="button button--primary" href={shopUrl} target="_blank" rel="noreferrer" onClick={() => trackEvent('begin_checkout', { currency, value: subtotal, items: lines.map(({ line, product }) => ({ item_id: product.id, item_name: product.name, price: product.price, quantity: line.quantity })) })}>{t('cart.continue')} <ArrowIcon /></a>
+              <a className="button button--primary" href={shopUrl} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent('begin_checkout', { currency, value: subtotal, items: lines.map(({ line, product }) => ({ item_id: product.id, item_name: product.name, price: product.price, quantity: line.quantity })) })}>{t('cart.continue')} <ArrowIcon /></a>
             ) : (
               <button className="button button--primary" type="button" disabled>{t('cart.unavailable')}</button>
             )}

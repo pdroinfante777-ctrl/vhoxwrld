@@ -2,7 +2,7 @@
   --chromatic-ink: #080808;
   --chromatic-paper: #efede7;
   --chromatic-white: #f8f6f1;
-  --chromatic-muted: #716e68;
+  --chromatic-muted: #625f59;
   --chromatic-line: rgba(8, 8, 8, 0.17);
   --chromatic-line-dark: rgba(248, 246, 241, 0.18);
 }
@@ -60,7 +60,7 @@ body::before { display: none; }
 .chromatic-campaign__copy > span {
   color: rgba(248, 246, 241, 0.68);
   font-family: var(--font-body);
-  font-size: 0.58rem;
+  font-size: var(--type-label-xs);
   font-weight: 650;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -100,7 +100,7 @@ body::before { display: none; }
   max-width: 34rem;
   margin-top: clamp(1.5rem, 3vh, 2.4rem);
   color: rgba(248, 246, 241, 0.72);
-  font-size: clamp(0.76rem, 1vw, 0.92rem);
+  font-size: var(--type-body-sm);
   line-height: 1.7;
   letter-spacing: 0;
   text-transform: none;
@@ -122,7 +122,7 @@ body::before { display: none; }
   display: flex;
   justify-content: space-between;
   color: rgba(248, 246, 241, 0.54);
-  font-size: 0.52rem;
+  font-size: var(--type-label-xs);
   letter-spacing: 0.16em;
   text-transform: uppercase;
 }
@@ -174,7 +174,7 @@ body::before { display: none; }
 .chromatic-heading > p,
 .chromatic-detail__copy > p {
   color: #514f4a;
-  font-size: clamp(0.78rem, 1vw, 0.92rem);
+  font-size: var(--type-body-sm);
   line-height: 1.78;
 }
 
@@ -205,7 +205,7 @@ body::before { display: none; }
 .chromatic-palette b {
   position: relative;
   z-index: 1;
-  font-size: 0.5rem;
+  font-size: var(--type-label-xs);
   font-weight: 560;
   letter-spacing: 0.13em;
 }
@@ -292,14 +292,14 @@ body::before { display: none; }
 .chromatic-study__meta > span,
 .chromatic-piece__meta span {
   color: var(--chromatic-muted);
-  font-size: 0.54rem;
+  font-size: var(--type-label-xs);
   letter-spacing: 0.12em;
 }
 
 .chromatic-study__meta h3,
 .chromatic-piece__meta h3 {
   margin-bottom: 0.45rem;
-  font-size: 0.72rem;
+  font-size: var(--type-label-sm);
   font-weight: 700;
   letter-spacing: 0.13em;
 }
@@ -308,7 +308,7 @@ body::before { display: none; }
 .chromatic-piece__meta p {
   max-width: 18rem;
   color: var(--chromatic-muted);
-  font-size: 0.68rem;
+  font-size: var(--type-body-sm);
   line-height: 1.55;
 }
 
@@ -370,7 +370,7 @@ body::before { display: none; }
   padding: 1rem 0;
   border-bottom: 1px solid var(--chromatic-line-dark);
   color: rgba(248, 246, 241, 0.76);
-  font-size: 0.62rem;
+  font-size: var(--type-label-sm);
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -383,6 +383,14 @@ body::before { display: none; }
 }
 
 .chromatic-piece__media { aspect-ratio: 1 / 1; }
+
+/* Planned pieces retain the complete supplied silhouette at every breakpoint. */
+.chromatic-piece__media img {
+  height: 100%;
+  object-fit: contain;
+}
+
+.chromatic-piece:hover .chromatic-piece__media img { transform: none; }
 
 .chromatic-piece__meta {
   display: flex;
@@ -399,7 +407,7 @@ body::before { display: none; }
   padding-bottom: 0.25rem;
   border-bottom: 1px solid currentColor;
   color: #514f4a;
-  font-size: 0.54rem;
+  font-size: var(--type-label-xs);
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -521,7 +529,7 @@ body::before { display: none; }
 
 .site-footer--chromatic .site-footer__masthead > span {
   color: rgba(248, 246, 241, 0.46);
-  font-size: 0.52rem;
+  font-size: var(--type-label-xs);
   letter-spacing: 0.15em;
   text-align: right;
 }

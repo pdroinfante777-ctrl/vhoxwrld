@@ -1,5 +1,18 @@
 # VHOX WRLD — technical and content SEO audit
 
+## Current status — 2026-09-09
+
+The historical route table below describes the pre-SIGNAL audit baseline, not the release candidate. Current source: `seo.config.mjs`, `src/seo/content.ts` and `src/seo/redirects.ts`.
+
+- Indexable: home, SIGNAL collection, Journal and Manifesto.
+- Planned SIGNAL CORE TEE, NIGHT BLOOM TEE and CRYSTAL SIGNAL TEE previews: `noindex, follow`, excluded from the sitemap and no Product/Offer schema.
+- Former BAT / ROSE / VOID paths redirect to the SIGNAL overview with Apache 301 rules and a client fallback in Vite preview.
+- Collection FAQ matches visible answers; ItemList uses SIGNAL names and canonical paths.
+- Generated title/description/canonical/robots agree with this policy. `llms.txt` no longer publishes former concepts as the catalog.
+- See `VALIDATION_SIGNAL.md` for current verification and remaining hosting checks.
+
+## Historical baseline
+
 Audit scope: React/Vite repository, production route model, semantic content, crawl controls, structured data, measurement readiness, accessibility and responsive presentation. Canonical origin: `https://vhoxwrld.com`.
 
 ## Architecture found

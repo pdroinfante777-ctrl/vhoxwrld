@@ -18,19 +18,19 @@ export function CollectionsPage() {
   const itemListSchema = useMemo(() => ({
     '@context': 'https://schema.org',
     '@graph': [
-      breadcrumbSchema([{ name: copy.breadcrumbHome, path: '/' }, { name: 'BAT / ROSE / VOID', path: '/collections/' }]),
+      breadcrumbSchema([{ name: copy.breadcrumbHome, path: '/' }, { name: 'DROP 001: SIGNAL', path: '/collections/' }]),
       {
         '@type': 'CollectionPage',
         '@id': `${canonicalUrl('/collections/')}#collection`,
-        name: copy.collections.title,
-        description: copy.collections.description,
+        name: 'VHOX DROP 001: SIGNAL',
+        description: 'From a distance, black. Up close, VHOX. Preview DROP 001: SIGNAL before product details, price and availability are confirmed.',
         url: canonicalUrl('/collections/'),
         mainEntity: {
           '@type': 'ItemList',
           itemListElement: products.map((product, index) => ({
             '@type': 'ListItem',
             position: index + 1,
-            name: `${product.name} concept study`,
+            name: product.name,
             url: canonicalUrl(`/collections/${product.slug}/`),
           })),
         },
@@ -40,33 +40,34 @@ export function CollectionsPage() {
 
   useEffect(() => {
     window.scrollTo(0, 0)
-    trackEntityView('collections:bat-rose-void', 'view_item_list', {
-      item_list_id: 'vhox-concept-studies',
-      item_list_name: 'VHOX concept studies',
-      items: products.map((product) => ({ item_id: product.id, item_name: product.name, item_category: 'Concept study' })),
+    trackEntityView('collections:drop-001-signal', 'view_item_list', {
+      item_list_id: 'vhox-drop-001-signal',
+      item_list_name: 'VHOX Drop 001: Signal',
+      items: products.map((product) => ({ item_id: product.id, item_name: product.name, item_category: product.category })),
     })
   }, [])
 
   return (
     <>
       <StructuredData id="vhox-collections-schema" data={itemListSchema} />
-      <StructuredData id="vhox-collections-faq-schema" data={faqSchema(copy.faq)} />
+      <StructuredData id="vhox-collection-faq" data={faqSchema(copy.faq)} />
       <article className="seo-page seo-page--collections">
         <header className="seo-page__hero">
-          <Breadcrumbs items={[{ label: copy.breadcrumbHome, href: '/' }, { label: 'BAT / ROSE / VOID' }]} />
-          <span className="seo-page__kicker">VHOX / COLLECTION STUDIES</span>
-          <h1>{copy.collections.h1}</h1>
+          <Breadcrumbs items={[{ label: copy.breadcrumbHome, href: '/' }, { label: 'DROP 001: SIGNAL' }]} />
+          <span className="seo-page__kicker">VHOX / DROP 001</span>
+          <h1>SIGNAL.</h1>
           <div className="seo-page__intro">
+            <p>FROM A DISTANCE, BLACK. UP CLOSE, VHOX.</p>
             <p>{copy.collectionIntro}</p>
             <a className="text-link seo-inline-cta" href="/#inner-circle">{copy.collectionCta} <ArrowIcon /></a>
-            <ShareButton path="/collections/" title={copy.collections.title} description={copy.collections.description} />
+            <ShareButton path="/collections/" title="VHOX DROP 001: SIGNAL" description="From a distance, black. Up close, VHOX." />
           </div>
         </header>
 
         <section className="seo-collection" aria-labelledby="collection-studies-title">
           <header className="seo-section-heading">
-            <span>01 / BAT · ROSE · VOID</span>
-            <h2 id="collection-studies-title">VHOX FORM STUDIES.</h2>
+            <span>01 / DROP 001</span>
+            <h2 id="collection-studies-title">SIGNAL.</h2>
           </header>
           <div className="collection__grid">
             {products.map((product, index) => <ProductCard product={product} index={index} key={product.id} />)}
@@ -75,7 +76,7 @@ export function CollectionsPage() {
 
         <section className="seo-status" aria-labelledby="collection-status-title">
           <header className="seo-section-heading">
-            <span>02 / VERIFIED STATUS</span>
+            <span>02 / RELEASE STATUS</span>
             <h2 id="collection-status-title">{copy.collectionStatus}</h2>
           </header>
           <div className="responsive-table" role="region" aria-label={copy.collectionStatus} tabIndex={0}>
@@ -85,23 +86,14 @@ export function CollectionsPage() {
             </table>
           </div>
         </section>
-
         <section className="seo-faq" aria-labelledby="collection-faq-title">
-          <header className="seo-section-heading">
-            <span>03 / FAQ</span>
-            <h2 id="collection-faq-title">{copy.faqTitle}</h2>
-          </header>
-          <div className="seo-faq__items">
-            {copy.faq.map((item, index) => (
-              <details key={item.question}>
-                <summary><span>{String(index + 1).padStart(2, '0')}</span>{item.question}</summary>
-                <p>{item.answer}</p>
-              </details>
-            ))}
-          </div>
+          <h2 id="collection-faq-title">{copy.faqTitle}</h2>
+          {copy.faq.map(({ question, answer }, index) => (
+            <details key={question}><summary><span>{String(index + 1).padStart(2, '0')}</span><b>{question}</b></summary><p>{answer}</p></details>
+          ))}
         </section>
       </article>
-      <MobileStickyCta href="/#inner-circle" label={copy.collectionCta} meta="BAT / ROSE / VOID" />
+      <MobileStickyCta href="/#inner-circle" label={copy.collectionCta} meta="DROP 001 / SIGNAL" />
     </>
   )
 }

@@ -31,8 +31,8 @@ export function Hero({ reducedMotion }: HeroProps) {
         </h1>
         <p className="hero__support">{copy.heroSupport}</p>
         <div className="hero__actions">
-          <a className="button button--primary" href="#chromatic-black">{copy.heroPrimary} <ArrowIcon /></a>
-          <a className="text-link" href="/collections/">{copy.heroSecondary}</a>
+          <a className="button button--primary" href="/collections/">{copy.heroPrimary} <ArrowIcon /></a>
+          <a className="text-link" href="#chromatic-black">{copy.heroSecondary}</a>
         </div>
       </div>
 

@@ -1,16 +1,11 @@
 import { socialProfiles } from '../config/social'
+import { productPath, products } from '../data/products'
 import type { TranslationKey } from '../i18n/translations'
 import { useLocale } from '../i18n/useLocale'
 import { BrandMark } from './BrandMark'
 import { MarketControls } from './MarketControls'
 
 const year = new Date().getFullYear()
-
-const collectionLinks = [
-  { label: 'BAT', href: '/collections/bat/' },
-  { label: 'ROSE', href: '/collections/rose/' },
-  { label: 'VOID', href: '/collections/void/' },
-] as const
 
 const exploreLinks = [
   { labelKey: 'nav.details' as TranslationKey, href: '/#chromatic-black' },
@@ -42,8 +37,10 @@ export function Footer() {
 
         <nav aria-label={t('footer.shop')}>
           <span>{t('footer.shop')}</span>
-          <a href="/collections/">{t('nav.drop001')}</a>
-          {collectionLinks.map((item) => <a key={item.href} href={item.href}>{item.label}</a>)}
+          <a href="/collections/">DROP 001 / SIGNAL</a>
+          {products.map((product) => (
+            <a key={product.id} href={productPath(product)}>{product.name}</a>
+          ))}
         </nav>
 
         <nav aria-label={t('footer.explore')}>
@@ -63,14 +60,14 @@ export function Footer() {
       <div className="site-footer__social">
         <span>{t('footer.social')}</span>
         {socialProfiles.length > 0 ? socialProfiles.map((profile) => (
-          <a key={profile.label} href={profile.url} target="_blank" rel="noreferrer">{profile.label}</a>
+          <a key={profile.label} href={profile.url} target="_blank" rel="noopener noreferrer">{profile.label}</a>
         )) : <p>{t('social.pending')}</p>}
       </div>
 
       <div className="site-footer__bottom">
         <span>{t('footer.copyright', { year })}</span>
         <span>VHOX WRLD / CHROMATIC BLACK</span>
-        <a href="#top">{t('footer.back')}</a>
+        <a href="#main-content">{t('footer.back')}</a>
       </div>
     </footer>
   )

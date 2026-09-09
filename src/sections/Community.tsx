@@ -16,7 +16,7 @@ export function Community() {
           <span>INSTAGRAM</span>
           <p>{t('community.instagramDetail')}</p>
           {instagramUrl ? (
-            <a href={instagramUrl} target="_blank" rel="noreferrer">{t('community.instagramOpen')} <ArrowIcon /></a>
+            <a href={instagramUrl} target="_blank" rel="noopener noreferrer">{t('community.instagramOpen')} <ArrowIcon /></a>
           ) : <span>{t('social.pending')}</span>}
         </article>
         <article data-reveal>
