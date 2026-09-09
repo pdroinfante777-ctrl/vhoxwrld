@@ -52,8 +52,12 @@ export function Navigation({ reducedMotion }: NavigationProps) {
   }, [open])
 
   useEffect(() => {
+    if (open) mobileMenuRef.current?.querySelector<HTMLElement>('a[href]')?.focus()
+  }, [open])
+
+  useEffect(() => {
     const handleMenuKeys = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (event.key === 'Escape' && open) {
         setOpen(false)
         toggleRef.current?.focus()
       }
@@ -144,6 +148,10 @@ export function Navigation({ reducedMotion }: NavigationProps) {
         ref={mobileMenuRef}
         id="mobile-menu"
         className="mobile-menu"
+        role="dialog"
+        aria-modal={open ? true : undefined}
+        aria-label={t('nav.mobile')}
+        inert={!open}
         aria-hidden={!open}
         onMouseDown={(event) => {
           if (event.target === event.currentTarget) setOpen(false)

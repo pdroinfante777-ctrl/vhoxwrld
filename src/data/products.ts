@@ -267,6 +267,7 @@ export function isProductPurchasable(product: Product) {
 function isApprovedPurchaseUrl(value: string | null) {
   const candidate = value?.trim()
   if (!candidate) return false
+  if (Array.from(candidate).some((char) => char === '\\' || char.charCodeAt(0) < 32 || char.charCodeAt(0) === 127)) return false
   if (candidate.startsWith('/') && !candidate.startsWith('//')) return true
 
   try {

@@ -16,5 +16,7 @@ describe('shop URL safety', () => {
     expect(resolveShopUrl('http://shop.example')).toBe('#collection')
     expect(resolveShopUrl('javascript:alert(1)')).toBe('#collection')
     expect(resolveShopUrl('not a url')).toBe('#collection')
+    expect(resolveShopUrl('//unapproved.example')).toBe('#collection')
+    expect(resolveShopUrl('/\\unapproved.example')).toBe('#collection')
   })
 })

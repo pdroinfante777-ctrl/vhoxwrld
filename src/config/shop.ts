@@ -4,7 +4,8 @@ export function resolveShopUrl(value: string | undefined) {
   const candidate = value?.trim()
 
   if (!candidate) return fallbackShopUrl
-  if (candidate.startsWith('#') || candidate.startsWith('/')) return candidate
+  if (Array.from(candidate).some((char) => char === '\\' || char.charCodeAt(0) < 32 || char.charCodeAt(0) === 127)) return fallbackShopUrl
+  if (candidate.startsWith('#') || (candidate.startsWith('/') && !candidate.startsWith('//'))) return candidate
 
   try {
     const parsed = new URL(candidate)

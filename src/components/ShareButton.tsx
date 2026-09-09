@@ -14,8 +14,11 @@ async function copyText(value: string) {
   textarea.style.opacity = '0'
   document.body.append(textarea)
   textarea.select()
-  document.execCommand('copy')
-  textarea.remove()
+  try {
+    if (!document.execCommand('copy')) throw new Error('Clipboard copy unavailable')
+  } finally {
+    textarea.remove()
+  }
 }
 
 export function ShareButton({ path, title, description }: ShareButtonProps) {

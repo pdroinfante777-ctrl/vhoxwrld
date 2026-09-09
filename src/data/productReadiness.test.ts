@@ -58,10 +58,15 @@ describe('product readiness', () => {
     expect(isProductPurchasable(makeReadyProduct({ shipping: null }))).toBe(false)
     expect(isProductPurchasable(makeReadyProduct({ returns: null }))).toBe(false)
     expect(isProductPurchasable(makeReadyProduct({ code: null }))).toBe(false)
+    expect(isProductPurchasable(makeReadyProduct({ fabricWeight: null }))).toBe(false)
+    expect(isProductPurchasable(makeReadyProduct({ sizeGuide: null }))).toBe(false)
+    expect(isProductPurchasable(makeReadyProduct({ construction: null }))).toBe(false)
   })
 
   it('requires an internal or HTTPS purchase destination', () => {
     expect(isProductPurchasable(makeReadyProduct({ purchaseUrl: null }))).toBe(false)
+    expect(isProductPurchasable(makeReadyProduct({ purchaseUrl: '/\\unapproved.example' }))).toBe(false)
+    expect(isProductPurchasable(makeReadyProduct({ purchaseUrl: '//unapproved.example' }))).toBe(false)
     expect(isProductPurchasable(makeReadyProduct({ purchaseUrl: 'http://shop.example.test/product' }))).toBe(false)
     expect(isProductPurchasable(makeReadyProduct({ purchaseUrl: 'javascript:alert(1)' }))).toBe(false)
     expect(isProductPurchasable(makeReadyProduct({ purchaseUrl: '/checkout/signal-core-tee' }))).toBe(true)
