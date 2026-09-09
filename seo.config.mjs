@@ -9,9 +9,9 @@ export const publicSeoRoutes = [
   },
   {
     path: '/collections/',
-    title: 'BAT, ROSE & VOID — VHOX Collection Studies',
-    description: 'Explore BAT, ROSE and VOID, three VHOX concept studies shaped by nocturnal identity, controlled tension and near-black depth.',
-    h1: 'THREE FORMS. ONE SIGNAL.',
+    title: 'DROP 001: SIGNAL — VHOX Collection',
+    description: 'Explore the planned pieces of DROP 001: SIGNAL. Product imagery, specifications, price and release remain pending.',
+    h1: 'SIGNAL.',
   },
   {
     path: '/journal/',
@@ -25,27 +25,13 @@ export const publicSeoRoutes = [
     description: 'Discover the VHOX manifesto: a disciplined language of near-black material, exact form and identity without compromise.',
     h1: 'DARKNESS IS A SURFACE.',
   },
-  {
-    path: '/collections/bat/',
-    title: 'BAT — Nocturnal Form Study | VHOX',
-    description: 'Explore BAT, the original VHOX signal: a sharp nocturnal form study with physical product specifications still pending approval.',
-    h1: 'BAT',
-  },
-  {
-    path: '/collections/rose/',
-    title: 'ROSE — Controlled Tension Study | VHOX',
-    description: 'Explore ROSE, a VHOX contrast study balancing organic tension and controlled structure. Commercial release details remain pending.',
-    h1: 'ROSE',
-  },
-  {
-    path: '/collections/void/',
-    title: 'VOID — Near-Black Depth Study | VHOX',
-    description: 'Explore VOID, a VHOX study of near-black depth, negative space and hidden tonal response. Physical validation remains pending.',
-    h1: 'VOID',
-  },
+
 ]
 
 export const noindexSeoRoutes = [
+  { path: '/collections/signal-core-tee/', title: 'SIGNAL CORE TEE — VHOX / Concept study', description: 'Preview SIGNAL CORE TEE from DROP 001: SIGNAL. Campaign study only; physical samples, specifications, price and release remain pending.' },
+  { path: '/collections/night-bloom-tee/', title: 'NIGHT BLOOM TEE — VHOX / Concept study', description: 'Preview NIGHT BLOOM TEE from DROP 001: SIGNAL. Campaign study only; physical samples, specifications, price and release remain pending.' },
+  { path: '/collections/crystal-signal-tee/', title: 'CRYSTAL SIGNAL TEE — VHOX / Concept study', description: 'Preview CRYSTAL SIGNAL TEE from DROP 001: SIGNAL. Campaign study only; physical samples, specifications, price and release remain pending.' },
   {
     path: '/cart/',
     title: 'Your Bag — VHOX',

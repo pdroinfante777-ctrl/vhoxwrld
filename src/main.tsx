@@ -12,10 +12,13 @@ import { CartProvider } from './cart/CartContext'
 import { LocaleProvider } from './i18n/LocaleContext'
 import { CurrencyProvider } from './commerce/CurrencyContext'
 import { configureGoogleSiteVerification } from './seo/metadata'
+import { legacyRedirect } from './seo/redirects'
 
 configureGoogleSiteVerification()
 
-createRoot(document.getElementById('root')!).render(
+const redirect = legacyRedirect(window.location.pathname)
+if (redirect) window.location.replace(redirect)
+else createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <LocaleProvider>
       <CurrencyProvider>
