@@ -4,10 +4,10 @@ import { products } from './products'
 import { translations } from '../i18n/translations'
 
 describe('VHOX Beyond Form editorial system', () => {
-  it('keeps BAT, ROSE and VOID in one consistent sequence', () => {
+  it('keeps SIGNAL chapters aligned with the approved catalog', () => {
     expect(heroScenes.map((scene) => scene.id)).toEqual(['bat', 'rose', 'void'])
-    expect(dropChapters.map((chapter) => chapter.id)).toEqual(['bat', 'rose', 'void'])
-    expect(products.map((product) => product.id)).toEqual(['bat', 'rose', 'void'])
+    expect(dropChapters.map((chapter) => chapter.id)).toEqual(products.map((product) => product.id))
+    expect(products.map((product) => product.id)).toEqual(['signal-core-tee', 'night-bloom-tee', 'crystal-signal-tee'])
   })
 
   it('connects every chapter to a real product route', () => {

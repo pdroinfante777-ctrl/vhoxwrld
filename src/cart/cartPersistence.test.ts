@@ -4,8 +4,8 @@ import { parseStoredCart, sanitizeStoredCart } from './cartPersistence'
 describe('cart persistence safety', () => {
   it('removes saved lines for concepts that are not purchasable', () => {
     expect(sanitizeStoredCart([{
-      key: 'bat::M::BLACK',
-      productId: 'bat',
+      key: 'signal-core-tee::M::BLACK',
+      productId: 'signal-core-tee',
       quantity: 2,
       size: 'M',
       color: 'BLACK',
