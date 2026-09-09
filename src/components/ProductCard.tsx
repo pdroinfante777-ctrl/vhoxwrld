@@ -60,7 +60,7 @@ export function ProductCard({ product, index, compact = false }: ProductCardProp
           </>
         )}
         <span className="product-card__media-status">
-          <span>{primary ? 'CAMPAIGN STUDY' : t('product.mediaPending')}</span>
+          <span>{primary?.usage === 'campaign-study' ? t('product.campaignStudy') : !primary ? t('product.mediaPending') : ''}</span>
           <span>{product.code}</span>
         </span>
       </a>

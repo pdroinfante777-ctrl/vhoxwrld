@@ -35,15 +35,16 @@ The production build must create `dist/index.html`.
 
 ## Product readiness and commerce safety
 
-BAT, ROSE and VOID remain editorial concept routes. Approved Chromatic Black campaign imagery is available, but commercial specifications, price, variants and release status are still pending, so the studies cannot be added to the bag.
+DROP 001: SIGNAL contains three planned pieces: SIGNAL CORE TEE, NIGHT BLOOM TEE and CRYSTAL SIGNAL TEE. Existing imagery is campaign-study material, not approved product photography. Product specifications, prices, variants and release remain pending; purchases are disabled.
 
 `isProductPurchasable(product)` in `src/data/products.ts` is the single commerce gate. It requires:
 
 - `availability: "available"`;
 - a positive confirmed price;
-- at least one approved media asset;
+- explicit launch approval and at least one approved product media asset;
 - confirmed size and color variants;
-- confirmed construction/material information.
+- confirmed materials, fabric weight, construction, fit, size guide, care, delivery and returns information;
+- a confirmed product code and safe approved purchase destination.
 
 The cart revalidates stored lines on every load and removes obsolete, malformed or non-purchasable concepts. Checkout remains only an HTTPS handoff to an approved `VITE_SHOP_URL`; this repository contains no payment system, credentials or secret keys.
 
@@ -93,8 +94,9 @@ Chromatic Black is presented as the approved visual direction. Product specifica
 Supported routes:
 
 - `/` — indexable campaign homepage.
-- `/collections/` — indexable BAT / ROSE / VOID overview with visible FAQ.
-- `/collections/bat/`, `/collections/rose/`, `/collections/void/` — indexable editorial studies; unverified commerce fields remain visibly pending.
+- `/collections/` — indexable DROP 001: SIGNAL overview with visible FAQ.
+- `/collections/signal-core-tee/`, `/collections/night-bloom-tee/`, `/collections/crystal-signal-tee/` — planned-piece previews, `noindex, follow`, excluded from the sitemap.
+- Former BAT / ROSE / VOID paths under `/collections/` and `/product/` — permanent redirects to `/collections/` on Apache; local client fallback provided.
 - `/journal/` — indexable editorial hub.
 - `/manifesto/` — indexable long-form house manifesto with In Brief and table of contents.
 - `/cart/` — local bag and future handoff layer; `noindex, follow`.
@@ -102,3 +104,5 @@ Supported routes:
 - unknown routes — branded 404 experience; `noindex, follow`.
 
 See [SEO_AUDIT.md](./SEO_AUDIT.md), [ASSET_GUIDE.md](./ASSET_GUIDE.md), [AUDIT_VHOX.md](./AUDIT_VHOX.md) and [HOSTINGER_DEPLOY.md](./HOSTINGER_DEPLOY.md).
+
+Current continuation evidence and PR review order: [VALIDATION_SIGNAL.md](./VALIDATION_SIGNAL.md). Node 20.20.2 / npm 10.9.2 clean installation, typecheck, lint, 38 tests, production build and both dependency audits passed on 2026-09-09. This does not constitute a production deployment or confirmation of Hostinger's actual runtime.

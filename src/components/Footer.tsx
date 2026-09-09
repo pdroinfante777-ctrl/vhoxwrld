@@ -67,7 +67,7 @@ export function Footer() {
       <div className="site-footer__bottom">
         <span>{t('footer.copyright', { year })}</span>
         <span>VHOX WRLD / CHROMATIC BLACK</span>
-        <a href="#top">{t('footer.back')}</a>
+        <a href="#main-content">{t('footer.back')}</a>
       </div>
     </footer>
   )
