@@ -609,11 +609,11 @@
   align-items: center;
   gap: 0.55rem;
   margin-bottom: 0.9rem;
-  color: var(--color-accent) !important;
+  color: var(--color-silver);
   font-family: var(--font-mono);
-  font-size: var(--type-label-xs) !important;
+  font-size: var(--type-label-xs);
   font-weight: 600;
-  letter-spacing: 0.15em !important;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 

@@ -2,44 +2,22 @@ import { ArrowIcon } from '../components/ArrowIcon'
 import { chromaticBlackCopy } from '../data/chromaticBlack'
 import { useLocale } from '../i18n/useLocale'
 
-type HeroProps = {
-  reducedMotion: boolean
-}
-
-export function Hero({ reducedMotion }: HeroProps) {
-  const { locale } = useLocale()
+export function Hero() {
+  const { locale, t } = useLocale()
   const copy = chromaticBlackCopy[locale]
-
   return (
-    <section id="top" className={`hero hero--chromatic ${reducedMotion ? 'hero--reduced-motion' : ''}`} aria-labelledby="hero-title">
-      <img
-        className="hero__campaign-image"
-        src="/chromatic-black/vhox-campaign-brutalist.jpeg"
-        width="1122"
-        height="1402"
-        alt={copy.heroAlt}
-        fetchPriority="high"
-        decoding="async"
-      />
-      <div className="hero__shade" aria-hidden="true" />
-
-      <div className="hero__content hero__content--chromatic">
-        <p className="hero__eyebrow">{copy.heroEyebrow}</p>
-        <h1 id="hero-title" className="hero__title hero__title--chromatic">
-          <span className="hero__line"><span className="hero__line-inner">{copy.heroLineOne}</span></span>
-          <span className="hero__line hero__line--editorial"><span className="hero__line-inner">{copy.heroLineTwo}</span></span>
-        </h1>
-        <p className="hero__support">{copy.heroSupport}</p>
-        <div className="hero__actions">
-          <a className="button button--primary" href="/collections/">{copy.heroPrimary} <ArrowIcon /></a>
-          <a className="text-link" href="#chromatic-black">{copy.heroSecondary}</a>
-        </div>
+    <section id="top" className="editorial-hero" aria-labelledby="hero-title">
+      <div className="editorial-hero__copy">
+        <p className="editorial-label">DROP 001 — SIGNAL</p>
+        <h1 id="hero-title">From a distance,<br />black.</h1>
+        <p className="editorial-hero__signature">Up close, VHOX.</p>
+        <p className="editorial-hero__movement">Movimiento Exclusivo</p>
+        <a className="editorial-link" href="/collections/">{copy.heroPrimary}<ArrowIcon /></a>
       </div>
-
-      <div className="hero__chromatic-footer" aria-hidden="true">
-        <span>{copy.heroFooterOne}</span>
-        <span>{copy.heroFooterTwo}</span>
-      </div>
+      <figure className="editorial-hero__figure">
+        <img src="/chromatic-black/vhox-campaign-brutalist.jpeg" width="1122" height="1402" alt={copy.heroAlt} fetchPriority="high" decoding="async" />
+        <figcaption><span>VHOX / Chromatic Black</span><span>{t('product.campaignStudy')}</span></figcaption>
+      </figure>
     </section>
   )
 }

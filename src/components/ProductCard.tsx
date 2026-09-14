@@ -11,15 +11,14 @@ type ProductCardProps = {
   compact?: boolean
 }
 
-export function ProductCard({ product, index, compact = false }: ProductCardProps) {
+export function ProductCard({ product, compact = false }: ProductCardProps) {
   const { locale, t } = useLocale()
   const { currency } = useCurrency()
   const { addItem } = useCart()
   const primary = product.media[0]
-  const alternate = product.media[1]
   const purchasable = isProductPurchasable(product)
   return (
-    <article className={`product-card ${compact ? 'product-card--compact' : ''}`} data-reveal>
+    <article className={`product-card ${compact ? 'product-card--compact' : ''}`}>
       <a
         className={`product-card__visual product-card__visual--${product.visual}`}
         href={productPath(product)}
@@ -27,7 +26,6 @@ export function ProductCard({ product, index, compact = false }: ProductCardProp
         aria-label={`${t('product.view')} ${product.name}`}
         onClick={() => trackEvent('select_item', { item_list_id: 'vhox-drop-001-signal', item_list_name: 'VHOX Drop 001: Signal', items: [{ item_id: product.id, item_name: product.name, item_category: product.category }] })}
       >
-        <span className="product-card__number">{String(index + 1).padStart(2, '0')}</span>
         {primary ? (
           <>
             {primary.type === 'image' ? (
@@ -42,32 +40,19 @@ export function ProductCard({ product, index, compact = false }: ProductCardProp
             ) : (
               <video className="product-card__image product-card__image--primary" src={primary.src} poster={primary.poster} muted loop playsInline preload="metadata" aria-label={primary.alt} />
             )}
-            {alternate?.type === 'image' && (
-              <img
-                className="product-card__image product-card__image--alternate"
-                src={alternate.src}
-                alt=""
-                loading="lazy"
-                decoding="async"
-                style={{ objectFit: alternate.objectFit, objectPosition: alternate.objectPosition }}
-              />
-            )}
           </>
         ) : (
           <>
             <span className="product-card__geometry" aria-hidden="true" />
-            <span className="product-card__garment-guide" aria-hidden="true" />
           </>
         )}
         <span className="product-card__media-status">
           <span>{primary?.usage === 'campaign-study' ? t('product.campaignStudy') : !primary ? t('product.mediaPending') : ''}</span>
-          <span>{product.code}</span>
         </span>
       </a>
 
       <div className="product-card__meta">
         <div>
-          <span>{product.category}</span>
           <h3><a href={productPath(product)}>{product.name}</a></h3>
         </div>
         <span className="status-dot">{purchasable ? t('product.available') : t('product.conceptStudy')}</span>
