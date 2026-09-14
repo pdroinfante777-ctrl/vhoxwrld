@@ -1,0 +1,32 @@
+[
+  {
+    "name": "main",
+    "foreground": "#eeece5",
+    "background": "#131412",
+    "ratio": 15.63
+  },
+  {
+    "name": "dark-secondary",
+    "foreground": "#b5b3aa",
+    "background": "#131412",
+    "ratio": 8.79
+  },
+  {
+    "name": "light-main",
+    "foreground": "#20211d",
+    "background": "#e7e4dc",
+    "ratio": 12.75
+  },
+  {
+    "name": "light-secondary",
+    "foreground": "#55574f",
+    "background": "#e7e4dc",
+    "ratio": 5.77
+  },
+  {
+    "name": "caption",
+    "foreground": "#42443c",
+    "background": "#d5d2c9",
+    "ratio": 6.54
+  }
+]
