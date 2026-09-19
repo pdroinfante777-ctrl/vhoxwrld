@@ -1,5 +1,6 @@
 import { socialProfiles } from '../config/social'
 import { productPath, products } from '../data/products'
+import { garmentCopy } from '../data/garmentEditorials'
 import type { TranslationKey } from '../i18n/translations'
 import { useLocale } from '../i18n/useLocale'
 import { BrandMark } from './BrandMark'
@@ -15,7 +16,7 @@ const exploreLinks = [
 ] as const
 
 export function Footer() {
-  const { t } = useLocale()
+  const { t, locale } = useLocale()
 
   return (
     <footer id="contact" className="site-footer site-footer--chromatic">
@@ -37,7 +38,9 @@ export function Footer() {
 
         <nav aria-label={t('footer.shop')}>
           <span>{t('footer.shop')}</span>
-          <a href="/collections/">DROP 001 / SIGNAL</a>
+          <a href="/collections/">SIGNAL</a>
+          <a href="/collections/#garments">{garmentCopy.collection[locale]}</a>
+          <a href="/collections/#premium">VHOX Premium</a>
           {products.map((product) => (
             <a key={product.id} href={productPath(product)}>{product.name}</a>
           ))}

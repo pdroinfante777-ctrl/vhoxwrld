@@ -1,0 +1,63 @@
+/* Garment stories: full photographs, clear titles, no decorative section codes. */
+.garment-edit, .premium-edit { padding: clamp(3rem, 6vw, 6rem) var(--page-x); scroll-margin-top: 0; }
+.garment-edit { background: #191a17; color: #eeece5; }
+.garment-edit__heading, .premium-edit header { display: grid; grid-template-columns: 1.1fr 1fr; gap: 7vw; align-items: start; margin-bottom: 2.5rem; }
+.garment-edit__heading h2, .premium-edit h2 { margin: 0; font-size: clamp(2rem, 3.5vw, 3.5rem); }
+.garment-edit__heading p, .premium-edit header p { max-width: 32rem; margin: 0; font-size: .9375rem; }
+.garment-edit__heading p { color: #b5b3aa; }
+.garment-edit__heading .editorial-link { margin-top: 1rem; }
+.garment-edit__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem 5vw; align-items: start; }
+.garment-story { min-width: 0; }
+.garment-story:nth-child(even) { padding-top: 5rem; }
+.garment-story h3 { margin: 1.25rem 0 .5rem; font-family: var(--font-body); font-size: clamp(1.25rem, 2vw, 1.8rem); font-weight: 450; }
+.garment-story > p { max-width: 31rem; margin: 0; color: #b5b3aa; font-size: .875rem; }
+.garment-edit__note { max-width: 42rem; margin: 2rem 0 0; color: #b5b3aa; font-size: .8125rem; }
+.garment-gallery { min-width: 0; }
+.garment-gallery__stage { position: relative; display: block; width: 100%; aspect-ratio: 4 / 5; padding: 0; border: 0; border-radius: 0; background: #121310; color: inherit; cursor: zoom-in; }
+.garment-gallery__stage img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.garment-gallery__enlarge { position: absolute; right: .75rem; bottom: .75rem; display: grid; place-items: center; width: 36px; height: 36px; background: #eeece5; color: #20211d; font-size: 1.5rem; line-height: 1; }
+.garment-gallery__views { display: flex; flex-wrap: wrap; gap: .65rem; margin-top: .8rem; }
+.garment-gallery__views button { width: 64px; height: 80px; padding: 3px; border: 1px solid #626459; background: #191a17; cursor: pointer; }
+.garment-gallery__views button[aria-pressed="true"] { border-color: #eeece5; box-shadow: inset 0 -2px #eeece5; }
+.garment-gallery__views img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.premium-edit { background: #e7e4dc; color: #20211d; }
+.premium-edit header p, .premium-edit .garment-edit__note { color: #55574f; }
+.premium-edit__images { display: grid; grid-template-columns: 1.4fr .75fr; align-items: center; gap: 5vw; }
+.premium-edit figure { min-width: 0; margin: 0; }
+.premium-edit .garment-gallery__stage { aspect-ratio: auto; background: transparent; }
+.premium-edit .garment-gallery__stage img { height: auto; }
+.premium-edit figcaption { margin-top: .9rem; font-size: .875rem; }
+.garment-lightbox { position: fixed; inset: 0; width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 1rem; border: 0; color: #eeece5; background: #131412; }
+.garment-lightbox::backdrop { background: #131412; }
+.garment-lightbox__body { height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; justify-items: center; gap: .75rem; }
+.garment-lightbox__close { justify-self: end; }
+.garment-lightbox button { min-width: 44px; min-height: 44px; padding: .6rem 1rem; border: 1px solid #626459; border-radius: 0; background: transparent; color: inherit; font: inherit; font-size: .875rem; cursor: pointer; }
+.garment-lightbox__body > img { display: block; max-width: 100%; width: auto; height: 100%; max-height: 100%; min-height: 0; object-fit: contain; }
+.garment-lightbox__caption { display: flex; align-items: center; justify-content: center; gap: 1rem; width: 100%; max-width: 60rem; }
+.garment-lightbox__caption p { margin: 0; text-align: center; font-size: .8125rem; }
+.garment-lightbox__caption button { flex-shrink: 0; }
+.garment-jump-links { display: flex; flex-wrap: wrap; gap: .5rem 2rem; margin: 0 0 1.5rem; padding: 1rem var(--page-x) 0; }
+.garment-jump-links a { display: inline-flex; align-items: center; min-height: 44px; font-size: .875rem; text-decoration: underline; text-underline-offset: .4rem; }
+.site-shell .seo-page--collections .seo-page__intro { grid-row: 2; }
+#collection-studies-title { scroll-margin-top: calc(var(--header-height) + 1rem); }
+.site-shell .editorial-hero h1 { margin-top: 0; }
+.site-shell .seo-section-heading, .site-shell .section-heading { grid-template-columns: minmax(0, 1fr); }
+.site-shell .seo-section-heading h2, .site-shell .section-heading h2 { grid-column: auto; }
+.site-shell .key-takeaways, .site-shell .article-toc { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); }
+.site-shell .key-takeaways h2, .site-shell .article-toc h2 { grid-column: 1; font-size: clamp(1.8rem, 3.5vw, 3rem); line-height: 1.1; }
+.site-shell .key-takeaways ul, .site-shell .article-toc ol { margin-top: 0; }
+.site-shell .article-toc a { display: block; font-family: var(--font-body); letter-spacing: 0; }
+.site-shell .manifesto-article section { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); }
+.site-shell .manifesto-article section h2 { max-width: 15ch; font-size: clamp(1.8rem, 3.5vw, 3rem); line-height: 1.1; }
+@media (max-width: 700px) {
+  .garment-edit__heading, .premium-edit header { grid-template-columns: 1fr; gap: 1.25rem; }
+  .garment-edit__grid { grid-template-columns: 1fr; gap: 2.5rem; }
+  .garment-story:nth-child(even) { padding-top: 0; }
+  .premium-edit__images { grid-template-columns: 1fr; gap: 2rem; }
+  .premium-edit figure:last-child { width: 86%; margin-left: auto; }
+  .garment-lightbox { padding: .75rem; }
+  .garment-lightbox__caption { gap: .5rem; }
+  .garment-lightbox__caption p { font-size: .75rem; }
+  .site-shell .key-takeaways, .site-shell .article-toc, .site-shell .manifesto-article section { grid-template-columns: 1fr; }
+  .site-shell .key-takeaways ul, .site-shell .article-toc ol { grid-column: 1; }
+}

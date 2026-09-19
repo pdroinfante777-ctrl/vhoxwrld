@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VHOX — revisión de prendas y Premium</title>
+<style>
+body{margin:0;background:#191a17;color:#eeece5;font:16px/1.5 system-ui,sans-serif;padding:clamp(20px,4vw,60px)}h1{font-size:clamp(28px,4vw,48px);font-weight:450;margin:0 0 12px}p{max-width:65ch;color:#b5b3aa}a{color:inherit}label{display:inline-block;margin:20px 24px 20px 0}select{display:block;margin-top:8px;font:inherit;color:#20211d;background:#eeece5;padding:10px;border:0}img{display:block;width:100%;height:auto;max-width:1440px;margin:auto}figure{margin:20px 0}figcaption{margin:12px 0;color:#b5b3aa}
+</style>
+<h1>Prendas y VHOX Premium</h1>
+<p>Once imágenes aportadas y dos nuevas imágenes de campaña. Galerías completas, fotografía sin recortes y títulos sin códigos decorativos.</p>
+<a href="../../GARMENT_REVIEW.md">Informe de implementación</a>
+<div><label>Vista<select id="page"><option value="garments">Prendas</option><option value="premium">VHOX Premium</option><option value="home">Portada</option></select></label><label>Ancho<select id="width"><option>1440</option><option>768</option><option>390</option><option>320</option></select></label></div>
+<figure><a id="full" href="garments-1440.png"><img id="capture" src="garments-1440.png" alt="Apartado de prendas a 1440 píxeles"></a><figcaption id="caption">Prendas · 1440 px</figcaption></figure>
+<script>
+const page=document.querySelector('#page'),width=document.querySelector('#width'),capture=document.querySelector('#capture'),full=document.querySelector('#full'),caption=document.querySelector('#caption');
+function update(){const text=page.selectedOptions[0].textContent+' · '+width.value+' px';capture.src=page.value+'-'+width.value+'.png';capture.alt=text;full.href=capture.src;caption.textContent=text;capture.style.maxWidth=width.value+'px'}
+page.addEventListener('change',update);width.addEventListener('change',update);
+</script>
+</html>

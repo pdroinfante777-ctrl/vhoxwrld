@@ -8,7 +8,6 @@ export function Hero() {
   return (
     <section id="top" className="editorial-hero" aria-labelledby="hero-title">
       <div className="editorial-hero__copy">
-        <p className="editorial-label">DROP 001 — SIGNAL</p>
         <h1 id="hero-title">From a distance,<br />black.</h1>
         <p className="editorial-hero__signature">Up close, VHOX.</p>
         <p className="editorial-hero__movement">Movimiento Exclusivo</p>

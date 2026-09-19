@@ -7,6 +7,8 @@ import { ProductCard } from '../components/ProductCard'
 import { ShareButton } from '../components/ShareButton'
 import { editorialCopy } from '../data/artDirection'
 import { products } from '../data/products'
+import { garmentCopy } from '../data/garmentEditorials'
+import { GarmentEditorials, PremiumEditorial } from '../sections/GarmentEditorials'
 import { useLocale } from '../i18n/useLocale'
 import { seoCopy } from '../seo/content'
 import { canonicalUrl } from '../seo/metadata'
@@ -41,7 +43,8 @@ export function CollectionsPage() {
   }), [copy])
 
   useEffect(() => {
-    window.scrollTo(0, 0)
+    if (!window.location.hash) window.scrollTo(0, 0)
+    else requestAnimationFrame(() => document.getElementById(window.location.hash.slice(1))?.scrollIntoView())
     trackEntityView('collections:drop-001-signal', 'view_item_list', {
       item_list_id: 'vhox-drop-001-signal',
       item_list_name: 'VHOX Drop 001: Signal',
@@ -55,8 +58,7 @@ export function CollectionsPage() {
       <StructuredData id="vhox-collection-faq" data={faqSchema(copy.faq)} />
       <article className="seo-page seo-page--collections">
         <header className="seo-page__hero">
-          <Breadcrumbs items={[{ label: copy.breadcrumbHome, href: '/' }, { label: 'DROP 001: SIGNAL' }]} />
-          <span className="seo-page__kicker">VHOX / DROP 001</span>
+          <Breadcrumbs items={[{ label: copy.breadcrumbHome, href: '/' }, { label: garmentCopy.collection[locale] }]} />
           <h1>SIGNAL</h1>
           <div className="seo-page__intro">
             <p>From a distance, black. Up close, VHOX.</p>
@@ -66,12 +68,21 @@ export function CollectionsPage() {
           </div>
         </header>
 
+        <nav className="garment-jump-links" aria-label={garmentCopy.collection[locale]}>
+          <a href="#collection-studies-title">SIGNAL</a>
+          <a href="#garments">{garmentCopy.collection[locale]}</a>
+          <a href="#premium">VHOX Premium</a>
+        </nav>
+
         <section className="seo-collection" aria-labelledby="collection-studies-title">
           <h2 id="collection-studies-title" className="sr-only">{editorial.selection}</h2>
           <div className="collection__grid">
             {products.map((product, index) => <ProductCard product={product} index={index} key={product.id} compact />)}
           </div>
         </section>
+
+        <GarmentEditorials />
+        <PremiumEditorial />
 
         <section className="seo-status" aria-labelledby="collection-status-title">
           <header className="seo-section-heading">
@@ -91,7 +102,7 @@ export function CollectionsPage() {
           ))}
         </section>
       </article>
-      <MobileStickyCta href="/#inner-circle" label={copy.collectionCta} meta="DROP 001 / SIGNAL" />
+      <MobileStickyCta href="/#inner-circle" label={copy.collectionCta} meta="SIGNAL" />
     </>
   )
 }
