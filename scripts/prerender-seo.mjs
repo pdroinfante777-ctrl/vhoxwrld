@@ -34,7 +34,7 @@ function pageHtml(route, robots) {
   return html
 }
 
-for (const route of [...publicSeoRoutes.filter(({ path }) => path !== '/'), ...noindexSeoRoutes]) {
+for (const route of [...publicSeoRoutes, ...noindexSeoRoutes]) {
   const output = new URL(`.${route.path}index.html`, distRoot)
   await mkdir(dirname(fileURLToPath(output)), { recursive: true })
   await writeFile(fileURLToPath(output), pageHtml(route, publicSeoRoutes.includes(route) ? 'index, follow' : 'noindex, follow'), 'utf8')

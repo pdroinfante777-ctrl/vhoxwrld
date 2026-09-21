@@ -43,7 +43,10 @@ function getRoute(): Route {
   if (path === '/journal') return { type: 'journal' }
   if (path === '/manifesto') return { type: 'manifesto' }
   const match = path.match(/^\/(?:collections|product)\/([^/]+)$/)
-  if (match) return { type: 'product', slug: decodeURIComponent(match[1]) }
+  if (match) {
+    try { return { type: 'product', slug: decodeURIComponent(match[1]) } }
+    catch { return { type: 'not-found' } }
+  }
   return { type: 'not-found' }
 }
 
@@ -68,13 +71,7 @@ function App() {
             : routedProduct ? `${routedProduct.name} — VHOX` : '404 — VHOX'
 
   const productMetaTitle = routedProduct
-    ? locale === 'en'
-      ? {
-          bat: 'BAT — Nocturnal Form Study | VHOX',
-          rose: 'ROSE — Controlled Tension Study | VHOX',
-          void: 'VOID — Near-Black Depth Study | VHOX',
-        }[routedProduct.slug] ?? `${routedProduct.name} — VHOX / ${t('product.conceptStudy')}`
-      : `${routedProduct.name} — VHOX / ${t('product.conceptStudy')}`
+    ? `${routedProduct.name} — VHOX / ${t('product.conceptStudy')}`
     : ''
 
   useLenis(reducedMotion)
@@ -102,7 +99,7 @@ function App() {
         title: productMetaTitle,
         description: productDescription(routedProduct, locale),
         path: `/collections/${routedProduct.slug}/`,
-        robots: 'index, follow',
+        robots: 'noindex, follow',
         locale,
       })
       return
