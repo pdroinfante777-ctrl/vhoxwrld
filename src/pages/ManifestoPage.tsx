@@ -28,7 +28,6 @@ export function ManifestoPage() {
       <StructuredData id="vhox-manifesto-schema" data={schemas} />
       <header className="seo-page__hero">
         <Breadcrumbs items={[{ label: copy.breadcrumbHome, href: '/' }, { label: 'Manifesto' }]} />
-        <span className="seo-page__kicker">VHOX / CHROMATIC BLACK</span>
         <h1>{copy.manifesto.h1}</h1>
         <div className="seo-page__intro">
           <p>{copy.manifestoIntro}</p>
@@ -38,21 +37,18 @@ export function ManifestoPage() {
       </header>
 
       <section className="key-takeaways" aria-labelledby="takeaways-title">
-        <span>01 / TL;DR</span>
         <h2 id="takeaways-title">{copy.inBrief}</h2>
         <ul>{sections.map((section) => <li key={section.id}><strong>{section.title}</strong><span>{section.body}</span></li>)}</ul>
       </section>
 
       <nav className="article-toc" aria-labelledby="contents-title">
-        <span>02 / NAVIGATION</span>
         <h2 id="contents-title">{copy.contents}</h2>
-        <ol>{sections.map((section, index) => <li key={section.id}><a href={`#${section.id}`}><span>{String(index + 1).padStart(2, '0')}</span>{section.title}</a></li>)}</ol>
+        <ol>{sections.map(section => <li key={section.id}><a href={`#${section.id}`}>{section.title}</a></li>)}</ol>
       </nav>
 
       <div className="manifesto-article">
-        {sections.map((section, index) => (
+        {sections.map(section => (
           <section id={section.id} key={section.id} aria-labelledby={`${section.id}-title`}>
-            <span>0{index + 3} / HOUSE CODE</span>
             <h2 id={`${section.id}-title`}>{section.title}</h2>
             <p>{section.body}</p>
           </section>

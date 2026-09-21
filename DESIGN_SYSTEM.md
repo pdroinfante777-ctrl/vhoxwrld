@@ -301,3 +301,8 @@ Antes de aprobar un componente o página:
 8. No simula compra, inventario, precio, envío ni escasez.
 9. No deforma ni reinterpreta el logo oficial.
 10. Se valida en móvil, landscape, tablet y escritorio antes de fusionarse.
+# Ampliación de prendas — 19 de septiembre de 2026
+
+Las historias de prendas y VHOX Premium utilizan títulos directos, fotografías completas y vistas seleccionables. La composición alterna dos columnas con un desplazamiento moderado en escritorio y una sola columna en móvil. Premium combina paisaje y retrato sobre piedra clara. Sin códigos de sección, números ornamentales ni etiquetas repetidas encima de los títulos. Los nombres SIGNAL e identificadores comerciales internos se conservan.
+
+Las imágenes nuevas son propuestas visuales, separadas del catálogo comprable. Se conserva el archivo original y se sirve WebP adaptativo. Las ampliaciones admiten teclado, Escape y retorno del foco; no hay animaciones automáticas. Los estados de producto y notas que ayudan a comprender disponibilidad siguen visibles.

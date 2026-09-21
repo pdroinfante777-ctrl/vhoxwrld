@@ -1,0 +1,101 @@
+{
+  "views": [
+    {
+      "label": "Ver: Vistas de una chaqueta negra sobre sudadera blanca, con detalles del pecho y bolsillo",
+      "loaded": true,
+      "selected": "true",
+      "src": "/garments/jacket-story.webp"
+    },
+    {
+      "label": "Ver: Chaqueta negra de aspecto desgastado sobre sudadera blanca, en percha",
+      "loaded": true,
+      "selected": "true",
+      "src": "/garments/jacket-distressed.webp"
+    },
+    {
+      "label": "Ver: Playera amplia en degradado violeta y blanco, modelo de pie",
+      "loaded": true,
+      "selected": "true",
+      "src": "/garments/tee-violet.webp"
+    },
+    {
+      "label": "Ver: Playera amplia en degradado cereza y blanco, vista frontal",
+      "loaded": true,
+      "selected": "true",
+      "src": "/garments/tee-burgundy.webp"
+    },
+    {
+      "label": "Ver: Playera violeta y blanca sobre modelo sentado en una calle húmeda",
+      "loaded": true,
+      "selected": "true",
+      "src": "/garments/tee-violet-seated.webp"
+    },
+    {
+      "label": "Ver: Sudadera gris con cierre y gráfica negra, vista frontal sobre modelo",
+      "loaded": true,
+      "selected": "true",
+      "src": "/garments/hoodie-front.webp"
+    },
+    {
+      "label": "Ver: Espalda y capucha de la sudadera gris con gráfica negra",
+      "loaded": true,
+      "selected": "true",
+      "src": "/garments/hoodie-back.webp"
+    },
+    {
+      "label": "Ver: Sudadera gráfica gris sobre modelo caminando",
+      "loaded": true,
+      "selected": "true",
+      "src": "/garments/hoodie-walking.webp"
+    },
+    {
+      "label": "Ver: Chaqueta racing negra, crema y verde con acentos naranja, vista frontal",
+      "loaded": true,
+      "selected": "true",
+      "src": "/garments/racing-green.webp"
+    },
+    {
+      "label": "Ver: Chaqueta racing negra, crema y roja, vista lateral sobre modelo",
+      "loaded": true,
+      "selected": "true",
+      "src": "/garments/racing-red.webp"
+    },
+    {
+      "label": "Ver: Conjunto con chaqueta racing verde, crema y negra en la calle",
+      "loaded": true,
+      "selected": "true",
+      "src": "/garments/racing-green-street.webp"
+    }
+  ],
+  "locales": [
+    {
+      "alt": "VHOX Premium concept: black overshirt and wide trousers beside an atelier window",
+      "lang": "en",
+      "premium": "Another way to wear black. Long silhouettes, open layers and colour revealed by light.",
+      "title": "Clothes with character."
+    },
+    {
+      "alt": "Conceito VHOX Premium: sobrecamisa preta e calça ampla junto à janela de um ateliê",
+      "lang": "pt",
+      "premium": "Outra forma de vestir o preto. Volumes longos, camadas abertas e cor que aparece com a luz.",
+      "title": "Peças com personalidade."
+    },
+    {
+      "alt": "Concept VHOX Premium : surchemise noire et pantalon ample près d’une fenêtre d’atelier",
+      "lang": "fr",
+      "premium": "Une autre façon de porter le noir. Des volumes longs, des superpositions ouvertes et une couleur révélée par la lumière.",
+      "title": "Des pièces de caractère."
+    },
+    {
+      "alt": "Concepto VHOX Premium: sobrecamisa negra y pantalón amplio junto a una ventana de taller",
+      "lang": "es",
+      "premium": "Otra forma de llevar el negro. Volúmenes largos, capas abiertas y color que aparece con la luz.",
+      "title": "Prendas con carácter."
+    }
+  ],
+  "dialog": {
+    "escapeReturnsFocus": true,
+    "arrowsChangeImage": true,
+    "bodyScrollRestored": true
+  }
+}

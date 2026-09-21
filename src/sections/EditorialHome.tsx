@@ -11,7 +11,7 @@ export function EditorialSelection() {
   return (
     <section id="collection" className="editorial-selection" aria-labelledby="selection-title">
       <header className="editorial-section-heading">
-        <div><p className="editorial-label">DROP 001 — SIGNAL</p><h2 id="selection-title">{copy.selection}</h2></div>
+        <h2 id="selection-title">{copy.selection}</h2>
         <a className="editorial-link" href="/collections/">{copy.explore}<ArrowIcon /></a>
       </header>
       <p className="editorial-selection__note">{copy.preview}</p>
@@ -25,7 +25,7 @@ export function EditorialStory() {
   const copy = editorialCopy[locale]
   return (
     <section id="chromatic-black" className="editorial-story" aria-labelledby="chromatic-title">
-      <header><p className="editorial-label">Chromatic Black</p><h2 id="chromatic-title">{copy.studyTitle}</h2><p>{copy.studyDescription}</p></header>
+      <header><h2 id="chromatic-title">{copy.studyTitle}</h2><p>{copy.studyDescription}</p></header>
       <div id="chromatic-studies" className="editorial-story__images">
         <figure className="editorial-story__lead"><img src="/chromatic-black/vhox-midnight-violet-tee.jpeg" width="1448" height="1086" alt={chromaticBlackCopy[locale].collectionAlt[2]} loading="lazy" decoding="async" /><figcaption>Midnight Violet <span>{t('product.campaignStudy')}</span></figcaption></figure>
         <figure className="editorial-story__inset"><img src="/chromatic-black/vhox-burnt-earth-tee.jpeg" width="1122" height="1402" alt={chromaticBlackCopy[locale].collectionAlt[1]} loading="lazy" decoding="async" /><figcaption>Burnt Earth <span>{t('product.campaignStudy')}</span></figcaption></figure>

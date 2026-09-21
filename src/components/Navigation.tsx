@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useCart } from '../cart/useCart'
 import { isProductPurchasable, products } from '../data/products'
+import { garmentCopy } from '../data/garmentEditorials'
 import { useLocale } from '../i18n/useLocale'
 import { BagIcon } from './BagIcon'
 import { BrandMark } from './BrandMark'
@@ -21,7 +22,7 @@ type NavigationProps = {
 }
 
 export function Navigation({ reducedMotion }: NavigationProps) {
-  const { t } = useLocale()
+  const { t, locale } = useLocale()
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [bagAnimating, setBagAnimating] = useState(false)
@@ -119,7 +120,7 @@ export function Navigation({ reducedMotion }: NavigationProps) {
       </a>
 
       <div className="header-actions">
-        <a className="header-drop-link" href="/collections/">DROP 001 / SIGNAL</a>
+        <a className="header-drop-link" href="/collections/">{garmentCopy.collection[locale]}</a>
         <a className="header-access-link" href="/#inner-circle">{t('nav.access')}</a>
         {showBag && (
           <a
@@ -155,9 +156,10 @@ export function Navigation({ reducedMotion }: NavigationProps) {
                 tabIndex={open ? 0 : -1}
                 onClick={() => setOpen(false)}
               >
-                {t(item.labelKey)}{'collectionName' in item ? ` / ${item.collectionName}` : ''}
+                {item.labelKey === 'nav.shop' ? garmentCopy.collection[locale] : t(item.labelKey)}
               </a>
             ))}
+            <a href="/collections/#premium" tabIndex={open ? 0 : -1} onClick={() => setOpen(false)}>VHOX Premium</a>
           </nav>
           <aside>
             <p>{t('nav.overlayCopy')}</p>

@@ -5,6 +5,7 @@ import { useReducedMotion } from './hooks/useReducedMotion'
 import { Hero } from './sections/Hero'
 import { EditorialSelection, EditorialStory, EditorialDetail, EditorialIdentity } from './sections/EditorialHome'
 import { InnerCircle } from './sections/InnerCircle'
+import { GarmentEditorials, PremiumEditorial } from './sections/GarmentEditorials'
 import { CartPage } from './pages/CartPage'
 import { ProductPage } from './pages/ProductPage'
 import { NotFoundPage } from './pages/NotFoundPage'
@@ -117,6 +118,8 @@ function HomePage() {
     <>
       <Hero />
       <EditorialSelection />
+      <GarmentEditorials preview />
+      <PremiumEditorial />
       <EditorialStory />
       <EditorialDetail />
       <EditorialIdentity />
