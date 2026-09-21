@@ -9,7 +9,7 @@ import { products } from '../data/products'
 import { useLocale } from '../i18n/useLocale'
 import { seoCopy } from '../seo/content'
 import { canonicalUrl } from '../seo/metadata'
-import { breadcrumbSchema } from '../seo/schema'
+import { breadcrumbSchema, faqSchema } from '../seo/schema'
 import { StructuredData } from '../seo/StructuredData'
 
 export function CollectionsPage() {
@@ -50,6 +50,7 @@ export function CollectionsPage() {
   return (
     <>
       <StructuredData id="vhox-collections-schema" data={itemListSchema} />
+      <StructuredData id="vhox-collection-faq" data={faqSchema(copy.faq)} />
       <article className="seo-page seo-page--collections">
         <header className="seo-page__hero">
           <Breadcrumbs items={[{ label: copy.breadcrumbHome, href: '/' }, { label: 'DROP 001: SIGNAL' }]} />
@@ -57,7 +58,7 @@ export function CollectionsPage() {
           <h1>SIGNAL.</h1>
           <div className="seo-page__intro">
             <p>FROM A DISTANCE, BLACK. UP CLOSE, VHOX.</p>
-            <p>Product details, price and availability are published only after confirmation by VHOX.</p>
+            <p>{copy.collectionIntro}</p>
             <a className="text-link seo-inline-cta" href="/#inner-circle">{copy.collectionCta} <ArrowIcon /></a>
             <ShareButton path="/collections/" title="VHOX DROP 001: SIGNAL" description="From a distance, black. Up close, VHOX." />
           </div>
@@ -85,7 +86,12 @@ export function CollectionsPage() {
             </table>
           </div>
         </section>
-
+        <section className="seo-faq" aria-labelledby="collection-faq-title">
+          <h2 id="collection-faq-title">{copy.faqTitle}</h2>
+          {copy.faq.map(({ question, answer }) => (
+            <details key={question}><summary>{question}</summary><p>{answer}</p></details>
+          ))}
+        </section>
       </article>
       <MobileStickyCta href="/#inner-circle" label={copy.collectionCta} meta="DROP 001 / SIGNAL" />
     </>

@@ -32,6 +32,9 @@ export type Product = {
   thumbnails: string[]
   sizes: string[]
   colors: string[]
+  fabricWeight: string | null
+  sizeGuide: string | null
+  construction: string | null
   materials: string | null
   features: string[]
   fit: string | null
@@ -90,6 +93,9 @@ export const products: Product[] = [
     sizes: [],
     colors: [],
     materials: null,
+    fabricWeight: null,
+    sizeGuide: null,
+    construction: null,
     features: [],
     fit: null,
     care: null,
@@ -142,6 +148,9 @@ export const products: Product[] = [
     sizes: [],
     colors: [],
     materials: null,
+    fabricWeight: null,
+    sizeGuide: null,
+    construction: null,
     features: [],
     fit: null,
     care: null,
@@ -194,6 +203,9 @@ export const products: Product[] = [
     sizes: [],
     colors: [],
     materials: null,
+    fabricWeight: null,
+    sizeGuide: null,
+    construction: null,
     features: [],
     fit: null,
     care: null,
@@ -231,6 +243,9 @@ export function isProductPurchasable(product: Product) {
   const hasConfirmedPrice = typeof product.price === 'number' && Number.isFinite(product.price) && product.price > 0
   const hasCompleteProductData = [
     product.materials,
+    product.fabricWeight,
+    product.sizeGuide,
+    product.construction,
     product.fit,
     product.care,
     product.shipping,

@@ -45,6 +45,7 @@ export function ProductPage({ product }: { product: Product }) {
       <article className="product-page" aria-labelledby="product-title">
         <div className="product-page__gallery-column">
           <ProductGallery product={product} />
+          {product.media.some((media) => media.usage === 'campaign-study') && <p className="product-page__commerce-note">{t('product.campaignNotice')}</p>}
         </div>
 
         <div className="product-page__info">
@@ -108,6 +109,10 @@ export function ProductPage({ product }: { product: Product }) {
             <details><summary>{t('product.fit')}</summary><p>{product.fit ?? t('product.infoPending')}</p></details>
             <details><summary>{t('product.care')}</summary><p>{product.care ?? t('product.infoPending')}</p></details>
             <details><summary>{t('product.shipping')}</summary><p>{product.shipping ?? t('product.infoPending')}</p></details>
+            <details><summary>{t('product.returns')}</summary><p>{product.returns ?? t('product.infoPending')}</p></details>
+            <details><summary>{t('product.weight')}</summary><p>{product.fabricWeight ?? t('product.infoPending')}</p></details>
+            <details><summary>{t('product.sizeGuide')}</summary><p>{product.sizeGuide ?? t('product.infoPending')}</p></details>
+            <details><summary>{t('product.technique')}</summary><p>{product.construction ?? t('product.infoPending')}</p></details>
           </div>
           {!purchasable && (
             <div className="responsive-table product-readiness" role="region" aria-label={`${product.name} ${seo.status}`} tabIndex={0}>
