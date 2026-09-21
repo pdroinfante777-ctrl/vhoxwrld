@@ -1,0 +1,146 @@
+[
+  {
+    "name": "home",
+    "client": 305,
+    "h1": "From a distance,black.",
+    "overflow": [],
+    "scroll": 305,
+    "visibleImages": true,
+    "width": 320
+  },
+  {
+    "name": "collection",
+    "client": 305,
+    "h1": "SIGNAL",
+    "overflow": [],
+    "scroll": 305,
+    "visibleImages": true,
+    "width": 320
+  },
+  {
+    "name": "product",
+    "client": 305,
+    "h1": "SIGNAL CORE TEE",
+    "overflow": [],
+    "scroll": 305,
+    "visibleImages": true,
+    "width": 320
+  },
+  {
+    "name": "cart",
+    "client": 305,
+    "h1": "Tu bolsa.",
+    "overflow": [],
+    "scroll": 305,
+    "visibleImages": true,
+    "width": 320
+  },
+  {
+    "name": "home",
+    "client": 375,
+    "h1": "From a distance,black.",
+    "overflow": [],
+    "scroll": 375,
+    "visibleImages": true,
+    "width": 390
+  },
+  {
+    "name": "collection",
+    "client": 375,
+    "h1": "SIGNAL",
+    "overflow": [],
+    "scroll": 375,
+    "visibleImages": true,
+    "width": 390
+  },
+  {
+    "name": "product",
+    "client": 375,
+    "h1": "SIGNAL CORE TEE",
+    "overflow": [],
+    "scroll": 375,
+    "visibleImages": true,
+    "width": 390
+  },
+  {
+    "name": "cart",
+    "client": 375,
+    "h1": "Tu bolsa.",
+    "overflow": [],
+    "scroll": 375,
+    "visibleImages": true,
+    "width": 390
+  },
+  {
+    "name": "home",
+    "client": 753,
+    "h1": "From a distance,black.",
+    "overflow": [],
+    "scroll": 753,
+    "visibleImages": true,
+    "width": 768
+  },
+  {
+    "name": "collection",
+    "client": 753,
+    "h1": "SIGNAL",
+    "overflow": [],
+    "scroll": 753,
+    "visibleImages": true,
+    "width": 768
+  },
+  {
+    "name": "product",
+    "client": 753,
+    "h1": "SIGNAL CORE TEE",
+    "overflow": [],
+    "scroll": 753,
+    "visibleImages": true,
+    "width": 768
+  },
+  {
+    "name": "cart",
+    "client": 753,
+    "h1": "Tu bolsa.",
+    "overflow": [],
+    "scroll": 753,
+    "visibleImages": true,
+    "width": 768
+  },
+  {
+    "name": "home",
+    "client": 1425,
+    "h1": "From a distance,black.",
+    "overflow": [],
+    "scroll": 1425,
+    "visibleImages": true,
+    "width": 1440
+  },
+  {
+    "name": "collection",
+    "client": 1425,
+    "h1": "SIGNAL",
+    "overflow": [],
+    "scroll": 1425,
+    "visibleImages": true,
+    "width": 1440
+  },
+  {
+    "name": "product",
+    "client": 1425,
+    "h1": "SIGNAL CORE TEE",
+    "overflow": [],
+    "scroll": 1425,
+    "visibleImages": true,
+    "width": 1440
+  },
+  {
+    "name": "cart",
+    "client": 1425,
+    "h1": "Tu bolsa.",
+    "overflow": [],
+    "scroll": 1425,
+    "visibleImages": true,
+    "width": 1440
+  }
+]

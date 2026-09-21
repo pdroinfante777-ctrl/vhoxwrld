@@ -237,3 +237,7 @@ Baseline problem: trust is weakened when copy implies heavyweight construction, 
 8. Final QA: clean install, audits, typecheck, lint, tests, build, local browser matrix, links, images, console and documentation.
 
 Each layer must remain a focused commit or stacked PR so it can be reviewed and reverted independently. No production merge or Hostinger change is part of this work.
+
+## Continuación verificada — 2026-09-09
+
+La arquitectura permanece en React 19 / Vite 6 / TypeScript. La estructura SIGNAL, contenidos, interacciones, rutas y validación se continuaron en PR separados a partir del trabajo existente. El estado vigente, evidencia, archivos modificados y pendientes están en VALIDATION_SIGNAL.md. SECURITY_AUDIT.md incluye el nuevo control de septiembre y las auditorías completas y de producción en cero. La metodología del usuario se conserva íntegra en METHODOLOGY_VHOX.md y complementa el brief maestro; no autoriza cambios automáticos de producción.

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useCart } from '../cart/useCart'
 import { isProductPurchasable, products } from '../data/products'
+import { garmentCopy } from '../data/garmentEditorials'
 import { useLocale } from '../i18n/useLocale'
 import { BagIcon } from './BagIcon'
 import { BrandMark } from './BrandMark'
@@ -21,29 +22,19 @@ type NavigationProps = {
 }
 
 export function Navigation({ reducedMotion }: NavigationProps) {
-  const { t } = useLocale()
+  const { t, locale } = useLocale()
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const [hidden, setHidden] = useState(false)
   const [bagAnimating, setBagAnimating] = useState(false)
   const { totalQuantity, pulseToken } = useCart()
   const showBag = totalQuantity > 0 || products.some(isProductPurchasable)
-  const lastScroll = useRef(0)
   const toggleRef = useRef<HTMLButtonElement>(null)
   const mobileMenuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScroll = window.scrollY
-      const delta = currentScroll - lastScroll.current
       setScrolled(currentScroll > 24)
-      setHidden((currentHidden) => {
-        if (open || currentScroll <= 96) return false
-        if (delta > 4) return true
-        if (delta < -4) return false
-        return currentHidden
-      })
-      lastScroll.current = currentScroll
     }
 
     handleScroll()
@@ -104,7 +95,6 @@ export function Navigation({ reducedMotion }: NavigationProps) {
   const headerClasses = [
     'site-header',
     scrolled ? 'site-header--scrolled' : '',
-    hidden && !reducedMotion ? 'site-header--hidden' : '',
     open ? 'site-header--open' : '',
   ].filter(Boolean).join(' ')
 
@@ -130,7 +120,7 @@ export function Navigation({ reducedMotion }: NavigationProps) {
       </a>
 
       <div className="header-actions">
-        <a className="header-drop-link" href="/collections/">DROP 001 / SIGNAL</a>
+        <a className="header-drop-link" href="/collections/">{garmentCopy.collection[locale]}</a>
         <a className="header-access-link" href="/#inner-circle">{t('nav.access')}</a>
         {showBag && (
           <a
@@ -159,17 +149,17 @@ export function Navigation({ reducedMotion }: NavigationProps) {
       >
         <div className="mobile-menu__body">
           <nav aria-label={t('nav.mobile')}>
-            {navigationItems.map((item, index) => (
+            {navigationItems.map((item) => (
               <a
                 key={item.labelKey}
                 href={item.href}
                 tabIndex={open ? 0 : -1}
                 onClick={() => setOpen(false)}
               >
-                <span>{String(index + 1).padStart(2, '0')}</span>
-                {t(item.labelKey)}{'collectionName' in item ? ` / ${item.collectionName}` : ''}
+                {item.labelKey === 'nav.shop' ? garmentCopy.collection[locale] : t(item.labelKey)}
               </a>
             ))}
+            <a href="/collections/#premium" tabIndex={open ? 0 : -1} onClick={() => setOpen(false)}>VHOX Premium</a>
           </nav>
           <aside>
             <p>{t('nav.overlayCopy')}</p>

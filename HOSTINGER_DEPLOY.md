@@ -59,7 +59,7 @@ All `VITE_*` values are public in the browser bundle. Never add private API toke
 - Console has no critical errors.
 - `dist/404.html`, `dist/policies.html` and `dist/terms.html` exist.
 - `dist/robots.txt`, `dist/sitemap.xml` and `dist/llms.txt` respond as public text/XML resources.
-- Each prerendered public route has its own title, description, canonical and `index, follow` directive.
+- Each indexable route has its own title, description, canonical and `index, follow` directive. Planned SIGNAL product previews remain `noindex, follow` and are excluded from the sitemap.
 
 GA4 remains off when its ID is empty or consent is not explicitly `granted`. Search Console verification is only prepared by the build; verification and sitemap submission must still be completed in Google's authenticated interface.
 

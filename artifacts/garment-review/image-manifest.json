@@ -1,0 +1,145 @@
+[
+  {
+    "name": "jacket-story",
+    "origin": "user",
+    "source": "assets/garment-sources/jacket-story.png",
+    "sha256": "82ca153ba84909f6e863454f538a564bea8a1355aba95086a6904e6f507099cc",
+    "width": 1024,
+    "height": 1536,
+    "webWidth": 1024,
+    "webHeight": 1536,
+    "webBytes": 200882
+  },
+  {
+    "name": "jacket-distressed",
+    "origin": "user",
+    "source": "assets/garment-sources/jacket-distressed.png",
+    "sha256": "869ac36abc72da13e318c5b4cbc24a6eb4809a3e5ca93e2de1635a17b11893bf",
+    "width": 1122,
+    "height": 1402,
+    "webWidth": 1122,
+    "webHeight": 1402,
+    "webBytes": 254014
+  },
+  {
+    "name": "tee-violet-seated",
+    "origin": "user",
+    "source": "assets/garment-sources/tee-violet-seated.png",
+    "sha256": "9e0c27eb7bd84154c29924337bdfa111748aa26e4964d4577739339e58d65ebf",
+    "width": 1122,
+    "height": 1402,
+    "webWidth": 1122,
+    "webHeight": 1402,
+    "webBytes": 235962
+  },
+  {
+    "name": "tee-burgundy",
+    "origin": "user",
+    "source": "assets/garment-sources/tee-burgundy.png",
+    "sha256": "3acca8590c1787d3d42b1b697c031982a04dfdc430f3c35953a126a91aae5aaf",
+    "width": 1122,
+    "height": 1402,
+    "webWidth": 1122,
+    "webHeight": 1402,
+    "webBytes": 294040
+  },
+  {
+    "name": "tee-violet",
+    "origin": "user",
+    "source": "assets/garment-sources/tee-violet.png",
+    "sha256": "6d18b3ba78ed0edb113ba62afc89fe9651d749fb5afec6de4dffe024ceb3fca9",
+    "width": 1122,
+    "height": 1402,
+    "webWidth": 1122,
+    "webHeight": 1402,
+    "webBytes": 241862
+  },
+  {
+    "name": "hoodie-walking",
+    "origin": "user",
+    "source": "assets/garment-sources/hoodie-walking.png",
+    "sha256": "48c3e78233998a3323e26f20ce01a26f043e93735fdc82061918e5bd6a84b4b8",
+    "width": 1122,
+    "height": 1402,
+    "webWidth": 1122,
+    "webHeight": 1402,
+    "webBytes": 280516
+  },
+  {
+    "name": "hoodie-back",
+    "origin": "user",
+    "source": "assets/garment-sources/hoodie-back.png",
+    "sha256": "31dd9f05e5c35ac97db918cc2c14e264e6e948ce6310a61132b30f5390a37157",
+    "width": 1122,
+    "height": 1402,
+    "webWidth": 1122,
+    "webHeight": 1402,
+    "webBytes": 183702
+  },
+  {
+    "name": "hoodie-front",
+    "origin": "user",
+    "source": "assets/garment-sources/hoodie-front.png",
+    "sha256": "87324ed40713228c2fb207ba17509c38f7344b56ee9c85f397be1db59beedb29",
+    "width": 1122,
+    "height": 1402,
+    "webWidth": 1122,
+    "webHeight": 1402,
+    "webBytes": 186758
+  },
+  {
+    "name": "racing-green-street",
+    "origin": "user",
+    "source": "assets/garment-sources/racing-green-street.png",
+    "sha256": "815a2bc43b87f5fafcbdc92a49fcc1483b574ca531432f82c3ec138af3a664b6",
+    "width": 1122,
+    "height": 1402,
+    "webWidth": 1122,
+    "webHeight": 1402,
+    "webBytes": 210958
+  },
+  {
+    "name": "racing-red",
+    "origin": "user",
+    "source": "assets/garment-sources/racing-red.png",
+    "sha256": "22622f62f346a7cfd5cf56e3570c07520907eeaddf27590911dcbe01ad530132",
+    "width": 1122,
+    "height": 1402,
+    "webWidth": 1122,
+    "webHeight": 1402,
+    "webBytes": 141058
+  },
+  {
+    "name": "racing-green",
+    "origin": "user",
+    "source": "assets/garment-sources/racing-green.png",
+    "sha256": "07d9c5965d5f3ab3a94f6d794d43b0a29f0129e6f7be38e389ab37c484fdc1c8",
+    "width": 1122,
+    "height": 1402,
+    "webWidth": 1122,
+    "webHeight": 1402,
+    "webBytes": 155838
+  },
+  {
+    "name": "premium-atelier",
+    "origin": "image_gen",
+    "source": "assets/garment-sources/premium-atelier.png",
+    "sha256": "ca3c9e91a9c8df9aa80be05a9668854776fcf8b611652a8f943ffb0b4751ee4a",
+    "width": 1536,
+    "height": 1024,
+    "webWidth": 1536,
+    "webHeight": 1024,
+    "webBytes": 213240
+  },
+  {
+    "name": "premium-courtyard",
+    "origin": "image_gen",
+    "source": "assets/garment-sources/premium-courtyard.png",
+    "sha256": "91ea39ae56d7383e57d528d96e666209acc46cdf597dda4225779cbe9b7f76be",
+    "width": 1122,
+    "height": 1402,
+    "webWidth": 1122,
+    "webHeight": 1402,
+    "webBytes": 155994
+  }
+]

@@ -1,5 +1,21 @@
 # VHOX Design System
 
+## Revisión editorial vigente — septiembre de 2026
+
+La dirección implementada en `src/styles/editorial.css` y `src/sections/EditorialHome.tsx` sustituye las decisiones de color, escala y movimiento de la versión inicial documentada abajo. El Master Brief y las condiciones de aprobación comercial siguen vigentes.
+
+- Una sola familia activa en la interfaz: Manrope, alojada localmente con su licencia existente. Se elimina la precarga de la serif sin borrar los archivos originales.
+- Base tinta `#131412`, carbón `#191a17`, hueso `#eeece5`, piedra `#e7e4dc`. Texto secundario oscuro `#55574f` sobre piedra; `#b5b3aa` sobre tinta. El verde permanece en el logo oficial.
+- Retícula editorial 5:6 en portada; catálogo comparable de tres columnas en escritorio/tablet y una en móvil. Composiciones narrativas 7:3 y 6:4.
+- Fotografías sin filtros ni zoom de hover; prendas completas con contain. La imagen vertical de Black Cherry tiene encuadre propio para equilibrar su escala.
+- Controles rectos, enlaces subrayados, foco por currentColor, navegación estable y scroll nativo. Loader, Lenis y revelaciones generales dejan de montarse.
+- Home: campaña → selección → Chromatic Black → detalle → identidad → acceso/servicio.
+- Ver `EDITORIAL_REVIEW.md` y `artifacts/editorial-review/index.html` para la evidencia y las limitaciones de los recursos disponibles.
+
+---
+
+## Especificación inicial conservada como referencia histórica
+
 Este documento define el contrato visual y de interacción de VHOXWRLD. La fuente de verdad de marca sigue siendo `VHOX_Master_Brief_v1.md`; este sistema traduce esa dirección a decisiones reutilizables para interfaz.
 
 ## 1. Principios de marca
@@ -285,3 +301,8 @@ Antes de aprobar un componente o página:
 8. No simula compra, inventario, precio, envío ni escasez.
 9. No deforma ni reinterpreta el logo oficial.
 10. Se valida en móvil, landscape, tablet y escritorio antes de fusionarse.
+# Ampliación de prendas — 19 de septiembre de 2026
+
+Las historias de prendas y VHOX Premium utilizan títulos directos, fotografías completas y vistas seleccionables. La composición alterna dos columnas con un desplazamiento moderado en escritorio y una sola columna en móvil. Premium combina paisaje y retrato sobre piedra clara. Sin códigos de sección, números ornamentales ni etiquetas repetidas encima de los títulos. Los nombres SIGNAL e identificadores comerciales internos se conservan.
+
+Las imágenes nuevas son propuestas visuales, separadas del catálogo comprable. Se conserva el archivo original y se sirve WebP adaptativo. Las ampliaciones admiten teclado, Escape y retorno del foco; no hay animaciones automáticas. Los estados de producto y notas que ayudan a comprender disponibilidad siguen visibles.

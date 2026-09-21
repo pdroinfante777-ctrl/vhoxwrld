@@ -50,7 +50,7 @@ export function ProductPage({ product }: { product: Product }) {
 
         <div className="product-page__info">
           <Breadcrumbs items={[{ label: seo.breadcrumbHome, href: '/' }, { label: t('product.shop'), href: '/collections/' }, { label: product.name }]} />
-          {!purchasable && <span className="concept-badge">DROP 001 / SIGNAL · {t('product.conceptStudy')}</span>}
+          {!purchasable && <span className="concept-badge">{t('product.conceptStudy')}</span>}
           <span className="product-page__category">{product.category}</span>
           <h1 id="product-title">{product.name}</h1>
           {product.subtitle && <p className="product-page__subtitle">{product.subtitle}</p>}
@@ -93,17 +93,14 @@ export function ProductPage({ product }: { product: Product }) {
           ) : (
             <div className="product-concept-access">
               <a className="button button--primary" href="/#inner-circle">{t('product.requestPrivateAccess')}</a>
-              <span>{t('product.physicalValidationPending')}</span>
             </div>
           )}
-          <p className="product-page__commerce-note">{t('product.commerceNote')}</p>
           {product.price !== null && (
             <p className="product-page__commerce-note">{t('product.displayCurrencyNote', { currency })}</p>
           )}
           <p className="sr-only" aria-live="polite">{announcement}</p>
 
           <div className="product-specs">
-            <details open><summary>{t('product.description')}</summary><p>{description}</p></details>
             <details><summary>{t('product.materials')}</summary><p>{product.materials ?? t('product.infoPending')}</p></details>
             <details><summary>{t('product.features')}</summary><p>{product.features.join(' / ') || t('product.infoPending')}</p></details>
             <details><summary>{t('product.fit')}</summary><p>{product.fit ?? t('product.infoPending')}</p></details>
@@ -114,26 +111,14 @@ export function ProductPage({ product }: { product: Product }) {
             <details><summary>{t('product.sizeGuide')}</summary><p>{product.sizeGuide ?? t('product.infoPending')}</p></details>
             <details><summary>{t('product.technique')}</summary><p>{product.construction ?? t('product.infoPending')}</p></details>
           </div>
-          {!purchasable && (
-            <div className="responsive-table product-readiness" role="region" aria-label={`${product.name} ${seo.status}`} tabIndex={0}>
-              <table>
-                <caption>{product.name} / {seo.collectionStatus}</caption>
-                <tbody>
-                  <tr><th scope="row">{t('product.materials')}</th><td>{product.materials ?? t('product.infoPending')}</td></tr>
-                  <tr><th scope="row">{t('product.fit')}</th><td>{product.fit ?? t('product.infoPending')}</td></tr>
-                  <tr><th scope="row">{t('product.size')}</th><td>{product.sizes.join(' / ') || t('product.infoPending')}</td></tr>
-                  <tr><th scope="row">{t('product.shipping')}</th><td>{product.shipping ?? t('product.infoPending')}</td></tr>
-                </tbody>
-              </table>
-            </div>
-          )}
+
         </div>
       </article>
       <RelatedProducts product={product} />
       <MobileStickyCta
         href={purchasable ? '#product-purchase' : '/#inner-circle'}
         label={purchasable ? t('product.add') : t('product.requestPrivateAccess')}
-        meta={purchasable ? formatProductPrice(product, currency, locale, t('product.pricePending')) : 'DROP 001 / SIGNAL'}
+        meta={purchasable ? formatProductPrice(product, currency, locale, t('product.pricePending')) : 'SIGNAL'}
       />
     </>
   )

@@ -5,7 +5,10 @@ import { Breadcrumbs } from '../components/Breadcrumbs'
 import { MobileStickyCta } from '../components/MobileStickyCta'
 import { ProductCard } from '../components/ProductCard'
 import { ShareButton } from '../components/ShareButton'
+import { editorialCopy } from '../data/artDirection'
 import { products } from '../data/products'
+import { garmentCopy } from '../data/garmentEditorials'
+import { GarmentEditorials, PremiumEditorial } from '../sections/GarmentEditorials'
 import { useLocale } from '../i18n/useLocale'
 import { seoCopy } from '../seo/content'
 import { canonicalUrl } from '../seo/metadata'
@@ -15,6 +18,7 @@ import { StructuredData } from '../seo/StructuredData'
 export function CollectionsPage() {
   const { locale } = useLocale()
   const copy = seoCopy[locale]
+  const editorial = editorialCopy[locale]
   const itemListSchema = useMemo(() => ({
     '@context': 'https://schema.org',
     '@graph': [
@@ -39,7 +43,8 @@ export function CollectionsPage() {
   }), [copy])
 
   useEffect(() => {
-    window.scrollTo(0, 0)
+    if (!window.location.hash) window.scrollTo(0, 0)
+    else requestAnimationFrame(() => document.getElementById(window.location.hash.slice(1))?.scrollIntoView())
     trackEntityView('collections:drop-001-signal', 'view_item_list', {
       item_list_id: 'vhox-drop-001-signal',
       item_list_name: 'VHOX Drop 001: Signal',
@@ -53,30 +58,34 @@ export function CollectionsPage() {
       <StructuredData id="vhox-collection-faq" data={faqSchema(copy.faq)} />
       <article className="seo-page seo-page--collections">
         <header className="seo-page__hero">
-          <Breadcrumbs items={[{ label: copy.breadcrumbHome, href: '/' }, { label: 'DROP 001: SIGNAL' }]} />
-          <span className="seo-page__kicker">VHOX / DROP 001</span>
-          <h1>SIGNAL.</h1>
+          <Breadcrumbs items={[{ label: copy.breadcrumbHome, href: '/' }, { label: garmentCopy.collection[locale] }]} />
+          <h1>SIGNAL</h1>
           <div className="seo-page__intro">
-            <p>FROM A DISTANCE, BLACK. UP CLOSE, VHOX.</p>
-            <p>{copy.collectionIntro}</p>
+            <p>From a distance, black. Up close, VHOX.</p>
+            <p>{editorial.preview}</p>
             <a className="text-link seo-inline-cta" href="/#inner-circle">{copy.collectionCta} <ArrowIcon /></a>
             <ShareButton path="/collections/" title="VHOX DROP 001: SIGNAL" description="From a distance, black. Up close, VHOX." />
           </div>
         </header>
 
+        <nav className="garment-jump-links" aria-label={garmentCopy.collection[locale]}>
+          <a href="#collection-studies-title">SIGNAL</a>
+          <a href="#garments">{garmentCopy.collection[locale]}</a>
+          <a href="#premium">VHOX Premium</a>
+        </nav>
+
         <section className="seo-collection" aria-labelledby="collection-studies-title">
-          <header className="seo-section-heading">
-            <span>01 / DROP 001</span>
-            <h2 id="collection-studies-title">SIGNAL.</h2>
-          </header>
+          <h2 id="collection-studies-title" className="sr-only">{editorial.selection}</h2>
           <div className="collection__grid">
-            {products.map((product, index) => <ProductCard product={product} index={index} key={product.id} />)}
+            {products.map((product, index) => <ProductCard product={product} index={index} key={product.id} compact />)}
           </div>
         </section>
 
+        <GarmentEditorials />
+        <PremiumEditorial />
+
         <section className="seo-status" aria-labelledby="collection-status-title">
           <header className="seo-section-heading">
-            <span>02 / RELEASE STATUS</span>
             <h2 id="collection-status-title">{copy.collectionStatus}</h2>
           </header>
           <div className="responsive-table" role="region" aria-label={copy.collectionStatus} tabIndex={0}>
@@ -88,12 +97,12 @@ export function CollectionsPage() {
         </section>
         <section className="seo-faq" aria-labelledby="collection-faq-title">
           <h2 id="collection-faq-title">{copy.faqTitle}</h2>
-          {copy.faq.map(({ question, answer }, index) => (
-            <details key={question}><summary><span>{String(index + 1).padStart(2, '0')}</span><b>{question}</b></summary><p>{answer}</p></details>
+          {copy.faq.map(({ question, answer }) => (
+            <details key={question}><summary><b>{question}</b></summary><p>{answer}</p></details>
           ))}
         </section>
       </article>
-      <MobileStickyCta href="/#inner-circle" label={copy.collectionCta} meta="DROP 001 / SIGNAL" />
+      <MobileStickyCta href="/#inner-circle" label={copy.collectionCta} meta="SIGNAL" />
     </>
   )
 }

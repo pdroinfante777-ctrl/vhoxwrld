@@ -53,7 +53,7 @@ export const seoCopy: Record<Locale, SeoCopy> = {
     collectionIntro: "SIGNAL CORE TEE, NIGHT BLOOM TEE y CRYSTAL SIGNAL TEE son las piezas planeadas de DROP 001: SIGNAL. La campaña explora la dirección; las fotos de producto, especificaciones, precio y lanzamiento siguen pendientes.",
     collectionCta: 'ENTRAR AL CÍRCULO INTERNO', collectionStatus: 'Estado de la colección', concept: 'Estudio', status: 'Estado', pending: 'Pendiente de confirmación física y comercial', faqTitle: 'Preguntas sobre la colección',
     faq: [
-      { question: '¿las piezas SIGNAL están disponibles para comprar?', answer: 'Todavía no. Son estudios editoriales y permanecen fuera de venta hasta que VHOX confirme muestras físicas, medios aprobados, especificaciones, precio y disponibilidad.' },
+      { question: '¿Las piezas SIGNAL están disponibles para comprar?', answer: 'Todavía no. Son estudios editoriales y permanecen fuera de venta hasta que VHOX confirme muestras físicas, medios aprobados, especificaciones, precio y disponibilidad.' },
       { question: '¿Los materiales y tallas están confirmados?', answer: 'No. Los materiales, el ajuste y las tallas permanecen pendientes hasta completar la validación física.' },
       { question: '¿Todos los estudios tendrán reposición?', answer: 'No existe una política de reposición confirmada. VHOX publicará disponibilidad y condiciones únicamente cuando estén aprobadas.' },
       { question: '¿Cómo recibo información confirmada del lanzamiento?', answer: 'Usa el contacto oficial de VHOX o entra al Inner Circle cuando el registro aprobado esté activo. No se promete fecha ni acceso antes de la confirmación oficial.' },

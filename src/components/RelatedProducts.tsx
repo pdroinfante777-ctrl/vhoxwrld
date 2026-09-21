@@ -17,14 +17,13 @@ export function RelatedProducts({ product }: { product: Product }) {
     <section className="related-products section" aria-labelledby="related-title">
       <div className="related-products__header">
         <div>
-          <span>DROP 001 / SIGNAL</span>
-          <h2 id="related-title">MORE FROM SIGNAL.</h2>
+          <h2 id="related-title">{t('related.title')}</h2>
         </div>
-        <div className="related-products__controls" aria-label={t('related.pagination')}>
+        {pageCount > 1 && <div className="related-products__controls" aria-label={t('related.pagination')}>
           <button type="button" aria-label={t('related.previous')} disabled={pageCount === 1} onClick={() => setPage((current) => (current - 1 + pageCount) % pageCount)}>←</button>
           <span>{String(page + 1).padStart(2, '0')} / {String(pageCount).padStart(2, '0')}</span>
           <button type="button" aria-label={t('related.next')} disabled={pageCount === 1} onClick={() => setPage((current) => (current + 1) % pageCount)}>→</button>
-        </div>
+        </div>}
       </div>
       <div className="related-products__grid">
         {visible.map((item, index) => <ProductCard key={item.id} product={item} index={index} compact />)}

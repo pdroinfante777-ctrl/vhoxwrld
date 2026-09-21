@@ -30,14 +30,12 @@ export function CartPage() {
   return (
     <section className="cart-page" aria-labelledby="cart-title">
       <header className="cart-page__header">
-        <span>{t('cart.meta')}</span>
         <h1 id="cart-title">{t('cart.title')}</h1>
         <p>{totalQuantity === 1 ? t('cart.countOne') : t('cart.count', { count: totalQuantity })}</p>
       </header>
 
       {lines.length === 0 ? (
         <div className="cart-empty">
-          <span>{t('cart.emptyLabel')}</span>
           <h2>{t('cart.empty')}</h2>
           <a className="button button--primary" href="/collections/">{t('cart.view')} <ArrowIcon /></a>
         </div>
