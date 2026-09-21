@@ -21,8 +21,8 @@ const studyMedia = [
 
 const collectionMedia = [
   { src: '/chromatic-black/vhox-textured-black-tee.jpeg', width: 1448, height: 1086 },
-  { src: '/chromatic-black/vhox-nylon-jacket.jpeg', width: 1254, height: 1254 },
-  { src: '/chromatic-black/vhox-cargo-pant.jpeg', width: 1254, height: 1254 },
+  { src: '/chromatic-black/vhox-black-cherry-tee.jpeg', width: 1122, height: 1402 },
+  { src: '/chromatic-black/vhox-midnight-violet-tee.jpeg', width: 1448, height: 1086 },
 ]
 
 export function ChromaticStory() {

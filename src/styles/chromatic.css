@@ -384,6 +384,14 @@ body::before { display: none; }
 
 .chromatic-piece__media { aspect-ratio: 1 / 1; }
 
+/* Planned pieces retain the complete supplied silhouette at every breakpoint. */
+.chromatic-piece__media img {
+  height: 100%;
+  object-fit: contain;
+}
+
+.chromatic-piece:hover .chromatic-piece__media img { transform: none; }
+
 .chromatic-piece__meta {
   display: flex;
   justify-content: space-between;

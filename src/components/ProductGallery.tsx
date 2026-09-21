@@ -6,6 +6,7 @@ export function ProductGallery({ product }: { product: Product }) {
   const { t } = useLocale()
   const [activeIndex, setActiveIndex] = useState(0)
   const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [failedSource, setFailedSource] = useState<string | null>(null)
   const pointerStart = useRef<number | null>(null)
   const galleryRef = useRef<HTMLDivElement>(null)
   const lightboxTriggerRef = useRef<HTMLButtonElement>(null)
@@ -74,7 +75,7 @@ export function ProductGallery({ product }: { product: Product }) {
           if (Math.abs(distance) > 44) move(distance > 0 ? -1 : 1)
         }}
       >
-        {activeMedia ? (
+        {activeMedia && activeMedia.src !== failedSource ? (
           activeMedia.type === 'image' ? (
             <button ref={lightboxTriggerRef} className="product-gallery__lightbox-trigger" type="button" onClick={() => setLightboxOpen(true)} aria-label={t('product.enlarge')}>
               <img
@@ -82,11 +83,13 @@ export function ProductGallery({ product }: { product: Product }) {
                 className="product-gallery__main-media"
                 src={activeMedia.src}
                 alt={activeMedia.alt}
+                onError={() => setFailedSource(activeMedia.src)}
+                decoding="async"
                 style={{ objectFit: activeMedia.objectFit ?? 'contain', objectPosition: activeMedia.objectPosition }}
               />
             </button>
           ) : (
-            <video key={activeMedia.src} className="product-gallery__main-media" src={activeMedia.src} poster={activeMedia.poster} controls playsInline aria-label={activeMedia.alt} />
+            <video key={activeMedia.src} className="product-gallery__main-media" src={activeMedia.src} poster={activeMedia.poster} onError={() => setFailedSource(activeMedia.src)} controls playsInline aria-label={activeMedia.alt} />
           )
         ) : (
           <div className={`product-gallery__placeholder product-card__visual--${product.visual}`}>

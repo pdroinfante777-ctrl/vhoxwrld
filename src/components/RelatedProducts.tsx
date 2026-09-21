@@ -17,7 +17,7 @@ export function RelatedProducts({ product }: { product: Product }) {
     <section className="related-products section" aria-labelledby="related-title">
       <div className="related-products__header">
         <div>
-          <span>DROP 001 / {product.code}</span>
+          <span>DROP 001 / SIGNAL</span>
           <h2 id="related-title">MORE FROM SIGNAL.</h2>
         </div>
         <div className="related-products__controls" aria-label={t('related.pagination')}>

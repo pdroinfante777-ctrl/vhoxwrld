@@ -88,8 +88,8 @@ export function CollectionsPage() {
         </section>
         <section className="seo-faq" aria-labelledby="collection-faq-title">
           <h2 id="collection-faq-title">{copy.faqTitle}</h2>
-          {copy.faq.map(({ question, answer }) => (
-            <details key={question}><summary>{question}</summary><p>{answer}</p></details>
+          {copy.faq.map(({ question, answer }, index) => (
+            <details key={question}><summary><span>{String(index + 1).padStart(2, '0')}</span><b>{question}</b></summary><p>{answer}</p></details>
           ))}
         </section>
       </article>
