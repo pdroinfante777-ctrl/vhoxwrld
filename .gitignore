@@ -11,6 +11,7 @@ dist/
 
 # logs and editor files
 *.log
+.npm-cache/
 .DS_Store
 .idea/
 .vscode/
