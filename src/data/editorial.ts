@@ -1,4 +1,5 @@
 import type { TranslationKey } from '../i18n/translations'
+import { products } from './products'
 
 export type HeroScene = {
   id: 'bat' | 'rose' | 'void'
@@ -33,7 +34,7 @@ export const heroScenes: HeroScene[] = [
 ]
 
 export type DropChapter = {
-  id: 'bat' | 'rose' | 'void'
+  id: string
   index: string
   title: string
   edition: string
@@ -41,7 +42,7 @@ export type DropChapter = {
   path: string
 }
 
-export const dropChapters: DropChapter[] = [
+const legacyChapters: DropChapter[] = [
   {
     id: 'bat',
     index: '01',
@@ -67,6 +68,15 @@ export const dropChapters: DropChapter[] = [
     path: '/collections/void/',
   },
 ]
+
+export const dropChapters: DropChapter[] = products.map((product, index) => ({
+  id: product.id,
+  index: String(index + 1).padStart(2, '0'),
+  title: product.name,
+  edition: 'DROP 001 / SIGNAL',
+  copyKey: legacyChapters[index].copyKey,
+  path: `/collections/${product.slug}/`,
+}))
 
 export type DetailStudy = {
   id: 'embroidery' | 'textile' | 'seam' | 'silhouette'

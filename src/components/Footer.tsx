@@ -1,16 +1,11 @@
 import { socialProfiles } from '../config/social'
+import { productPath, products } from '../data/products'
 import type { TranslationKey } from '../i18n/translations'
 import { useLocale } from '../i18n/useLocale'
 import { BrandMark } from './BrandMark'
 import { MarketControls } from './MarketControls'
 
 const year = new Date().getFullYear()
-
-const collectionLinks = [
-  { label: 'BAT', href: '/collections/bat/' },
-  { label: 'ROSE', href: '/collections/rose/' },
-  { label: 'VOID', href: '/collections/void/' },
-] as const
 
 const exploreLinks = [
   { labelKey: 'nav.details' as TranslationKey, href: '/#chromatic-black' },
@@ -42,8 +37,10 @@ export function Footer() {
 
         <nav aria-label={t('footer.shop')}>
           <span>{t('footer.shop')}</span>
-          <a href="/collections/">{t('nav.drop001')}</a>
-          {collectionLinks.map((item) => <a key={item.href} href={item.href}>{item.label}</a>)}
+          <a href="/collections/">DROP 001 / SIGNAL</a>
+          {products.map((product) => (
+            <a key={product.id} href={productPath(product)}>{product.name}</a>
+          ))}
         </nav>
 
         <nav aria-label={t('footer.explore')}>

@@ -49,7 +49,7 @@ export function ProductPage({ product }: { product: Product }) {
 
         <div className="product-page__info">
           <Breadcrumbs items={[{ label: seo.breadcrumbHome, href: '/' }, { label: t('product.shop'), href: '/collections/' }, { label: product.name }]} />
-          {!purchasable && <span className="concept-badge">{t('product.conceptStudy')}</span>}
+          {!purchasable && <span className="concept-badge">DROP 001 / SIGNAL · {t('product.conceptStudy')}</span>}
           <span className="product-page__category">{product.category}</span>
           <h1 id="product-title">{product.name}</h1>
           {product.subtitle && <p className="product-page__subtitle">{product.subtitle}</p>}
@@ -128,7 +128,7 @@ export function ProductPage({ product }: { product: Product }) {
       <MobileStickyCta
         href={purchasable ? '#product-purchase' : '/#inner-circle'}
         label={purchasable ? t('product.add') : t('product.requestPrivateAccess')}
-        meta={purchasable ? formatProductPrice(product, currency, locale, t('product.pricePending')) : t('product.conceptStudy')}
+        meta={purchasable ? formatProductPrice(product, currency, locale, t('product.pricePending')) : 'DROP 001 / SIGNAL'}
       />
     </>
   )
