@@ -116,3 +116,19 @@ npm run lint
 npm test
 npm run build
 ```
+
+## Revalidation on 2026-09-09
+
+The August findings above are a historical baseline. A fresh clean install on **Node 20.20.2 / npm 10.9.2** found four affected package groups: Browserslist, baseline-browser-mapping, Vitest and @vitest/mocker. They are now remediated:
+
+| Dependency | Before this continuation | Final | Parent / resolution |
+| --- | --- | --- | --- |
+| browserslist | 4.28.6 | 4.28.9 | @vitejs/plugin-react → Babel → helper-compilation-targets; compatible transitive update |
+| baseline-browser-mapping | 2.10.43 | 2.11.21 | browserslist; compatible transitive update |
+| vitest / @vitest/mocker | 3.2.7 | 4.1.11 | reviewed test-runner major upgrade; Node 20 and Vite 6 supported |
+
+[The Vitest advisory](https://github.com/advisories/GHSA-82fw-gwwq-j7x9) identifies 4.1.11 as the patched stable release and states that 3.x will not receive a fix. The [migration guide](https://vitest.dev/guide/migration/) and package engine/peer declarations were reviewed. This project uses ordinary unit tests, no custom pools, browser mocks or coverage plugin. All 38 tests pass on 4.1.11; the test that reads generated files now explicitly declares its Node type dependency.
+
+Vite remains 6.4.3. No force or dependency overrides were used. The eight Hostinger alert versions in the table above remain as recorded and were rechecked with npm ls. The exact Hostinger runtime still requires its deployment log; local validation does not establish that remote fact.
+
+Final clean npm ci, typecheck, ESLint, 38 tests and build passed under Node 20.20.2 / npm 10.9.2. Full npm audit and production-only audit both report **0 vulnerabilities**. Production JS remains 477.55 kB (154.22 kB gzip); build emits no source maps. Stop local Vite processes before npm ci on Windows to avoid locking esbuild.exe.
